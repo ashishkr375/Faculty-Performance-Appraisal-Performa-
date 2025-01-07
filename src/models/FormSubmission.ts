@@ -1,12 +1,12 @@
 import { Schema, model, models, Document } from 'mongoose';
 
-interface IFormSubmission extends Document {
+interface FormSubmissionDocument extends Document {
     email: string;
-    data: Record<string, any>;
+    data: Record<string, unknown>;
     submittedAt: Date;
 }
 
-const FormSubmissionSchema = new Schema<IFormSubmission>({
+const FormSubmissionSchema = new Schema<FormSubmissionDocument>({
     email: {
         type: String,
         required: true
@@ -22,4 +22,4 @@ const FormSubmissionSchema = new Schema<IFormSubmission>({
 });
 
 export const FormSubmission = models.FormSubmission || 
-    model<IFormSubmission>('FormSubmission', FormSubmissionSchema); 
+    model<FormSubmissionDocument>('FormSubmission', FormSubmissionSchema); 

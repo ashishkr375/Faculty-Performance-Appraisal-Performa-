@@ -7,6 +7,7 @@ import { CgSpinner } from 'react-icons/cg';
 
 interface UserSubmission {
     userId: string;  // email
+    email?: string;
     step1?: {
         name: string;
         department: string;
@@ -14,6 +15,7 @@ interface UserSubmission {
     };
     completedSteps: number[];
     lastUpdated: Date;
+    isAdmin?: boolean;
 }
 
 export default function AdminPage() {
@@ -35,7 +37,9 @@ export default function AdminPage() {
             if (!response.ok) throw new Error('Failed to fetch users');
             const data = await response.json();
             setUsers(data);
-        } catch (err) {
+        } catch (error) {
+            // eslint-disable-next-line no-console
+            console.error('Error:', error);
             setError('Failed to load users');
         } finally {
             setLoading(false);
@@ -52,8 +56,8 @@ export default function AdminPage() {
             });
             if (!response.ok) throw new Error('Failed to add admin');
             setNewAdminEmail('');
-            fetchUsers(); // Refresh user list
-        } catch (err) {
+            fetchUsers();
+        } catch (_err) {
             setError('Failed to add admin');
         }
     };
@@ -66,8 +70,8 @@ export default function AdminPage() {
                 body: JSON.stringify({ email }),
             });
             if (!response.ok) throw new Error('Failed to remove admin');
-            fetchUsers(); // Refresh user list
-        } catch (err) {
+            fetchUsers();
+        } catch (_err) {
             setError('Failed to remove admin');
         }
     };
@@ -185,11 +189,11 @@ export default function AdminPage() {
                                     {users
                                         .filter(user => user.isAdmin)
                                         .map(admin => (
-                                            <li key={admin.email} className="flex justify-between items-center">
-                                                <span>{admin.email}</span>
-                                                {admin.email !== 'webmaster@nitp.ac.in' && (
+                                            <li key={admin.userId} className="flex justify-between items-center">
+                                                <span>{admin.userId}</span>
+                                                {admin.userId !== 'webmaster@nitp.ac.in' && (
                                                     <button
-                                                        onClick={() => handleRemoveAdmin(admin.email)}
+                                                        onClick={() => handleRemoveAdmin(admin.userId)}
                                                         className="text-red-500 hover:text-red-700"
                                                     >
                                                         Remove

@@ -1,14 +1,14 @@
 import { Schema, model, models, Document } from 'mongoose';
 
-interface IFormProgress extends Document {
+interface FormProgressDocument extends Document {
     email: string;
-    step1: Record<string, any> | null;
-    step2: Record<string, any> | null;
+    step1: Record<string, unknown>;
+    step2: Record<string, unknown>;
     currentStep: number;
     lastUpdated: Date;
 }
 
-const FormProgressSchema = new Schema<IFormProgress>({
+const FormProgressSchema = new Schema<FormProgressDocument>({
     email: {
         type: String,
         required: true,
@@ -33,4 +33,4 @@ const FormProgressSchema = new Schema<IFormProgress>({
 });
 
 export const FormProgress = models.FormProgress || 
-    model<IFormProgress>('FormProgress', FormProgressSchema); 
+    model<FormProgressDocument>('FormProgress', FormProgressSchema); 

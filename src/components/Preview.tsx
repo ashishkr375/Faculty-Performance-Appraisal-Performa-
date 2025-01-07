@@ -1223,7 +1223,7 @@ export function Preview({ formData }: PreviewProps) {
                 </div>
 
                 <div className="text-right mt-4">
-                    <p>DIRECTOR/ DIRECTOR'S NOMINEE</p>
+                    <p>Director&apos;s Review</p>
                     <div className="mt-14">
                         <p>Signature</p>
                         <p className="mr-16">Date:</p>

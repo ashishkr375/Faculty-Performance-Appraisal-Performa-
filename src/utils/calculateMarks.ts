@@ -1,11 +1,23 @@
-import { SponsoredRD } from '@/types/form';
+import type { FormData } from '@/types/form';
 
-// Individual step calculation functions
-export const calculateStep2Marks = (formData: any) => {
+interface BaseFormData {
+    courses: Array<{
+        totalTheoryHours: number;
+        totalLabHours: number;
+    }>;
+    innovations: string[];
+    newLabs: string[];
+    otherTasks: string[];
+    projectSupervision: {
+        btech: Array<Record<string, unknown>>;
+        mtech: Array<Record<string, unknown>>;
+    };
+}
+
+export const calculateStep2Marks = (formData: BaseFormData): number => {
     let marks = 0;
     
-    // Teaching Engagement (max 14 marks)
-    formData.courses.forEach((course: any) => {
+    formData.courses.forEach((course) => {
         marks += (course.totalTheoryHours * 1) + (course.totalLabHours * 0.5);
     });
     marks = Math.min(marks, 14);

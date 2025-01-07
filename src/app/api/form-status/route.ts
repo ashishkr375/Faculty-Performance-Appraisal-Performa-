@@ -16,8 +16,8 @@ export async function GET() {
 
         const { db } = await connectToDatabase();
         const formData = await db.collection('forms').findOne({
-            userId: session.user.id,
-            academicYear: '2023-24' // You might want to make this dynamic
+            userId: session.user.email,
+            academicYear: '2023-24'
         });
 
         if (!formData) {

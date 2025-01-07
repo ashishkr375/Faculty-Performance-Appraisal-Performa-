@@ -10,11 +10,11 @@ export interface BasicInfo {
 
 // Teaching Engagement (Step 2)
 export interface TeachingCourse {
-    semester: 'First' | 'Second';
-    level: 'UG I' | 'UG II' | 'PG' | 'Ph.D.';
+    semester: string;
+    level: string;
     courseNo: string;
     title: string;
-    type: 'Core' | 'Elective';
+    type: string;
     studentCount: number;
     weeklyLoadL: number;
     weeklyLoadT: number;
@@ -24,15 +24,27 @@ export interface TeachingCourse {
     yearsOffered: number;
 }
 
+export interface ProjectSupervision {
+    btech: Array<{
+        title: string;
+        students: string;
+        internalSupervisors: string;
+        externalSupervisors: string;
+    }>;
+    mtech: Array<{
+        title: string;
+        students: string;
+        internalSupervisors: string;
+        externalSupervisors: string;
+    }>;
+}
+
 export interface InstructionalElement {
     courses: TeachingCourse[];
     innovations: string[];
     newLabs: string[];
     otherTasks: string[];
-    projectSupervision: {
-        btech: ProjectSupervision[];
-        mtech: ProjectSupervision[];
-    };
+    projectSupervision: ProjectSupervision;
     calculatedMarks: number;
 }
 

@@ -3,10 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import type { InstructionalElement, TeachingCourse, ProjectSupervision } from '@/types/form';
-import { SaveLoader } from '@/components/SaveLoader';
+import type { TeachingCourse } from '@/types/form';
 import Loading from '@/app/loading';
-import { fetchFacultyData } from '@/lib/fetchFacultyData';
 
 const COURSE_LEVELS = ['UG I', 'UG II', 'PG', 'Ph.D.'] as const;
 const SEMESTERS = ['Spring', 'Summer', 'Autumn'] as const;
@@ -67,17 +65,7 @@ const SECTION_DESCRIPTIONS = {
 export default function Step2Page() {
     const { data: session, status } = useSession();
     const router = useRouter();
-    const [formData, setFormData] = useState<InstructionalElement>({
-        courses: [],
-        innovations: [],
-        newLabs: [],
-        otherTasks: [],
-        projectSupervision: {
-            btech: [],
-            mtech: []
-        },
-        calculatedMarks: 0
-    });
+    const [formData, setFormData] = useState<TeachingCourse[]>([]);
     const [loading, setLoading] = useState(true);
     const [yearRange, setYearRange] = useState<{ start: string; end: string }>({ start: '', end: '' });
     const [hasAdminData, setHasAdminData] = useState(false);
@@ -102,67 +90,35 @@ export default function Step2Page() {
     }, []);
 
     useEffect(() => {
-        if (!session?.user?.email || status === 'loading' || !yearRange.start || !yearRange.end) return;
-
         const fetchData = async () => {
+            if (!session?.user?.email || status !== 'authenticated') {
+                return;
+            }
+            
             setLoading(true);
             try {
-                const response = await fetch('/api/get-part?step=2');
-                const savedData = await response.json();
-
-                if (savedData && savedData.courses?.length > 0) {
-                    setFormData(savedData);
-                } else {
-                    const facultyData = await fetchFacultyData(session.user.email);
-                    
-                    if (facultyData?.subjects_teaching?.length > 0) {
-                        const relevantCourses = facultyData.subjects_teaching.filter(subject => {
-                            const year = parseInt(subject.end);
-                            return year >= parseInt(yearRange.start) && year <= parseInt(yearRange.end);
-                        });
-
-                        const convertedCourses = relevantCourses.map(subject => ({
-                            courseNo: subject.code,
-                            title: subject.name,
-                            semester: subject.start,
-                            level: 'UG I',
-                            type: 'Core',
-                            studentCount: 0,
-                            weeklyLoadL: 0,
-                            weeklyLoadT: 0,
-                            weeklyLoadP: 0,
-                            totalTheoryHours: 0,
-                            totalLabHours: 0,
-                            yearsOffered: parseInt(subject.end) || 0
-                        }));
-
-                        setFormData({
-                            ...formData,
-                            courses: convertedCourses
-                        });
-                        setHasAdminData(true);
-                    }
-                }
+                const data = await fetchFormData();
+                setFormData(prev => ({...prev, ...data}));
             } catch (error) {
-                console.error('Error fetching data:', error);
+                console.error('Error:', error);
             } finally {
                 setLoading(false);
             }
         };
 
         fetchData();
-    }, [session, status, yearRange]);
+    }, [session, status]);
 
     const handleCourseChange = (index: number, field: keyof TeachingCourse, value: any) => {
-        const updatedCourses = [...formData.courses];
+        const updatedCourses = [...formData];
         updatedCourses[index] = { ...updatedCourses[index], [field]: value };
-        setFormData({ ...formData, courses: updatedCourses });
+        setFormData(updatedCourses);
     };
 
     const handleAddCourse = () => {
-        setFormData({
+        setFormData([
             ...formData,
-            courses: [...formData.courses, {
+            {
                 semester: 'First',
                 level: 'UG I',
                 courseNo: '',
@@ -175,13 +131,13 @@ export default function Step2Page() {
                 totalTheoryHours: 0,
                 totalLabHours: 0,
                 yearsOffered: 0
-            }]
-        });
+            }
+        ]);
     };
 
     const handleRemoveCourse = (index: number) => {
-        const updatedCourses = formData.courses.filter((_, i) => i !== index);
-        setFormData({ ...formData, courses: updatedCourses });
+        const updatedCourses = formData.filter((_, i) => i !== index);
+        setFormData(updatedCourses);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -207,42 +163,33 @@ export default function Step2Page() {
     };
 
     const handleAddInnovation = () => {
-        setFormData({
-            ...formData,
-            innovations: [...formData.innovations, '']
-        });
+        setFormData([...formData, '']);
     };
 
     const handleInnovationChange = (index: number, value: string) => {
-        const updatedInnovations = [...formData.innovations];
+        const updatedInnovations = [...formData];
         updatedInnovations[index] = value;
-        setFormData({ ...formData, innovations: updatedInnovations });
+        setFormData(updatedInnovations);
     };
 
     const handleAddLab = () => {
-        setFormData({
-            ...formData,
-            newLabs: [...formData.newLabs, '']
-        });
+        setFormData([...formData, '']);
     };
 
     const handleLabChange = (index: number, value: string) => {
-        const updatedLabs = [...formData.newLabs];
+        const updatedLabs = [...formData];
         updatedLabs[index] = value;
-        setFormData({ ...formData, newLabs: updatedLabs });
+        setFormData(updatedLabs);
     };
 
     const handleAddTask = () => {
-        setFormData({
-            ...formData,
-            otherTasks: [...formData.otherTasks, '']
-        });
+        setFormData([...formData, '']);
     };
 
     const handleTaskChange = (index: number, value: string) => {
-        const updatedTasks = [...formData.otherTasks];
+        const updatedTasks = [...formData];
         updatedTasks[index] = value;
-        setFormData({ ...formData, otherTasks: updatedTasks });
+        setFormData(updatedTasks);
     };
 
     const handleAddBTechProject = () => {
@@ -302,7 +249,7 @@ export default function Step2Page() {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
-                {formData.courses.map((course, index) => (
+                {formData.map((course, index) => (
                     <div key={index} className="border p-4 rounded-lg bg-white shadow-sm">
                         <div className="grid grid-cols-2 gap-4 mb-4">
                             <div>
@@ -463,7 +410,7 @@ export default function Step2Page() {
                 <div className="mt-8">
                     <h2 className="text-xl font-semibold mb-2">{SECTION_DESCRIPTIONS.innovations.title}</h2>
                     <p className="text-gray-600 mb-4">{SECTION_DESCRIPTIONS.innovations.description}</p>
-                    {formData.innovations.map((innovation, index) => (
+                    {formData.map((innovation, index) => (
                         <div key={index} className="mb-4">
                             <div className="flex gap-2">
                                 <input
@@ -476,8 +423,8 @@ export default function Step2Page() {
                                 <button
                                     type="button"
                                     onClick={() => {
-                                        const newInnovations = formData.innovations.filter((_, i) => i !== index);
-                                        setFormData({ ...formData, innovations: newInnovations });
+                                        const newInnovations = formData.filter((_, i) => i !== index);
+                                        setFormData(newInnovations);
                                     }}
                                     className="text-red-500"
                                 >
@@ -499,7 +446,7 @@ export default function Step2Page() {
                 <div className="mt-8">
                     <h2 className="text-xl font-semibold mb-2">{SECTION_DESCRIPTIONS.newLabs.title}</h2>
                     <p className="text-gray-600 mb-4">{SECTION_DESCRIPTIONS.newLabs.description}</p>
-                    {formData.newLabs.map((lab, index) => (
+                    {formData.map((lab, index) => (
                         <div key={index} className="mb-4">
                             <div className="flex gap-2">
                                 <input
@@ -512,8 +459,8 @@ export default function Step2Page() {
                                 <button
                                     type="button"
                                     onClick={() => {
-                                        const newLabs = formData.newLabs.filter((_, i) => i !== index);
-                                        setFormData({ ...formData, newLabs: newLabs });
+                                        const newLabs = formData.filter((_, i) => i !== index);
+                                        setFormData(newLabs);
                                     }}
                                     className="text-red-500"
                                 >
@@ -535,7 +482,7 @@ export default function Step2Page() {
                 <div className="mt-8">
                     <h2 className="text-xl font-semibold mb-2">{SECTION_DESCRIPTIONS.otherTasks.title}</h2>
                     <p className="text-gray-600 mb-4">{SECTION_DESCRIPTIONS.otherTasks.description}</p>
-                    {formData.otherTasks.map((task, index) => (
+                    {formData.map((task, index) => (
                         <div key={index} className="mb-4">
                             <div className="flex gap-2">
                                 <input
@@ -548,8 +495,8 @@ export default function Step2Page() {
                                 <button
                                     type="button"
                                     onClick={() => {
-                                        const newTasks = formData.otherTasks.filter((_, i) => i !== index);
-                                        setFormData({ ...formData, otherTasks: newTasks });
+                                        const newTasks = formData.filter((_, i) => i !== index);
+                                        setFormData(newTasks);
                                     }}
                                     className="text-red-500"
                                 >
