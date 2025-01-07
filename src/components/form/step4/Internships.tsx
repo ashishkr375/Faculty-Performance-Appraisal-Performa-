@@ -5,6 +5,22 @@ interface Props {
     setFormData: (data: SponsoredRD) => void;
 }
 
+const DESCRIPTION = {
+    title: "Internships offered during the appraisal period",
+    description: "Maximum 04 marks:\n" +
+        "• 02 marks for each registered external student (other than the institute) for a minimum period of one month\n" +
+        "• 01 mark for each registered internal student (NIT Patna) for a minimum period of one month",
+    note: "For more than one supervisor, marks will be divided equally",
+    fields: {
+        name: "Name of registered student",
+        qualification: "Qualification of students, e.g., BTech/MTech/PhD",
+        affiliation: "Affiliation of the student",
+        project: "Title of project during training",
+        startDate: "Start date",
+        endDate: "End date"
+    }
+};
+
 export const Internships = ({ formData, setFormData }: Props) => {
     const handleAddInternship = () => {
         setFormData({
@@ -23,15 +39,14 @@ export const Internships = ({ formData, setFormData }: Props) => {
 
     return (
         <section>
-            <h2 className="text-xl font-semibold mb-4">Internships</h2>
-            <p className="text-sm text-gray-600 mb-4">
-                [Max 04 marks: 02 marks per external student, 01 mark per internal student]
-            </p>
+            <h2 className="text-xl font-semibold mb-2">{DESCRIPTION.title}</h2>
+            <p className="text-gray-600 mb-2 whitespace-pre-line">{DESCRIPTION.description}</p>
+            <p className="text-gray-600 mb-4 italic">{DESCRIPTION.note}</p>
             {formData.internships.map((internship, index) => (
                 <div key={index} className="border p-4 rounded mb-4">
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block mb-2">Student Name</label>
+                            <label className="block mb-2">{DESCRIPTION.fields.name}</label>
                             <input
                                 type="text"
                                 value={internship.studentName}
@@ -45,7 +60,7 @@ export const Internships = ({ formData, setFormData }: Props) => {
                             />
                         </div>
                         <div>
-                            <label className="block mb-2">Qualification</label>
+                            <label className="block mb-2">{DESCRIPTION.fields.qualification}</label>
                             <input
                                 type="text"
                                 value={internship.qualification}
@@ -60,7 +75,7 @@ export const Internships = ({ formData, setFormData }: Props) => {
                             />
                         </div>
                         <div>
-                            <label className="block mb-2">Affiliation</label>
+                            <label className="block mb-2">{DESCRIPTION.fields.affiliation}</label>
                             <input
                                 type="text"
                                 value={internship.affiliation}
@@ -74,7 +89,7 @@ export const Internships = ({ formData, setFormData }: Props) => {
                             />
                         </div>
                         <div>
-                            <label className="block mb-2">Project Title</label>
+                            <label className="block mb-2">{DESCRIPTION.fields.project}</label>
                             <input
                                 type="text"
                                 value={internship.projectTitle}
@@ -88,7 +103,7 @@ export const Internships = ({ formData, setFormData }: Props) => {
                             />
                         </div>
                         <div>
-                            <label className="block mb-2">Start Date</label>
+                            <label className="block mb-2">{DESCRIPTION.fields.startDate}</label>
                             <input
                                 type="date"
                                 value={internship.startDate}
@@ -102,7 +117,7 @@ export const Internships = ({ formData, setFormData }: Props) => {
                             />
                         </div>
                         <div>
-                            <label className="block mb-2">End Date</label>
+                            <label className="block mb-2">{DESCRIPTION.fields.endDate}</label>
                             <input
                                 type="date"
                                 value={internship.endDate}

@@ -20,8 +20,7 @@ export const OutreachActivities = ({ formData, setFormData }: Props) => {
                 [Maximum 07 marks @ 01 mark per activity]
                 <br />
                 <small>
-                    Involvement with outside institutes, Network/Joint Projects, International & National 
-                    Academics, Professional Societies, Industry/Govt./Public/Community Service, Editorial work, etc.
+                Such as involvement with outside institutes -  Network / Joint Projects, International & National Academics, Professional Societies, Industry / Govt./ Public/ Community Service, Editorial & Renewing work, Editing of proceedings, Development of national code of standards, members of advisory committee/BOS/Senate/BOG/professional bodies/Governing Council/Selection Committees/Chief Guest/Editorship of journal/Reviewer of journal, membership of Professional bodies/award/recognition/fellow member of any professional bodies or societies/getting fellowship during the appraisal period from any professional bodies or societies, MOU initiated, etc
                 </small>
             </p>
             {formData.outreachActivities.map((activity, index) => (

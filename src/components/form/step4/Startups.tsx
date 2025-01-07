@@ -5,6 +5,24 @@ interface Props {
     setFormData: (data: SponsoredRD) => void;
 }
 
+const DESCRIPTION = {
+    title: "Startup",
+    description: "Maximum 06 marks:\n" +
+        "• 02 marks for registered startup as a firm/company as per Indian govt. act\n" +
+        "• 03 marks per startup for annual revenue from 50K to 1 Lakh\n" +
+        "• 04 marks per startup for annual revenue between 1-5 Lakhs\n" +
+        "• 05 marks per startup for annual revenue between 5 to 10 Lakhs\n" +
+        "• 06 marks per startup for annual revenue greater than 10 Lakhs",
+    fields: {
+        name: "Name of startup",
+        incubation: "Place of incubation (e.g., TBI NIT Patna or other)",
+        registration: "Date of registration as firm/company as per Indian govt. act",
+        owners: "Name of owner(s) and founder(s)",
+        revenue: "Annual Income (INR)",
+        pan: "PAN no of reg. startup"
+    }
+};
+
 export const Startups = ({ formData, setFormData }: Props) => {
     const handleAddStartup = () => {
         setFormData({
@@ -22,10 +40,9 @@ export const Startups = ({ formData, setFormData }: Props) => {
 
     return (
         <section>
-            <h2 className="text-xl font-semibold mb-4">Startups</h2>
-            <p className="text-sm text-gray-600 mb-4">
-                [Max 06 marks @ 02 marks for registered startup, 03-06 marks based on annual revenue]
-            </p>
+            <h2 className="text-xl font-semibold mb-2">{DESCRIPTION.title}</h2>
+            <p className="text-gray-600 mb-2 whitespace-pre-line">{DESCRIPTION.description}</p>
+            
             {formData.startups.map((startup, index) => (
                 <div key={index} className="border p-4 rounded mb-4">
                     <div className="grid grid-cols-2 gap-4">

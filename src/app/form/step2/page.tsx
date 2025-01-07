@@ -4,9 +4,65 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import type { InstructionalElement, TeachingCourse, ProjectSupervision } from '@/types/form';
+import { SaveLoader } from '@/components/SaveLoader';
+import Loading from '@/app/loading';
+import { fetchFacultyData } from '@/lib/fetchFacultyData';
 
 const COURSE_LEVELS = ['UG I', 'UG II', 'PG', 'Ph.D.'] as const;
-const SEMESTERS = ['First', 'Second'] as const;
+const SEMESTERS = ['Spring', 'Summer', 'Autumn'] as const;
+
+// Add descriptions for each section
+const SECTION_DESCRIPTIONS = {
+    teachingEngagement: {
+        title: "Teaching Engagement",
+        description: "Only courses with at least 5 enrolled students will be considered. Maximum marks: 14 for both semesters. Distribution: 01 mark per 01 hour Lecture/Tutorial class and 0.5 marks per 01 hour practical class.",
+        courseFields: {
+            courseNo: "Course Number as per institute records",
+            title: "Official course title",
+            type: "Specify if the course is Core or Elective",
+            studentCount: "Number of enrolled students (minimum 5 required)",
+            weeklyLoad: "Weekly teaching hours - Lecture (L), Tutorial (T), and Practical (P)",
+            totalHours: "Total theory and laboratory hours conducted",
+            yearsOffered: "Number of years continuously offering this course"
+        }
+    },
+    innovations: {
+        title: "Innovations in Teaching",
+        description: "Maximum marks: 02 (01 mark per innovation). Describe any innovative teaching methods, tools, or approaches implemented during the reporting period."
+    },
+    newLabs: {
+        title: "New Laboratory/Experiment Development",
+        description: "02 marks per new laboratory developed, 01 mark per new experiment. Provide details of new laboratories or experiments developed during the reporting period."
+    },
+    otherTasks: {
+        title: "Other Instructional Tasks",
+        description: "Maximum marks: 02 (01 mark per task). Include development of Instructional software, Education technology packages (including ETV films, modular courses, practical supervision etc.)."
+    },
+    projectSupervision: {
+        title: "Project and Thesis Supervision",
+        description: "Maximum marks: 10",
+        btech: {
+            title: "B.Tech Projects",
+            description: "02 marks per project/group",
+            fields: {
+                title: "Complete title of the Project/Thesis/Dissertation",
+                students: "Names and Roll Numbers of all students in the group",
+                internalSupervisors: "Names of other NIT Patna supervisors, if any",
+                externalSupervisors: "Names and affiliations of external supervisors, if any"
+            }
+        },
+        mtech: {
+            title: "M.Tech/MSc/MCA/MBA Projects",
+            description: "03 marks per project/group",
+            fields: {
+                title: "Complete title of the Project/Thesis/Dissertation",
+                students: "Names and Roll Numbers of all students in the group",
+                internalSupervisors: "Names of other NIT Patna supervisors, if any",
+                externalSupervisors: "Names and affiliations of external supervisors, if any"
+            }
+        }
+    }
+};
 
 export default function Step2Page() {
     const { data: session, status } = useSession();
@@ -23,27 +79,79 @@ export default function Step2Page() {
         calculatedMarks: 0
     });
     const [loading, setLoading] = useState(true);
+    const [yearRange, setYearRange] = useState<{ start: string; end: string }>({ start: '', end: '' });
+    const [hasAdminData, setHasAdminData] = useState(false);
 
     useEffect(() => {
-        if (status === 'unauthenticated') {
-            router.push('/auth/signin');
-        }
-
-        const fetchSavedData = async () => {
+        const fetchYearRange = async () => {
             try {
-                const response = await fetch('/api/get-part?step=2');
-                if (response.ok) {
-                    const data = await response.json();
-                    setFormData(data);
+                const response = await fetch('/api/get-part?step=1');
+                const data = await response.json();
+                if (data?.appraisalPeriodStart && data?.appraisalPeriodEnd) {
+                    setYearRange({
+                        start: new Date(data.appraisalPeriodStart).getFullYear().toString(),
+                        end: new Date(data.appraisalPeriodEnd).getFullYear().toString()
+                    });
                 }
             } catch (error) {
-                console.error('Error fetching saved data:', error);
+                console.error('Error fetching year range:', error);
             }
-            setLoading(false);
         };
 
-        fetchSavedData();
-    }, [status, router]);
+        fetchYearRange();
+    }, []);
+
+    useEffect(() => {
+        if (!session?.user?.email || status === 'loading' || !yearRange.start || !yearRange.end) return;
+
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                const response = await fetch('/api/get-part?step=2');
+                const savedData = await response.json();
+
+                if (savedData && savedData.courses?.length > 0) {
+                    setFormData(savedData);
+                } else {
+                    const facultyData = await fetchFacultyData(session.user.email);
+                    
+                    if (facultyData?.subjects_teaching?.length > 0) {
+                        const relevantCourses = facultyData.subjects_teaching.filter(subject => {
+                            const year = parseInt(subject.end);
+                            return year >= parseInt(yearRange.start) && year <= parseInt(yearRange.end);
+                        });
+
+                        const convertedCourses = relevantCourses.map(subject => ({
+                            courseNo: subject.code,
+                            title: subject.name,
+                            semester: subject.start,
+                            level: 'UG I',
+                            type: 'Core',
+                            studentCount: 0,
+                            weeklyLoadL: 0,
+                            weeklyLoadT: 0,
+                            weeklyLoadP: 0,
+                            totalTheoryHours: 0,
+                            totalLabHours: 0,
+                            yearsOffered: parseInt(subject.end) || 0
+                        }));
+
+                        setFormData({
+                            ...formData,
+                            courses: convertedCourses
+                        });
+                        setHasAdminData(true);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [session, status, yearRange]);
 
     const handleCourseChange = (index: number, field: keyof TeachingCourse, value: any) => {
         const updatedCourses = [...formData.courses];
@@ -173,7 +281,26 @@ export default function Step2Page() {
 
     return (
         <div className="max-w-4xl mx-auto p-6">
-            <h1 className="text-2xl font-bold mb-6">Teaching Engagement</h1>
+            <h1 className="text-2xl font-bold mb-2">Teaching Engagement</h1>
+            <p className="text-gray-600 mb-6">{SECTION_DESCRIPTIONS.teachingEngagement.description}</p>
+
+            {hasAdminData && (
+                <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                    <div className="flex">
+                        <div className="flex-shrink-0">
+                            <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                            </svg>
+                        </div>
+                        <div className="ml-3">
+                            <p className="text-sm text-blue-700">
+                                Some course data has been pre-filled from NITP admin database. Please fill in the remaining details manually.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-6">
                 {formData.courses.map((course, index) => (
                     <div key={index} className="border p-4 rounded-lg bg-white shadow-sm">
@@ -189,7 +316,7 @@ export default function Step2Page() {
                                     <option value="">Select Semester</option>
                                     {SEMESTERS.map((sem) => (
                                         <option key={sem} value={sem}>
-                                            {sem} Semester
+                                            {sem}
                                         </option>
                                     ))}
                                 </select>
@@ -334,8 +461,8 @@ export default function Step2Page() {
 
                 {/* Innovations Section */}
                 <div className="mt-8">
-                    <h2 className="text-xl font-semibold mb-4">Innovations in Teaching</h2>
-                    <p className="text-sm text-gray-600 mb-4">[Max marks 02 @ 01 per innovation]</p>
+                    <h2 className="text-xl font-semibold mb-2">{SECTION_DESCRIPTIONS.innovations.title}</h2>
+                    <p className="text-gray-600 mb-4">{SECTION_DESCRIPTIONS.innovations.description}</p>
                     {formData.innovations.map((innovation, index) => (
                         <div key={index} className="mb-4">
                             <div className="flex gap-2">
@@ -370,8 +497,8 @@ export default function Step2Page() {
 
                 {/* New Labs Section */}
                 <div className="mt-8">
-                    <h2 className="text-xl font-semibold mb-4">New Laboratory/Experiment Development</h2>
-                    <p className="text-sm text-gray-600 mb-4">[02 marks per new laboratory/01 mark per new experiment]</p>
+                    <h2 className="text-xl font-semibold mb-2">{SECTION_DESCRIPTIONS.newLabs.title}</h2>
+                    <p className="text-gray-600 mb-4">{SECTION_DESCRIPTIONS.newLabs.description}</p>
                     {formData.newLabs.map((lab, index) => (
                         <div key={index} className="mb-4">
                             <div className="flex gap-2">
@@ -406,8 +533,8 @@ export default function Step2Page() {
 
                 {/* Other Tasks Section */}
                 <div className="mt-8">
-                    <h2 className="text-xl font-semibold mb-4">Other Instructional Tasks</h2>
-                    <p className="text-sm text-gray-600 mb-4">[Max marks: 02 @ 01 mark per task]</p>
+                    <h2 className="text-xl font-semibold mb-2">{SECTION_DESCRIPTIONS.otherTasks.title}</h2>
+                    <p className="text-gray-600 mb-4">{SECTION_DESCRIPTIONS.otherTasks.description}</p>
                     {formData.otherTasks.map((task, index) => (
                         <div key={index} className="mb-4">
                             <div className="flex gap-2">
@@ -442,17 +569,18 @@ export default function Step2Page() {
 
                 {/* Project Supervision Section */}
                 <div className="mt-8">
-                    <h2 className="text-xl font-semibold mb-4">Project and Thesis Supervision</h2>
-                    <p className="text-sm text-gray-600 mb-4">[Max marks: 10]</p>
+                    <h2 className="text-xl font-semibold mb-2">{SECTION_DESCRIPTIONS.projectSupervision.title}</h2>
+                    <p className="text-gray-600 mb-4">{SECTION_DESCRIPTIONS.projectSupervision.description}</p>
 
                     {/* B.Tech Projects */}
                     <div className="mb-6">
-                        <h3 className="text-lg font-medium mb-3">B.Tech Projects (2 marks per project)</h3>
+                        <h3 className="text-lg font-medium mb-3">{SECTION_DESCRIPTIONS.projectSupervision.btech.title}</h3>
+                        <p className="text-sm text-gray-600 mb-4">{SECTION_DESCRIPTIONS.projectSupervision.btech.description}</p>
                         {formData.projectSupervision.btech.map((project, index) => (
                             <div key={index} className="border p-4 rounded mb-4">
                                 <div className="grid grid-cols-1 gap-4">
                                     <div>
-                                        <label className="block mb-2">Title of Project/Thesis</label>
+                                        <label className="block mb-2">{SECTION_DESCRIPTIONS.projectSupervision.btech.fields.title}</label>
                                         <input
                                             type="text"
                                             value={project.title}
@@ -472,7 +600,7 @@ export default function Step2Page() {
                                         />
                                     </div>
                                     <div>
-                                        <label className="block mb-2">Names/Roll Nos of Students</label>
+                                        <label className="block mb-2">{SECTION_DESCRIPTIONS.projectSupervision.btech.fields.students}</label>
                                         <input
                                             type="text"
                                             value={project.students}
@@ -492,7 +620,7 @@ export default function Step2Page() {
                                         />
                                     </div>
                                     <div>
-                                        <label className="block mb-2">Other Supervisors (if any)</label>
+                                        <label className="block mb-2">{SECTION_DESCRIPTIONS.projectSupervision.btech.fields.internalSupervisors}</label>
                                         <input
                                             type="text"
                                             value={project.internalSupervisors}
@@ -511,7 +639,7 @@ export default function Step2Page() {
                                         />
                                     </div>
                                     <div>
-                                        <label className="block mb-2">External Supervisors (if any)</label>
+                                        <label className="block mb-2">{SECTION_DESCRIPTIONS.projectSupervision.btech.fields.externalSupervisors}</label>
                                         <input
                                             type="text"
                                             value={project.externalSupervisors}
@@ -559,12 +687,13 @@ export default function Step2Page() {
 
                     {/* M.Tech/MSc/MCA/MBA Projects */}
                     <div className="mb-6">
-                        <h3 className="text-lg font-medium mb-3">M.Tech/MSc/MCA/MBA Projects (3 marks per project)</h3>
+                        <h3 className="text-lg font-medium mb-3">{SECTION_DESCRIPTIONS.projectSupervision.mtech.title}</h3>
+                        <p className="text-sm text-gray-600 mb-4">{SECTION_DESCRIPTIONS.projectSupervision.mtech.description}</p>
                         {formData.projectSupervision.mtech.map((project, index) => (
                             <div key={index} className="border p-4 rounded mb-4">
                                 <div className="grid grid-cols-1 gap-4">
                                     <div>
-                                        <label className="block mb-2">Title of Project/Thesis/Dissertation</label>
+                                        <label className="block mb-2">{SECTION_DESCRIPTIONS.projectSupervision.mtech.fields.title}</label>
                                         <input
                                             type="text"
                                             value={project.title}
@@ -584,7 +713,7 @@ export default function Step2Page() {
                                         />
                                     </div>
                                     <div>
-                                        <label className="block mb-2">Names/Roll Nos of Students</label>
+                                        <label className="block mb-2">{SECTION_DESCRIPTIONS.projectSupervision.mtech.fields.students}</label>
                                         <input
                                             type="text"
                                             value={project.students}
@@ -604,7 +733,7 @@ export default function Step2Page() {
                                         />
                                     </div>
                                     <div>
-                                        <label className="block mb-2">Other Supervisors (if any)</label>
+                                        <label className="block mb-2">{SECTION_DESCRIPTIONS.projectSupervision.mtech.fields.internalSupervisors}</label>
                                         <input
                                             type="text"
                                             value={project.internalSupervisors}
@@ -623,7 +752,7 @@ export default function Step2Page() {
                                         />
                                     </div>
                                     <div>
-                                        <label className="block mb-2">External Supervisors (if any)</label>
+                                        <label className="block mb-2">{SECTION_DESCRIPTIONS.projectSupervision.mtech.fields.externalSupervisors}</label>
                                         <input
                                             type="text"
                                             value={project.externalSupervisors}

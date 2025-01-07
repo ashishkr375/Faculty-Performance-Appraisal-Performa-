@@ -11,6 +11,41 @@ import { Visits } from '@/components/form/step5/Visits';
 import { OutreachActivities } from '@/components/form/step5/OutreachActivities';
 import { calculateStep5Marks } from '@/utils/calculateMarks';
 
+const SECTION_DESCRIPTIONS = {
+    events: {
+        title: "Workshop/FDP/Conference Organization",
+        description: "Maximum marks: 06\n" +
+            "• Workshop or Faculty Development program or short-term courses (min 05 working days) as coordinator/convener: 2 Marks per Event\n" +
+            "• Global Initiative of Academic Networks (GIAN) as course coordinator:\n" +
+            "  - Two weeks duration: 2 Marks per Course\n" +
+            "  - One week duration: 1 Mark per Course\n" +
+            "• National/International conference as Chairman/Secretary: 3 Marks per Program\n" +
+            "• National conference/workshop/webinar/expert lecture: 1 mark each (Max. 3 marks)"
+    },
+    lectures: {
+        title: "Continuing Education/QIP Short Term Lectures/Special Lectures",
+        description: "Maximum 01 mark @ 0.5 mark per lecture delivered"
+    },
+    onlineCourses: {
+        title: "MOOC/NPTEL/Online Courses",
+        description: "0.5 mark per course offered/01 mark for attending a full course with completion certificate"
+    },
+    visits: {
+        title: "Visit to Outside Institute/Organization",
+        description: "0.5 mark per visit, max 1 mark"
+    },
+    outreach: {
+        title: "Outreach Activities",
+        description: "Maximum 07 marks @ 01 mark per activity\n" +
+            "Such as involvement with outside institutes - Network/Joint Projects, International & National Academics, " +
+            "Professional Societies, Industry/Govt./Public/Community Service, Editorial & Renewing work, " +
+            "Editing of proceedings, Development of national code of standards, members of advisory committee/BOS/Senate/BOG/" +
+            "professional bodies/Governing Council/Selection Committees/Chief Guest/Editorship of journal/Reviewer of journal, " +
+            "membership of Professional bodies/award/recognition/fellow member of any professional bodies or societies/" +
+            "getting fellowship during the appraisal period from any professional bodies or societies, MOU initiated, etc."
+    }
+};
+
 const Step5Page = () => {
     const { data: session, status } = useSession();
     const router = useRouter();
@@ -89,10 +124,18 @@ const Step5Page = () => {
                 <span className="text-gray-600">/6</span>
             </div>
             <form onSubmit={handleSubmit} className="space-y-8">
+                <section>
+                    <h2 className="text-xl font-semibold mb-2">{SECTION_DESCRIPTIONS.events.title}</h2>
+                    <p className="text-gray-600 mb-4 whitespace-pre-line">{SECTION_DESCRIPTIONS.events.description}</p>
+                </section>
                 <Events formData={formData} setFormData={setFormData} />
+                
                 <Lectures formData={formData} setFormData={setFormData} />
+                
                 <OnlineCourses formData={formData} setFormData={setFormData} />
+               
                 <Visits formData={formData} setFormData={setFormData} />
+               
                 <OutreachActivities formData={formData} setFormData={setFormData} />
 
                 <div className="flex justify-between mt-6">

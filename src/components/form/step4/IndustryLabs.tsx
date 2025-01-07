@@ -5,6 +5,17 @@ interface Props {
     setFormData: (data: SponsoredRD) => void;
 }
 
+const DESCRIPTION = {
+    title: "Setting-up of industry sponsored laboratory in the institute during the appraisal period",
+    description: "Maximum marks: 05",
+    fields: {
+        industry: "Name of the industry",
+        funding: "Fund received in the institute account during appraisal period",
+        equipment: "Name of equipment installed",
+        location: "Place of equipment installed"
+    }
+};
+
 export const IndustryLabs = ({ formData, setFormData }: Props) => {
     const handleAddLab = () => {
         setFormData({
@@ -20,13 +31,13 @@ export const IndustryLabs = ({ formData, setFormData }: Props) => {
 
     return (
         <section>
-            <h2 className="text-xl font-semibold mb-4">Industry Sponsored Labs</h2>
-            <p className="text-sm text-gray-600 mb-4">[Max marks: 05]</p>
+            <h2 className="text-xl font-semibold mb-2">{DESCRIPTION.title}</h2>
+            <p className="text-gray-600 mb-4">{DESCRIPTION.description}</p>
             {formData.industryLabs.map((lab, index) => (
                 <div key={index} className="border p-4 rounded mb-4">
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block mb-2">Industry Name</label>
+                            <label className="block mb-2">{DESCRIPTION.fields.industry}</label>
                             <input
                                 type="text"
                                 value={lab.industryName}
@@ -40,7 +51,7 @@ export const IndustryLabs = ({ formData, setFormData }: Props) => {
                             />
                         </div>
                         <div>
-                            <label className="block mb-2">Fund Received (₹)</label>
+                            <label className="block mb-2">{DESCRIPTION.fields.funding} (₹)</label>
                             <input
                                 type="number"
                                 value={lab.fundReceived}
@@ -54,7 +65,7 @@ export const IndustryLabs = ({ formData, setFormData }: Props) => {
                             />
                         </div>
                         <div>
-                            <label className="block mb-2">Equipment Name</label>
+                            <label className="block mb-2">{DESCRIPTION.fields.equipment}</label>
                             <input
                                 type="text"
                                 value={lab.equipmentName}
@@ -68,7 +79,7 @@ export const IndustryLabs = ({ formData, setFormData }: Props) => {
                             />
                         </div>
                         <div>
-                            <label className="block mb-2">Location</label>
+                            <label className="block mb-2">{DESCRIPTION.fields.location}</label>
                             <input
                                 type="text"
                                 value={lab.location}

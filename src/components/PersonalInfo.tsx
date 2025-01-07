@@ -29,19 +29,19 @@ export function PersonalInfo({ data }: PersonalInfoProps) {
             </div>
             <div className="grid grid-cols-2 gap-4">
                 <div className="info-row">
-                    <span className="label">Name:</span>
+                    <span className="label font-semibold">Name : </span>
                     <span className="value">{data.step1.name}</span>
                 </div>
                 <div className="info-row">
-                    <span className="label">Designation:</span>
+                    <span className="label font-semibold">Designation : </span>
                     <span className="value">{data.step1.designation}</span>
                 </div>
                 <div className="info-row">
-                    <span className="label">Deptt. /Centre:</span>
+                    <span className="label font-semibold">Deptt. /Centre : </span>
                     <span className="value">Department of {data.step1.department}</span>
                 </div>
                 <div className="info-row">
-                    <span className="label">If, Joint Faculty:</span>
+                    <span className="label font-semibold">If, Joint Faculty:</span>
                     <span className="value">{data.step1.jointFaculty}</span>
                 </div>
             </div>

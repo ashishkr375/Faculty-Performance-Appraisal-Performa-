@@ -5,6 +5,19 @@ interface Props {
     setFormData: (data: SponsoredRD) => void;
 }
 
+const DESCRIPTION = {
+    title: "Sponsored Research Projects from any Govt. agency/industry/institute",
+    description: "Project under TEQIP/Institute grant shall not be considered for marks:\n" +
+        "• 01 mark for each submitted research project (maximum up to 02 marks)\n" +
+        "• 03 marks for completion/ongoing status, of each sponsored research project with grant ≤ Rs. 5 lacs\n" +
+        "• 04 marks for completion/ongoing status, of each sponsored research project with grant between Rs. 5 to Rs. 10 lacs\n" +
+        "• 05 marks for completion/ongoing status, of each sponsored research project with grant ≥ Rs. 10 lacs",
+    notes: [
+        "1. Sponsored research project from industry: With the condition that for a research project, grant from the industry must be received in the institute account will only be considered as 'Sponsored research project from industry'.",
+        "2. Faculty as a PI/Co-PI of an external sponsored research projects submitted from any institute other than NIT Patna: With the condition that for such a research project, complete grant/share of grant from the funding agency must be received in the institute (NIT Patna) account will only be considered."
+    ]
+};
+
 export const SponsoredProjects = ({ formData, setFormData }: Props) => {
     const handleAddProject = () => {
         setFormData({
@@ -25,20 +38,12 @@ export const SponsoredProjects = ({ formData, setFormData }: Props) => {
 
     return (
         <section>
-            <h2 className="text-xl font-semibold mb-4">Sponsored Research Projects</h2>
-            <div className="mb-6 text-sm text-gray-600 space-y-2">
-                <p>Projects from any Govt. agency/industry/institute (Project under TEQIP/Institute grant shall not be considered for marks)</p>
-                <ul className="list-disc pl-5 space-y-1">
-                    <li>01 mark for each submitted research project (maximum up to 02 marks) to any Govt. agency/industry/institute during the period of reporting.</li>
-                    <li>03 marks for completion/ongoing status, of each sponsored research project with grant ≤ Rs. 5 lacs</li>
-                    <li>04 marks for completion/ongoing status, of each sponsored research project with grant between Rs. 5 to Rs. 10 lacs</li>
-                    <li>05 marks for completion/ongoing status, of each sponsored research project with grant ≥ Rs. 10 lacs</li>
-                </ul>
-                <p className="font-semibold mt-4">Important Notes:</p>
-                <ul className="list-disc pl-5 space-y-1">
-                    <li>Sponsored research project from industry: Grant must be received in the institute account</li>
-                    <li>For external projects (PI/Co-PI from other institutes): Complete grant/share must be received in NIT Patna account</li>
-                </ul>
+            <h2 className="text-xl font-semibold mb-2">{DESCRIPTION.title}</h2>
+            <p className="text-gray-600 mb-4 whitespace-pre-line">{DESCRIPTION.description}</p>
+            <div className="mb-4">
+                {DESCRIPTION.notes.map((note, index) => (
+                    <p key={index} className="text-sm text-gray-600 mb-1">{note}</p>
+                ))}
             </div>
 
             {formData.sponsoredProjects.map((project, index) => (

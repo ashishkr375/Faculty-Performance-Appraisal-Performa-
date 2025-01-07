@@ -5,6 +5,11 @@ interface Props {
     setFormData: (data: SponsoredRD) => void;
 }
 
+const DESCRIPTION = {
+    title: "Consultancy Projects",
+    description: "Maximum 08 marks. Up to Rs. 50,000/-: 01 mark. After increment of each Rs. 50,000/- one mark will be added maximum up to 08 marks."
+};
+
 export const ConsultancyProjects = ({ formData, setFormData }: Props) => {
     const handleAddProject = () => {
         setFormData({
@@ -23,8 +28,8 @@ export const ConsultancyProjects = ({ formData, setFormData }: Props) => {
 
     return (
         <section>
-            <h2 className="text-xl font-semibold mb-4">Consultancy Projects</h2>
-            <p className="text-sm text-gray-600 mb-4">[Max marks: 08]</p>
+            <h2 className="text-xl font-semibold mb-2">{DESCRIPTION.title}</h2>
+            <p className="text-gray-600 mb-4">{DESCRIPTION.description}</p>
             {formData.consultancyProjects.map((project, index) => (
                 <div key={index} className="border p-4 rounded mb-4">
                     <div className="grid grid-cols-2 gap-4">

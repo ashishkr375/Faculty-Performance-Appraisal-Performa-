@@ -8,6 +8,27 @@ import { InstituteLevelActivities } from '@/components/form/step6/InstituteLevel
 import { DepartmentLevelActivities } from '@/components/form/step6/DepartmentLevelActivities';
 import { calculateStep6Marks } from '@/utils/calculateMarks';
 
+const SECTION_DESCRIPTIONS = {
+    instituteLevelRoles: {
+        title: "Institute Level",
+        description: "Maximum 10 marks\n" +
+            "• 02 marks/semester for Head of the Department, Dean, Chief Warden, Professor In charge (Training and placement), " +
+            "Advisor (Estate), Chief Vigilance Officer, PI (Exam), TEQIP (Coordinator), etc. such as Chief Proctor.\n" +
+            "• 01 mark/semester for Warden, Assistant warden, Associate Dean, Chairman or Convener institute academic committees, " +
+            "Faculty In charge Computer Center or Information and Technology Services or Library or Admission or student activities " +
+            "and other Institutional activities like Coordinator/Incharge IIC/SC/ST cell, NCC, Annual report, Technical Events, " +
+            "Cultural events, NKN, GIAN, Yoga, Raj Bhasha, security.\n" +
+            "• Other assignments: 0.5 Marks/semester Chairman and Convener of different standing committee and special committee " +
+            "(Ex-officio status will not be considered). Faculty in charges (Each for one year duration) of different Units or equivalent."
+    },
+    departmentLevelRoles: {
+        title: "Department/Centre's Level",
+        description: "Maximum 05 marks\n" +
+            "0.5 Mark/semester for each Departmental activities identified by Head of the Department like lab in charges, " +
+            "or department level committee for a minimum period of one year."
+    }
+};
+
 const Step6Page = () => {
     const { data: session, status } = useSession();
     const router = useRouter();
@@ -75,15 +96,18 @@ const Step6Page = () => {
 
     return (
         <div className="max-w-4xl mx-auto p-6">
-            <h1 className="text-2xl font-bold mb-6">Management & Institutional Development</h1>
-            <div className="mb-4 text-right">
-                <span className="font-semibold">Total Marks: </span>
-                <span className="text-blue-600">{formData.calculatedMarks}</span>
-                <span className="text-gray-600">/15</span>
-            </div>
+            <h1 className="text-2xl font-bold mb-6">Management & Institutional Development Elements</h1>
+            
             <form onSubmit={handleSubmit} className="space-y-8">
-                <InstituteLevelActivities formData={formData} setFormData={setFormData} />
-                <DepartmentLevelActivities formData={formData} setFormData={setFormData} />
+                <section>
+                    <h2 className="text-xl font-semibold mb-2">{SECTION_DESCRIPTIONS.instituteLevelRoles.title}</h2>
+                    <p className="text-gray-600 mb-4 whitespace-pre-line">{SECTION_DESCRIPTIONS.instituteLevelRoles.description}</p>
+                    <InstituteLevelActivities formData={formData} setFormData={setFormData} />
+                </section>
+
+                <section>
+                    <DepartmentLevelActivities formData={formData} setFormData={setFormData} />
+                </section>
 
                 <div className="flex justify-between mt-6">
                     <button

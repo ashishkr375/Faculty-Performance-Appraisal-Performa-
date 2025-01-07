@@ -3,12 +3,48 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import type { ResearchPublications } from '@/types/form';
+import { SaveLoader } from '@/components/SaveLoader';
+import Loading from '@/app/loading';
+import { fetchFacultyData } from '@/lib/fetchFacultyData';
 
-const Step3Page = () => {
+const SECTION_DESCRIPTIONS = {
+    phdSupervision: {
+        title: "Ph.D Research Supervision",
+        description: "Maximum marks: 10. Ph.D. pursuing: 02 marks per Ph.D. student till 03 years of registration, 01 marks per Ph.D. student during 4th and 5th year of registration. No marks shall be awarded for Ph.D. guidance after 05 years of registration. Ph.D. Awarded: 04 marks per Candidate",
+        fields: {
+            name: "Full name and Roll Number of the student",
+            registrationYear: "Year of registration",
+            status: "Current status (FT with stipend under Institute/TEQIP/Project/PT)",
+            area: "Research area and thesis title",
+            otherSupervisors: "Other supervisors' details (if any)",
+            sciPublications: "Number of SCI publications during reported period",
+            scopusPublications: "Number of Scopus publications during reported period",
+            currentStatus: "Latest status (Comprehensive/Pre-submission/Submitted/Awarded)",
+            statusDate: "Date of latest status"
+        }
+    },
+    journalPapers: {
+        title: "Refereed Journal Papers",
+        description: "04 marks for Q1 journal, 03 marks for Q2 journal, 02 marks for Q3 journal, 01 mark for Q4 journal/Scopus, no marks for other journals. Full marks for publications with only supervisor and registered students, otherwise marks divided equally among authors.",
+        fields: {
+            authors: "Author names in sequence as in paper",
+            title: "Complete paper title",
+            journal: "Journal name",
+            volume: "Volume number",
+            year: "Publication year",
+            pages: "Page numbers",
+            quartile: "Journal quartile (Q1/Q2/Q3/Q4)",
+            date: "Publication date",
+            students: "Involved NITP students (name and roll number)",
+            url: "Paper URL/DOI"
+        }
+    }
+};
+
+export default function Step3Page() {
     const { data: session, status } = useSession();
     const router = useRouter();
-    const [formData, setFormData] = useState<ResearchPublications>({
+    const [formData, setFormData] = useState({
         phdSupervision: [],
         journalPapers: [],
         conferencePapers: [],
@@ -20,27 +56,76 @@ const Step3Page = () => {
         calculatedMarks: 0
     });
     const [loading, setLoading] = useState(true);
+    const [hasAdminData, setHasAdminData] = useState(false);
 
     useEffect(() => {
-        if (status === 'unauthenticated') {
-            router.push('/auth/signin');
-        }
+        if (!session?.user?.email || status === 'loading') return;
 
-        const fetchSavedData = async () => {
+        const fetchData = async () => {
+            setLoading(true);
             try {
                 const response = await fetch('/api/get-part?step=3');
-                if (response.ok) {
-                    const data = await response.json();
-                    setFormData(data);
+                const savedData = await response.json();
+
+                if (savedData) {
+                    setFormData(savedData);
+                } else {
+                    // Fetch from faculty API
+                    const facultyData = await fetchFacultyData(session.user.email);
+                    
+                    if (facultyData) {
+                        // Convert PhD candidates data
+                        const phdStudents = facultyData.phd_candidates.map(student => ({
+                            name: student.phd_student_name,
+                            registrationYear: student.start_year,
+                            status: 'FT', // Default value
+                            area: student.thesis_topic,
+                            otherSupervisors: '',
+                            sciPublications: 0,
+                            scopusPublications: 0,
+                            currentStatus: student.completion_year === 'Ongoing' ? 'Pursuing' : 'Awarded',
+                            statusDate: student.completion_year === 'Ongoing' ? '' : student.completion_year
+                        }));
+
+                        // Parse publications data if available
+                        let publications = [];
+                        if (facultyData.publications?.[0]?.publications) {
+                            try {
+                                const parsedPubs = JSON.parse(facultyData.publications[0].publications);
+                                publications = parsedPubs.map(pub => ({
+                                    authors: pub.authors || '',
+                                    title: pub.title || '',
+                                    journal: pub.journal_name || '',
+                                    volume: '',
+                                    year: pub.year || '',
+                                    pages: '',
+                                    quartile: '',
+                                    date: '',
+                                    students: '',
+                                    url: pub.citation_key || ''
+                                }));
+                            } catch (error) {
+                                console.error('Error parsing publications:', error);
+                            }
+                        }
+
+                        setFormData({
+                            ...formData,
+                            phdSupervision: phdStudents,
+                            journalPapers: publications
+                        });
+                        setHasAdminData(true);
+                    }
                 }
             } catch (error) {
-                console.error('Error fetching saved data:', error);
+                console.error('Error fetching data:', error);
+            } finally {
+                setLoading(false);
             }
-            setLoading(false);
         };
 
-        fetchSavedData();
-    }, [status, router]);
+        fetchData();
+    }, [session, status]);
 
     const handleAddPhDStudent = () => {
         setFormData({
@@ -1114,6 +1199,4 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
             </form>
         </div>
     );
-};
-
-export default Step3Page; 
+} 

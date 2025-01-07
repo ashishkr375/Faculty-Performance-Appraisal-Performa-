@@ -5,6 +5,22 @@ interface Props {
     setFormData: (data: SponsoredRD) => void;
 }
 
+const DESCRIPTION = {
+    title: "IPR and Technology Transfer",
+    description: "04 marks for Technology transfer, 03 marks for the grant of patent, 02 marks for publication of each patent.\n" +
+        "01 marks for grant of each Design/copyright and maximum up to 3 marks, no mark for filing of Design/copyright",
+    note: "IPR containing 'Institute name as Applicant or one of the Applicants' will only be considered.",
+    fields: {
+        title: "Title of IPR",
+        registrationDate: "Date of registration/filing",
+        publicationDate: "Date of publication",
+        grantDate: "Date of grant",
+        grantNumber: "Grant No.",
+        applicant: "Name of Applicant",
+        inventors: "Name of Inventor(s)"
+    }
+};
+
 export const IPR = ({ formData, setFormData }: Props) => {
     const handleAddIPR = () => {
         setFormData({
@@ -16,23 +32,22 @@ export const IPR = ({ formData, setFormData }: Props) => {
                 grantDate: '',
                 grantNumber: '',
                 applicant: '',
-                inventors: '',
-                type: 'Patent'
+                inventors: ''
             }]
         });
     };
 
     return (
         <section>
-            <h2 className="text-xl font-semibold mb-4">IPR and Technology Transfer</h2>
-            <p className="text-sm text-gray-600 mb-4">
-                [04 marks for Technology transfer, 03 marks for patent grant, 02 marks for patent publication]
-            </p>
+            <h2 className="text-xl font-semibold mb-2">{DESCRIPTION.title}</h2>
+            <p className="text-gray-600 mb-2">{DESCRIPTION.description}</p>
+            <p className="text-gray-600 mb-4 italic">{DESCRIPTION.note}</p>
+
             {formData.ipr.map((item, index) => (
                 <div key={index} className="border p-4 rounded mb-4">
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block mb-2">Title</label>
+                            <label className="block mb-2">{DESCRIPTION.fields.title}</label>
                             <input
                                 type="text"
                                 value={item.title}
@@ -63,7 +78,7 @@ export const IPR = ({ formData, setFormData }: Props) => {
                             </select>
                         </div>
                         <div>
-                            <label className="block mb-2">Registration Date</label>
+                            <label className="block mb-2">{DESCRIPTION.fields.registrationDate}</label>
                             <input
                                 type="date"
                                 value={item.registrationDate}
@@ -77,7 +92,7 @@ export const IPR = ({ formData, setFormData }: Props) => {
                             />
                         </div>
                         <div>
-                            <label className="block mb-2">Publication Date</label>
+                            <label className="block mb-2">{DESCRIPTION.fields.publicationDate}</label>
                             <input
                                 type="date"
                                 value={item.publicationDate}
@@ -90,7 +105,7 @@ export const IPR = ({ formData, setFormData }: Props) => {
                             />
                         </div>
                         <div>
-                            <label className="block mb-2">Grant Date</label>
+                            <label className="block mb-2">{DESCRIPTION.fields.grantDate}</label>
                             <input
                                 type="date"
                                 value={item.grantDate}
@@ -103,7 +118,7 @@ export const IPR = ({ formData, setFormData }: Props) => {
                             />
                         </div>
                         <div>
-                            <label className="block mb-2">Grant Number</label>
+                            <label className="block mb-2">{DESCRIPTION.fields.grantNumber}</label>
                             <input
                                 type="text"
                                 value={item.grantNumber}
@@ -116,7 +131,7 @@ export const IPR = ({ formData, setFormData }: Props) => {
                             />
                         </div>
                         <div>
-                            <label className="block mb-2">Applicant</label>
+                            <label className="block mb-2">{DESCRIPTION.fields.applicant}</label>
                             <input
                                 type="text"
                                 value={item.applicant}
@@ -130,7 +145,7 @@ export const IPR = ({ formData, setFormData }: Props) => {
                             />
                         </div>
                         <div>
-                            <label className="block mb-2">Inventors</label>
+                            <label className="block mb-2">{DESCRIPTION.fields.inventors}</label>
                             <input
                                 type="text"
                                 value={item.inventors}
@@ -150,7 +165,7 @@ export const IPR = ({ formData, setFormData }: Props) => {
                             const updated = formData.ipr.filter((_, i) => i !== index);
                             setFormData({ ...formData, ipr: updated });
                         }}
-                        className="mt-2 text-red-500 underline"
+                        className="mt-2 text-red-500"
                     >
                         Remove IPR
                     </button>
