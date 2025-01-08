@@ -57,7 +57,9 @@
     @apply bg-background text-foreground;
   }
 }
-
+.page-break {
+  page-break-after: always;
+}
 @keyframes pulse {
   0%,
   100% {
