@@ -5,8 +5,8 @@ import { Providers } from '@/components/providers'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: 'Multi-Part Form Application',
-  description: 'A multi-step form with API integration and MongoDB',
+  title: 'Faculty Performance Appraisal Form',
+  description: 'Faculty Performance Appraisal Form for the NIT Patna',
 }
 
 export default function RootLayout({
