@@ -14,35 +14,40 @@ interface BaseFormData {
     };
 }
 
-export const calculateStep2Marks = (formData: BaseFormData): number => {
+export function calculateStep2Marks(formData: any): number {
     let marks = 0;
     
-    formData.courses.forEach((course) => {
+    // Check for nested structure and handle courses
+    const courses = formData?.step2?.courses || formData?.courses || [];
+    courses.forEach((course: any) => {
         marks += (course.totalTheoryHours * 1) + (course.totalLabHours * 0.5);
     });
     marks = Math.min(marks, 14);
 
-    // Innovations (max 2 marks)
-    marks += Math.min(formData.innovations.length * 1, 2);
+    // Handle innovations
+    const innovations = formData?.step2?.innovations || formData?.innovations || [];
+    marks += Math.min(innovations.length, 2);
 
-    // New Labs (max 5 marks)
-    formData.newLabs.forEach(() => {
-        marks += 2;
-    });
+    // Handle new labs
+    const newLabs = formData?.step2?.newLabs || formData?.newLabs || [];
+    marks += newLabs.length * 2;
 
-    // Other Tasks (max 2 marks)
-    marks += Math.min(formData.otherTasks.length * 1, 2);
+    // Handle other tasks
+    const otherTasks = formData?.step2?.otherTasks || formData?.otherTasks || [];
+    marks += Math.min(otherTasks.length, 2);
 
-    // Project Supervision (max 10 marks)
-    formData.projectSupervision.btech.forEach(() => {
-        marks += 2;
-    });
-    formData.projectSupervision.mtech.forEach(() => {
-        marks += 3;
-    });
+    // Handle project supervision
+    const btechProjects = formData?.step2?.projectSupervision?.btech || formData?.projectSupervision?.btech || [];
+    const mtechProjects = formData?.step2?.projectSupervision?.mtech || formData?.projectSupervision?.mtech || [];
+    
+    marks += btechProjects.length * 2; // 2 marks per B.Tech project
+    marks += mtechProjects.length * 3; // 3 marks per M.Tech project
 
-    return Math.min(marks, 25);
-};
+    // Cap total marks at maximum allowed (if needed)
+    // marks = Math.min(marks, MAX_MARKS); // Uncomment and set MAX_MARKS if needed
+
+    return marks;
+}
 
 export const calculateStep3Marks = (formData: any) => {
     let marks = 0;

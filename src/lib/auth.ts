@@ -9,11 +9,16 @@ export const authOptions: AuthOptions = {
             clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
         }),
     ],
+    secret: process.env.NEXTAUTH_SECRET,
+    session: {
+        strategy: "jwt",
+        maxAge: 30 * 24 * 60 * 60, // 30 days
+    },
     pages: {
         signIn: '/auth/signin',
     },
     callbacks: {
-        async session({ session }) {
+        async session({ session, token }) {
             if (session?.user?.email) {
                 try {
                     const { db } = await connectToDatabase();
@@ -28,16 +33,8 @@ export const authOptions: AuthOptions = {
             }
             return session;
         },
-        async redirect({ url, baseUrl }) {
-            // If there's a stored redirect path, use it
-            if (typeof window !== 'undefined') {
-                const redirectPath = sessionStorage.getItem('redirectAfterLogin');
-                if (redirectPath) {
-                    return `${baseUrl}${redirectPath}`;
-                }
-            }
-            // Otherwise, use the default redirect
-            return url.startsWith(baseUrl) ? url : baseUrl;
+        async jwt({ token }) {
+            return token;
         },
     },
 };

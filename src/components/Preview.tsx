@@ -227,7 +227,7 @@ interface PreviewProps {
     };
 }
 
-export function Preview({ formData }: PreviewProps) {
+export default function Preview({ formData }: PreviewProps) {
     const router = useRouter();
 
     const formatDate = (dateString: string) => {
@@ -389,24 +389,29 @@ export function Preview({ formData }: PreviewProps) {
                     </p>
 
                     {/* Course Tables */}
-                    {['First', 'Second'].map(semester => (
-                        <div key={semester} className="mb-8">
-                            <h4 className="font-bold mb-2">{semester} Semester</h4>
-                            <table className="w-full border-collapse text-xs">
-                                <thead>
-                                    <tr>
-                                        <th className="border p-2">Course No & Title</th>
-                                        <th className="border p-2">Core/Elective</th>
-                                        <th className="border p-2">Students</th>
-                                        <th className="border p-2">L-T-P</th>
-                                        <th className="border p-2">Theory/Lab Hours</th>
-                                        <th className="border p-2">Years Offered</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {formData.step2.courses
-                                        .filter(course => course.semester === semester)
-                                        .map((course, idx) => (
+                    {['Summer', 'Autumn', 'Spring'].map(semester => {
+                        // Check if teachingEngagement and courses exist before accessing
+                        const courses = formData.step2?.teachingEngagement?.courses || [];
+                        const semesterCourses = courses.filter(course => course.semester === semester);
+                        
+                        if (semesterCourses.length === 0) return null;
+
+                        return (
+                            <div key={semester} className="mb-8">
+                                <h4 className="font-bold mb-2">{semester} Semester</h4>
+                                <table className="w-full border-collapse text-xs">
+                                    <thead>
+                                        <tr>
+                                            <th className="border p-2">Course No & Title</th>
+                                            <th className="border p-2">Core/Elective</th>
+                                            <th className="border p-2">Students</th>
+                                            <th className="border p-2">L-T-P</th>
+                                            <th className="border p-2">Theory/Lab Hours</th>
+                                            <th className="border p-2">Years Offered</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {semesterCourses.map((course, idx) => (
                                             <tr key={idx}>
                                                 <td className="border p-2">
                                                     {course.courseNo} - {course.title}
@@ -422,10 +427,11 @@ export function Preview({ formData }: PreviewProps) {
                                                 <td className="border p-2">{course.yearsOffered}</td>
                                             </tr>
                                         ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        );
+                    })}
                 </div>
 
                 {/* Innovations */}
