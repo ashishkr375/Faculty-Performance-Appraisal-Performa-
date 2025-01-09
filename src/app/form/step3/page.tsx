@@ -7,6 +7,68 @@ import { SaveLoader } from '@/components/SaveLoader';
 import Loading from '@/app/loading';
 import { fetchFacultyData } from '@/lib/fetchFacultyData';
 
+interface PhDStudent {
+    studentName: string;
+    rollNo: string;
+    registrationYear: string;
+    status: string;
+    stipendType: string;
+    researchArea: string;
+    otherSupervisors: string;
+    sciPublications: number;
+    scopusPublications: number;
+    currentStatus: string;
+    statusDate: string;
+}
+
+interface JournalPaper {
+    authors: string;
+    title: string;
+    journal: string;
+    volume: string;
+    year: string;
+    pages: string;
+    quartile: string;
+    publicationDate: string;
+    studentInvolved: string;
+    doi: string;
+}
+
+interface ConferencePaper {
+    authors: string;
+    title: string;
+    conference: string;
+    location: string;
+    year: string;
+    pages: string;
+    indexing: string;
+    foreignAuthor: string;
+    studentInvolved: string;
+    doi: string;
+}
+
+interface Book {
+    title: string;
+    authors: string;
+    publisher: string;
+    isbn: string;
+    year: string;
+    scopusIndexed: boolean;
+    doi: string;
+}
+
+interface FormData {
+    phdSupervision: PhDStudent[];
+    journalPapers: JournalPaper[];
+    conferencePapers: ConferencePaper[];
+    books: {
+        textbooks: Book[];
+        editedBooks: Book[];
+        chapters: Book[];
+    };
+    calculatedMarks: number;
+}
+
 const SECTION_DESCRIPTIONS = {
     phdSupervision: {
         title: "Ph.D Research Supervision",
@@ -44,7 +106,7 @@ const SECTION_DESCRIPTIONS = {
 export default function Step3Page() {
     const { data: session, status } = useSession();
     const router = useRouter();
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<FormData>({
         phdSupervision: [],
         journalPapers: [],
         conferencePapers: [],
@@ -59,66 +121,34 @@ export default function Step3Page() {
     const [hasAdminData, setHasAdminData] = useState(false);
 
     useEffect(() => {
-        if (!session?.user?.email || status === 'loading') return;
-
         const fetchData = async () => {
+            if (!session?.user?.email || status !== 'authenticated') {
+                return;
+            }
+            
             setLoading(true);
             try {
                 const response = await fetch('/api/get-part?step=3');
-                const savedData = await response.json();
-
-                if (savedData) {
-                    setFormData(savedData);
-                } else {
-                    // Fetch from faculty API
-                    const facultyData = await fetchFacultyData(session.user.email);
-                    
-                    if (facultyData) {
-                        // Convert PhD candidates data
-                        const phdStudents = facultyData.phd_candidates.map(student => ({
-                            name: student.phd_student_name,
-                            registrationYear: student.start_year,
-                            status: 'FT', // Default value
-                            area: student.thesis_topic,
-                            otherSupervisors: '',
-                            sciPublications: 0,
-                            scopusPublications: 0,
-                            currentStatus: student.completion_year === 'Ongoing' ? 'Pursuing' : 'Awarded',
-                            statusDate: student.completion_year === 'Ongoing' ? '' : student.completion_year
-                        }));
-
-                        // Parse publications data if available
-                        let publications = [];
-                        if (facultyData.publications?.[0]?.publications) {
-                            try {
-                                const parsedPubs = JSON.parse(facultyData.publications[0].publications);
-                                publications = parsedPubs.map(pub => ({
-                                    authors: pub.authors || '',
-                                    title: pub.title || '',
-                                    journal: pub.journal_name || '',
-                                    volume: '',
-                                    year: pub.year || '',
-                                    pages: '',
-                                    quartile: '',
-                                    date: '',
-                                    students: '',
-                                    url: pub.citation_key || ''
-                                }));
-                            } catch (error) {
-                                console.error('Error parsing publications:', error);
-                            }
-                        }
-
-                        setFormData({
-                            ...formData,
-                            phdSupervision: phdStudents,
-                            journalPapers: publications
-                        });
-                        setHasAdminData(true);
-                    }
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
                 }
+                const data = await response.json();
+                
+                // Initialize with existing data or default values
+                setFormData({
+                    phdSupervision: data?.phdSupervision || [],
+                    journalPapers: data?.journalPapers || [],
+                    conferencePapers: data?.conferencePapers || [],
+                    books: {
+                        textbooks: data?.books?.textbooks || [],
+                        editedBooks: data?.books?.editedBooks || [],
+                        chapters: data?.books?.chapters || []
+                    },
+                    calculatedMarks: data?.calculatedMarks || 0
+                });
             } catch (error) {
-                console.error('Error fetching data:', error);
+                console.error('Error:', error);
+                // Keep the default state on error
             } finally {
                 setLoading(false);
             }

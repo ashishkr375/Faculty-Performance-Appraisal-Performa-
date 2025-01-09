@@ -110,7 +110,7 @@ export default function Dashboard() {
                         href="/form/review"
                         className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600"
                     >
-                        View Complete Form
+                        View Complete Filled Form
                     </Link>
                 </div>
             )}

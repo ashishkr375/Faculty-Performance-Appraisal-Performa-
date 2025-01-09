@@ -80,7 +80,7 @@ export default function ReviewPage() {
 
     return (
         <div className="container mx-auto py-8">
-            <div className="bg-white shadow-lg rounded-lg">
+            <div className="bg-white rounded-lg">
                 {formData && <Preview formData={formData} />}
             </div>
         </div>
