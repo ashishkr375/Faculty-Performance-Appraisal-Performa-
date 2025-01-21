@@ -11,17 +11,19 @@ export interface BasicInfo {
 // Teaching Engagement (Step 2)
 export interface TeachingCourse {
     semester: string;
-    level: string;
+    level?: string;
     courseNo: string;
     title: string;
-    type: string;
+    type?: string;
     studentCount: number;
-    weeklyLoadL: number;
-    weeklyLoadT: number;
-    weeklyLoadP: number;
-    totalTheoryHours: number;
-    totalLabHours: number;
-    yearsOffered: number;
+    weeklyLoadL?: number;
+    weeklyLoadT?: number;
+    weeklyLoadP?: number;
+    totalTheoryHours?: number;
+    totalLabHours?: number;
+    yearsOffered?: number;
+    academicYear?: string;
+    teachingHoursPerWeek?: number;
 }
 
 export interface ProjectSupervision {

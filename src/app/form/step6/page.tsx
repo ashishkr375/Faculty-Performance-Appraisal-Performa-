@@ -48,28 +48,14 @@ const Step6Page = () => {
         const fetchSavedData = async () => {
             try {
                 const response = await fetch('/api/get-part?step=6');
-                const data = response.ok ? await response.json() : null;
 
-                if (data && Object.keys(data).length > 0) {
-                    const instituteLevelActivities = data?.institute_activities?.map(activity => ({
-                        role: activity.role_position,
-                        duration: `${new Date(activity.start_date).toLocaleDateString()} - ${new Date(activity.end_date).toLocaleDateString()}`,
-                        marks: activity.marks || 0,
-                    })) || [];
+                const existingData = response.ok ? await response.json() : null;
 
-                    const departmentLevelActivities = data?.department_activities?.map(activity => ({
-                        activity: activity.activity_description,
-                        duration: `${new Date(activity.start_date).toLocaleDateString()} - ${new Date(activity.end_date).toLocaleDateString()}`,
-                        marks: activity.marks || 0,
-                    })) || [];
-
-                    const managementDevelopment: ManagementDevelopment = {
-                        instituteLevelActivities,
-                        departmentLevelActivities,
-                        calculatedMarks: data?.calculatedMarks || 0,
-                    };
-
-                    setFormData(managementDevelopment);
+                if (existingData && Object.keys(existingData).length > 0) {
+                    setFormData(prevData => ({
+                        ...prevData,
+                        ...existingData,
+                    }));
                 } else {
                     const facultyData = await fetchFacultyData(session?.user?.email || '');
 

@@ -71,34 +71,10 @@ const Step5Page = () => {
                 const data = response.ok ? await response.json() : null;
 
                 if (data && Object.keys(data).length > 0) {
-                    const workshopsConferences = data?.workshops_conferences?.map(workshop => ({
-                        event_type: workshop.event_type,
-                        role: workshop.role,
-                        event_name: workshop.event_name,
-                        sponsored_by: workshop.sponsored_by,
-                        start_date: workshop.start_date,
-                        end_date: workshop.end_date,
-                        participants_count: workshop.participants_count,
-                    })) || [];
-
-                    const organizationParticipation: OrganizationParticipation = {
-                        events: workshopsConferences.map(workshop => ({
-                            type: 'National',
-                            role: workshop.role,
-                            name: workshop.event_name,
-                            sponsor: workshop.sponsored_by,
-                            startDate: workshop.start_date,
-                            endDate: workshop.end_date,
-                            participants: workshop.participants_count,
-                        })),
-                        lectures: data?.lectures || [],
-                        onlineCourses: data?.onlineCourses || [],
-                        visits: data?.visits || [],
-                        outreachActivities: data?.outreachActivities || [],
-                        calculatedMarks: data?.calculatedMarks || 0,
-                    };
-
-                    setFormData(organizationParticipation);
+                    setFormData(prevData => ({
+                        ...prevData,
+                        ...data,
+                    }));
                 } else {
                     const facultyData = await fetchFacultyData(session?.user?.email || '');
 
