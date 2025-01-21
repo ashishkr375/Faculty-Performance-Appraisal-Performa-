@@ -88,8 +88,8 @@ const Step4Page = () => {
                         title: project.project_title,
                         fundingAgency: project.funding_agency,
                         financialOutlay: parseFloat(project.financial_outlay),
-                        startDate: project.start_date,
-                        endDate: project.end_date,
+                        startDate: project.start_date.split("T")[0],
+                        endDate: project.end_date.split("T")[0],
                         investigators: project.investigators,
                         piInstitute: project.pi_institute || '',
                         status: project.status || 'In Progress',
@@ -99,7 +99,7 @@ const Step4Page = () => {
                         title: project.project_title,
                         fundingAgency: project.funding_agency,
                         financialOutlay: parseFloat(project.financial_outlay),
-                        startDate: project.start_date,
+                        startDate: project.start_date.split("T")[0],
                         period: `${project.start_date} - ${project.end_date}`,
                         investigators: project.investigators,
                         status: project.status || 'In Progress',
@@ -127,8 +127,8 @@ const Step4Page = () => {
                         qualification: internship.qualification || '',
                         affiliation: internship.affiliation || '',
                         projectTitle: internship.project_title || '',
-                        startDate: internship.start_date,
-                        endDate: internship.end_date,
+                        startDate: internship.start_date.split("T")[0],
+                        endDate: internship.end_date.split("T")[0],
                         isExternal: internship.student_type === 'External',
                     })) || [];
                     const industryLabs = [];
@@ -163,8 +163,8 @@ const Step4Page = () => {
                     const workExperience = facultyData?.work_experience?.map(work => ({
                         workExperience: work.work_experiences,
                         institute: work.institute,
-                        startDate: work.start_date,
-                        endDate: work.end_date,
+                        startDate: work.start_date.split("T")[0],
+                        endDate: work.end_date.split("T")[0],
                     })) || [];
                     setFormData({
                         sponsoredProjects,

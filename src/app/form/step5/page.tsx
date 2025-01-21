@@ -84,8 +84,8 @@ const Step5Page = () => {
                             role: workshop.role,
                             event_name: workshop.event_name,
                             sponsored_by: workshop.sponsored_by,
-                            start_date: workshop.start_date,
-                            end_date: workshop.end_date,
+                            start_date: workshop.start_date.split("T")[0],
+                            end_date: workshop.end_date.split("T")[0],
                             participants_count: workshop.participants_count,
                         })) || [];
 
@@ -95,8 +95,8 @@ const Step5Page = () => {
                                 role: workshop.role,
                                 name: workshop.event_name,
                                 sponsor: workshop.sponsored_by,
-                                startDate: workshop.start_date,
-                                endDate: workshop.end_date,
+                                startDate: workshop.start_date.split("T")[0],
+                                endDate: workshop.end_date.split("T")[0],
                                 participants: workshop.participants_count,
                             })),
                             lectures:  [],
