@@ -10,7 +10,7 @@ import { OnlineCourses } from '@/components/form/step5/OnlineCourses';
 import { Visits } from '@/components/form/step5/Visits';
 import { OutreachActivities } from '@/components/form/step5/OutreachActivities';
 import { calculateStep5Marks } from '@/utils/calculateMarks';
-
+import { fetchFacultyData } from '@/lib/fetchFacultyData';
 const SECTION_DESCRIPTIONS = {
     events: {
         title: "Workshop/FDP/Conference Organization",
@@ -62,23 +62,86 @@ const Step5Page = () => {
     useEffect(() => {
         if (status === 'unauthenticated') {
             router.push('/auth/signin');
+            return;
         }
 
         const fetchSavedData = async () => {
             try {
                 const response = await fetch('/api/get-part?step=5');
-                if (response.ok) {
-                    const data = await response.json();
-                    setFormData(data);
+                const data = response.ok ? await response.json() : null;
+
+                if (data && Object.keys(data).length > 0) {
+                    const workshopsConferences = data?.workshops_conferences?.map(workshop => ({
+                        event_type: workshop.event_type,
+                        role: workshop.role,
+                        event_name: workshop.event_name,
+                        sponsored_by: workshop.sponsored_by,
+                        start_date: workshop.start_date,
+                        end_date: workshop.end_date,
+                        participants_count: workshop.participants_count,
+                    })) || [];
+
+                    const organizationParticipation: OrganizationParticipation = {
+                        events: workshopsConferences.map(workshop => ({
+                            type: 'National',
+                            role: workshop.role,
+                            name: workshop.event_name,
+                            sponsor: workshop.sponsored_by,
+                            startDate: workshop.start_date,
+                            endDate: workshop.end_date,
+                            participants: workshop.participants_count,
+                        })),
+                        lectures: data?.lectures || [],
+                        onlineCourses: data?.onlineCourses || [],
+                        visits: data?.visits || [],
+                        outreachActivities: data?.outreachActivities || [],
+                        calculatedMarks: data?.calculatedMarks || 0,
+                    };
+
+                    setFormData(organizationParticipation);
+                } else {
+                    const facultyData = await fetchFacultyData(session?.user?.email || '');
+
+                    if (facultyData) {
+                        const workshopsConferences = facultyData?.workshops_conferences?.map(workshop => ({
+                            event_type: workshop.event_type,
+                            role: workshop.role,
+                            event_name: workshop.event_name,
+                            sponsored_by: workshop.sponsored_by,
+                            start_date: workshop.start_date,
+                            end_date: workshop.end_date,
+                            participants_count: workshop.participants_count,
+                        })) || [];
+
+                        const organizationParticipation: OrganizationParticipation = {
+                            events: workshopsConferences.map(workshop => ({
+                                type: 'National',
+                                role: workshop.role,
+                                name: workshop.event_name,
+                                sponsor: workshop.sponsored_by,
+                                startDate: workshop.start_date,
+                                endDate: workshop.end_date,
+                                participants: workshop.participants_count,
+                            })),
+                            lectures:  [],
+                            onlineCourses:  [],
+                            visits:  [],
+                            outreachActivities:  [],
+                            calculatedMarks: formData?.calculatedMarks || 0,
+                        };
+
+                        setFormData(organizationParticipation);
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching saved data:', error);
+            } finally {
+                setLoading(false);
             }
-            setLoading(false);
         };
 
         fetchSavedData();
-    }, [status, router]);
+    }, [status, router, session?.user?.email]);
 
     useEffect(() => {
         // Calculate marks whenever form data changes
