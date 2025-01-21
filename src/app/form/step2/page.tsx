@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import type { TeachingCourse } from '@/types/form';
 import Loading from '@/app/loading';
+import { fetchFacultyData } from '@/lib/fetchFacultyData';
 
 const COURSE_LEVELS = ['UG I', 'UG II', 'PG', 'Ph.D.'] as const;
 const SEMESTERS = ['Spring', 'Summer', 'Autumn'] as const;
@@ -128,21 +129,82 @@ export default function Step2Page() {
             if (!session?.user?.email || status !== 'authenticated') {
                 return;
             }
-            
+
             setLoading(true);
             try {
-                const response = await fetch('/api/get-part?step=2');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch data');
+                const formResponse = await fetch('/api/get-part?step=2');
+                const existingData = formResponse.ok ? await formResponse.json() : null;
+
+                if (existingData && Object.keys(existingData).length > 0) {
+                    setFormData(prevData => ({
+                        ...prevData,
+                        ...existingData,
+                    }));
+                } else {
+                    const facultyData = await fetchFacultyData(session?.user?.email || '');
+                    let courses = [];
+                    if (facultyData?.teaching_engagement) {
+                        courses = facultyData.teaching_engagement.map((engagement) => ({
+                            semester: engagement.semester,
+                            courseNo: engagement.course_number,
+                            title: engagement.course_title,
+                            studentCount: engagement.student_count,
+                            academicYear: engagement.academic_year,
+                            teachingHoursPerWeek: engagement.teaching_hours_per_week,
+                            level: engagement.level,
+                            type: engagement.course_type,
+                            weeklyLoadL: engagement.lectures,
+                            weeklyLoadT: engagement.tutorials,
+                            weeklyLoadP: engagement.practicals,
+                            totalTheoryHours: engagement.total_theory,
+                            totalLabHours: engagement.lab_hours,
+                            yearsOffered: engagement.years_offered,
+                        }));
+                    }
+
+                    const projectSupervision = { btech: [], mtech: [] };
+                    if (facultyData?.project_supervision) {
+                        facultyData.project_supervision.forEach((project) => {
+                            const projectData = {
+                                title: project.project_title,
+                                students: project.student_details,
+                                internalSupervisors: project.internal_supervisors,
+                                externalSupervisors: project.external_supervisors,
+                            };
+
+                            if (project.category === 'Undergraduate') {
+                                projectSupervision.btech.push(projectData);
+                            } else if (project.category === 'Postgraduate') {
+                                projectSupervision.mtech.push(projectData);
+                            }
+                        });
+                    }
+
+                    let workshopsConferences = [];
+                    if (facultyData?.workshops_conferences) {
+                        workshopsConferences = facultyData.workshops_conferences.map((event) => ({
+                            id: event.id,
+                            email: event.email,
+                            event_type: event.event_type,
+                            role: event.role,
+                            event_name: event.event_name,
+                            sponsored_by: event.sponsored_by,
+                            start_date: event.start_date,
+                            end_date: event.end_date,
+                            participants_count: event.participants_count,
+                        }));
+                    }
+
+                    setFormData(prevData => ({
+                        ...prevData,
+                        teachingEngagement: { courses:courses },
+                        projectSupervision,
+                        workshopsConferences,
+                        innovations: [],
+                        newLabs: [],
+                        otherTasks: [],
+                    }));
                 }
-                const data = await response.json();
-                setFormData(data || {
-                    teachingEngagement: { courses: [] },
-                    innovations: [],
-                    newLabs: [],
-                    otherTasks: [],
-                    projectSupervision: { btech: [], mtech: [] }
-                });
             } catch (error) {
                 console.error('Error:', error);
             } finally {

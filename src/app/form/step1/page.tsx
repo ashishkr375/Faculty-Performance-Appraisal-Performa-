@@ -189,8 +189,9 @@ export default function Step1Page() {
                                 <input
                                     type="text"
                                     value={formData.designation}
+                                    disabled={true}
                                     onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
-                                    className="w-full p-2 border rounded"
+                                    className="w-full p-2 border rounded bg-gray-100"
                                     required
                                 />
                             </div>
@@ -199,8 +200,9 @@ export default function Step1Page() {
                                 <input
                                     type="text"
                                     value={formData.department}
+                                    disabled={true}
                                     onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                                    className="w-full p-2 border rounded"
+                                    className="w-full p-2 border rounded bg-gray-100"
                                     placeholder="Department of ..."
                                     required
                                 />

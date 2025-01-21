@@ -129,31 +129,115 @@ export default function Step3Page() {
             setLoading(true);
             try {
                 const response = await fetch('/api/get-part?step=3');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch data');
+                const data = response.ok ? await response.json() : null;
+                if (data && Object.keys(data).length > 0) {
+                    setFormData({
+                        phdSupervision: data?.phdSupervision || [],
+                        journalPapers: data?.journalPapers || [],
+                        conferencePapers: data?.conferencePapers || [],
+                        books: {
+                            textbooks: data?.books?.textbooks || [],
+                            editedBooks: data?.books?.editedBooks || [],
+                            chapters: data?.books?.chapters || []
+                        },
+                        calculatedMarks: data?.calculatedMarks || 0
+                    });
+                } else {
+                    const facultyData = await fetchFacultyData(session?.user?.email || '');
+                    const phdSupervision = facultyData?.phd_candidates?.map(candidate => ({
+                        studentName: candidate.student_name,
+                        rollNo: candidate.roll_no,
+                        registrationYear: candidate.registration_year,
+                        status: candidate.current_status,
+                        stipendType: candidate.registration_type,
+                        researchArea: candidate.research_area,
+                        otherSupervisors: candidate.other_supervisors,
+                        sciPublications: 0,
+                        scopusPublications: 0,
+                        currentStatus: candidate.current_status,
+                        // statusDate: new Date().toISOString().split('T')[0]
+                        statusDate:null
+                    })) || [];
+    
+                    const journalPapers = facultyData?.journal_papers?.map(paper => ({
+                        authors: paper.authors,
+                        title: paper.title,
+                        journal: paper.journal_name,
+                        volume: paper.volume,
+                        year: paper.publication_year,
+                        pages: paper.pages,
+                        quartile: paper.journal_quartile,
+                        publicationDate: paper.publication_date,
+                        studentInvolved: paper.student_involved ? 'Yes' : 'No',
+                        doi: paper.doi_url,
+                    })) || [];
+    
+                    const conferencePapers = facultyData?.conference_papers?.map(paper => ({
+                        authors: paper.authors,
+                        title: paper.title,
+                        conference: paper.conference_name,
+                        location: paper.location,
+                        year: paper.conference_year,
+                        pages: paper.pages,
+                        indexing: paper.indexing,
+                        foreignAuthor: paper.foreign_author,
+                        studentInvolved: paper.student_involved,
+                        doi: paper.doi,
+                    })) || [];
+    
+                    const books = {
+                        textbooks: facultyData?.textbooks?.map(book => ({
+                            title: book.title,
+                            authors: book.authors,
+                            publisher: book.publisher,
+                            isbn: book.isbn,
+                            year: book.year,
+                            scopusIndexed: book.scopus === "Yes",
+                            doi: book.doi,
+                            pages:book.pages
+                        })) || [],
+                        editedBooks: facultyData?.edited_books?.map(book => ({
+                            title: book.title,
+                            authors: book.editors,
+                            publisher: book.publisher,
+                            isbn: book.isbn,
+                            year: book.year,
+                            scopusIndexed: book.scopus === "Yes",
+                            doi: book.doi,
+                            pages:book.pages,
+                            editors:book.editors
+                        })) || [],
+                        chapters: facultyData?.book_chapters?.map(chapter => ({
+                            chapterTitle: chapter.chapter_title,
+                            authors: chapter.authors,
+                            bookTitle: chapter.book_title,
+                            publisher: chapter.publisher,
+                            isbn: chapter.isbn,
+                            year: chapter.year,
+                            scopusIndexed: chapter.scopus === "Yes",
+                            doi: chapter.doi,
+                            pages:chapter.pages,
+                            
+                        })) || [],
+                    };
+    
+                    const calculatedMarks = formData?.calculatedMarks || 0;
+    
+                    setFormData({
+                        phdSupervision,
+                        journalPapers,
+                        conferencePapers,
+                        books,
+                        calculatedMarks,
+                    });
                 }
-                const data = await response.json();
-                
-                // Initialize with existing data or default values
-                setFormData({
-                    phdSupervision: data?.phdSupervision || [],
-                    journalPapers: data?.journalPapers || [],
-                    conferencePapers: data?.conferencePapers || [],
-                    books: {
-                        textbooks: data?.books?.textbooks || [],
-                        editedBooks: data?.books?.editedBooks || [],
-                        chapters: data?.books?.chapters || []
-                    },
-                    calculatedMarks: data?.calculatedMarks || 0
-                });
             } catch (error) {
                 console.error('Error:', error);
-                // Keep the default state on error
             } finally {
                 setLoading(false);
             }
         };
-
+    
         fetchData();
     }, [session, status]);
 

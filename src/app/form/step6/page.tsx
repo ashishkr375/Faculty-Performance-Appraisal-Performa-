@@ -7,7 +7,7 @@ import type { ManagementDevelopment } from '@/types/form';
 import { InstituteLevelActivities } from '@/components/form/step6/InstituteLevelActivities';
 import { DepartmentLevelActivities } from '@/components/form/step6/DepartmentLevelActivities';
 import { calculateStep6Marks } from '@/utils/calculateMarks';
-
+import { fetchFacultyData } from '@/lib/fetchFacultyData';
 const SECTION_DESCRIPTIONS = {
     instituteLevelRoles: {
         title: "Institute Level",
@@ -42,23 +42,53 @@ const Step6Page = () => {
     useEffect(() => {
         if (status === 'unauthenticated') {
             router.push('/auth/signin');
+            return;
         }
 
         const fetchSavedData = async () => {
             try {
                 const response = await fetch('/api/get-part?step=6');
-                if (response.ok) {
-                    const data = await response.json();
-                    setFormData(data);
+
+                const existingData = response.ok ? await response.json() : null;
+
+                if (existingData && Object.keys(existingData).length > 0) {
+                    setFormData(prevData => ({
+                        ...prevData,
+                        ...existingData,
+                    }));
+                } else {
+                    const facultyData = await fetchFacultyData(session?.user?.email || '');
+
+                    if (facultyData) {
+                        const instituteLevelActivities = facultyData?.institute_activities?.map(activity => ({
+                            role: activity.role_position,
+                            duration: `${new Date(activity.start_date).toLocaleDateString()} - ${new Date(activity.end_date).toLocaleDateString()}`,
+                            marks:  0,
+                        })) || [];
+
+                        const departmentLevelActivities = facultyData?.department_activities?.map(activity => ({
+                            activity: activity.activity_description,
+                            duration: `${new Date(activity.start_date).toLocaleDateString()} - ${new Date(activity.end_date).toLocaleDateString()}`,
+                            marks: 0,
+                        })) || [];
+
+                        const managementDevelopment: ManagementDevelopment = {
+                            instituteLevelActivities,
+                            departmentLevelActivities,
+                            calculatedMarks: formData?.calculatedMarks || 0,
+                        };
+                        setFormData(managementDevelopment);
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching saved data:', error);
+            } finally {
+                setLoading(false);
             }
-            setLoading(false);
         };
 
         fetchSavedData();
-    }, [status, router]);
+    }, [status, router, session?.user?.email]);
 
     useEffect(() => {
         // Calculate marks whenever form data changes
