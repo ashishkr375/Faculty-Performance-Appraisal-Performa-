@@ -68,13 +68,13 @@ const Step6Page = () => {
                     if (facultyData) {
                         const instituteLevelActivities = facultyData?.institute_activities?.map(activity => ({
                             role: activity.role_position,
-                            duration: `${formatDate(activity.start_date)} - ${formatDate(activity.end_date)}`,
+                            duration: `${formatDate(activity.start_date)} - ${activity.end_date === 'Continue' ? 'Continue' : formatDate(activity.end_date)}`,
                             marks:  0,
                         })) || [];
 
                         const departmentLevelActivities = facultyData?.department_activities?.map(activity => ({
                             activity: activity.activity_description,
-                            duration: `${formatDate(activity.start_date)} - ${formatDate(activity.end_date)}`,
+                            duration: `${formatDate(activity.start_date)} - ${activity.end_date === 'Continue' ? 'Continue' : formatDate(activity.end_date)}`,
                             marks: 0,
                         })) || [];
 
@@ -91,13 +91,13 @@ const Step6Page = () => {
                     if (facultyData) {
                         const instituteLevelActivities = facultyData?.institute_activities?.map(activity => ({
                             role: activity.role_position,
-                            duration: `${formatDate(activity.start_date)} - ${formatDate(activity.end_date)}`,
+                            duration: `${formatDate(activity.start_date)} - ${activity.end_date === 'Continue' ? 'Continue' : formatDate(activity.end_date)}`,
                             marks:  0,
                         })) || [];
 
                         const departmentLevelActivities = facultyData?.department_activities?.map(activity => ({
                             activity: activity.activity_description,
-                            duration:`${formatDate(activity.start_date)} - ${formatDate(activity.end_date)}`,
+                            duration:`${formatDate(activity.start_date)} - ${activity.end_date === 'Continue' ? 'Continue' : formatDate(activity.end_date)}`,
                             marks: 0,
                         })) || [];
 
