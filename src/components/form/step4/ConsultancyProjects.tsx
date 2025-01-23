@@ -43,7 +43,8 @@ export const ConsultancyProjects = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...project, title: e.target.value };
                                     setFormData({ ...formData, consultancyProjects: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                                 required
                             />
                         </div>
@@ -57,7 +58,8 @@ export const ConsultancyProjects = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...project, fundingAgency: e.target.value };
                                     setFormData({ ...formData, consultancyProjects: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                                 required
                             />
                         </div>
@@ -71,7 +73,8 @@ export const ConsultancyProjects = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...project, financialOutlay: parseFloat(e.target.value) };
                                     setFormData({ ...formData, consultancyProjects: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                                 required
                             />
                         </div>
@@ -85,7 +88,8 @@ export const ConsultancyProjects = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...project, startDate: e.target.value };
                                     setFormData({ ...formData, consultancyProjects: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                                 required
                             />
                         </div>
@@ -99,7 +103,8 @@ export const ConsultancyProjects = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...project, period: e.target.value };
                                     setFormData({ ...formData, consultancyProjects: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                                 required
                             />
                         </div>
@@ -113,7 +118,8 @@ export const ConsultancyProjects = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...project, investigators: e.target.value };
                                     setFormData({ ...formData, consultancyProjects: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                                 required
                             />
                         </div>
@@ -126,12 +132,15 @@ export const ConsultancyProjects = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...project, status: e.target.value as 'Started' | 'Completed' | 'In Progress' };
                                     setFormData({ ...formData, consultancyProjects: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
                                 required
+                                disabled={true}
                             >
                                 <option value="Started">Started</option>
                                 <option value="In Progress">In Progress</option>
                                 <option value="Completed">Completed</option>
+                                <option value="Terminated">Terminated</option>
+                                <option value="Ongoing">Ongoing</option>
                             </select>
                         </div>
                     </div>
@@ -147,13 +156,13 @@ export const ConsultancyProjects = ({ formData, setFormData }: Props) => {
                     </button>
                 </div>
             ))}
-            <button
+            {/* <button
                 type="button"
                 onClick={handleAddProject}
                 className="w-full p-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-600"
             >
                 + Add Consultancy Project
-            </button>
+            </button> */}
         </section>
     );
 }; 

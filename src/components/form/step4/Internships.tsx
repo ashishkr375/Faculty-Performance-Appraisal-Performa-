@@ -55,7 +55,8 @@ export const Internships = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...internship, studentName: e.target.value };
                                     setFormData({ ...formData, internships: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                                 required
                             />
                         </div>
@@ -69,7 +70,8 @@ export const Internships = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...internship, qualification: e.target.value };
                                     setFormData({ ...formData, internships: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                                 placeholder="e.g., BTech/MTech/PhD"
                                 required
                             />
@@ -84,7 +86,8 @@ export const Internships = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...internship, affiliation: e.target.value };
                                     setFormData({ ...formData, internships: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                                 required
                             />
                         </div>
@@ -98,7 +101,8 @@ export const Internships = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...internship, projectTitle: e.target.value };
                                     setFormData({ ...formData, internships: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                                 required
                             />
                         </div>
@@ -112,7 +116,8 @@ export const Internships = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...internship, startDate: e.target.value };
                                     setFormData({ ...formData, internships: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                                 required
                             />
                         </div>
@@ -126,7 +131,8 @@ export const Internships = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...internship, endDate: e.target.value };
                                     setFormData({ ...formData, internships: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                                 required
                             />
                         </div>
@@ -159,13 +165,13 @@ export const Internships = ({ formData, setFormData }: Props) => {
                     </button>
                 </div>
             ))}
-            <button
+            {/* <button
                 type="button"
                 onClick={handleAddInternship}
                 className="w-full p-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-600"
             >
                 + Add Internship
-            </button>
+            </button> */}
         </section>
     );
 }; 

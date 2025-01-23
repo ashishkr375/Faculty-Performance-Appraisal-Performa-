@@ -32,7 +32,7 @@ export interface FacultyProfile {
         pages: string;
         doi_url: string;
         student_involved:number;
-        publication_date:Date;
+        publication_date:string;
         journal_quartile:string;
         student_details:string;
     }>;

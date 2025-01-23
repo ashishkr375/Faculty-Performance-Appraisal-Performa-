@@ -56,9 +56,10 @@ export const Events = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...event, role: e.target.value };
                                     setFormData({ ...formData, events: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
                                 placeholder="e.g., Coordinator, Convener"
                                 required
+                                disabled={true}
                             />
                         </div>
                         <div>
@@ -71,7 +72,8 @@ export const Events = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...event, name: e.target.value };
                                     setFormData({ ...formData, events: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                                 required
                             />
                         </div>
@@ -85,7 +87,8 @@ export const Events = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...event, sponsor: e.target.value };
                                     setFormData({ ...formData, events: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                                 required
                             />
                         </div>
@@ -99,8 +102,9 @@ export const Events = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...event, startDate: e.target.value };
                                     setFormData({ ...formData, events: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
                                 required
+                                disabled={true}
                             />
                         </div>
                         <div>
@@ -113,8 +117,9 @@ export const Events = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...event, endDate: e.target.value };
                                     setFormData({ ...formData, events: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
                                 required
+                                disabled={true}
                             />
                         </div>
                         <div>
@@ -127,8 +132,9 @@ export const Events = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...event, participants: parseInt(e.target.value) };
                                     setFormData({ ...formData, events: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
                                 required
+                                disabled={true}
                             />
                         </div>
                     </div>
@@ -144,14 +150,14 @@ export const Events = ({ formData, setFormData }: Props) => {
                     </button>
                 </div>
             ))}
-            <button
+            {/* <button
                 type="button"
                 onClick={handleAddEvent}
                                 className="w-full p-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-600"
 
             >
                 + Add Event
-            </button>
+            </button> */}
         </section>
     );
 }; 

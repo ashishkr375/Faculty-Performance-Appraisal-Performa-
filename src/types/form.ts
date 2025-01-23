@@ -21,7 +21,7 @@ export interface TeachingCourse {
     weeklyLoadP?: number;
     totalTheoryHours?: number;
     totalLabHours?: number;
-    yearsOffered?: number;
+    yearsOffered?: number | string;
     academicYear?: string;
     teachingHoursPerWeek?: number;
 }

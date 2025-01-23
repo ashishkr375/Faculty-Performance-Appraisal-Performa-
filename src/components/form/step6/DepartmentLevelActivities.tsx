@@ -40,9 +40,10 @@ export const DepartmentLevelActivities = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...activity, activity: e.target.value };
                                     setFormData({ ...formData, departmentLevelActivities: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
                                 placeholder="e.g., Lab In-charge, Committee Member"
                                 required
+                                disabled={true}
                             />
                         </div>
                         <div>
@@ -55,8 +56,9 @@ export const DepartmentLevelActivities = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...activity, duration: e.target.value };
                                     setFormData({ ...formData, departmentLevelActivities: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
                                 placeholder="e.g., Jan 2023 - June 2023"
+                                disabled={true}
                                 required
                             />
                         </div>
@@ -73,14 +75,14 @@ export const DepartmentLevelActivities = ({ formData, setFormData }: Props) => {
                     </button>
                 </div>
             ))}
-            <button
+            {/* <button
                 type="button"
                 onClick={handleAddActivity}
                 className="w-full p-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-600"
 
             >
                 + Add Department Level Activity
-            </button>
+            </button> */}
         </section>
     );
 }; 

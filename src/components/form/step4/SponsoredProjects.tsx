@@ -38,14 +38,6 @@ export const SponsoredProjects = ({ formData, setFormData }: Props) => {
 
     return (
         <section>
-            <h2 className="text-xl font-semibold mb-2">{DESCRIPTION.title}</h2>
-            <p className="text-gray-600 mb-4 whitespace-pre-line">{DESCRIPTION.description}</p>
-            <div className="mb-4">
-                {DESCRIPTION.notes.map((note, index) => (
-                    <p key={index} className="text-sm text-gray-600 mb-1">{note}</p>
-                ))}
-            </div>
-
             {formData.sponsoredProjects.map((project, index) => (
                 <div key={index} className="border p-4 rounded mb-4">
                     <div className="grid grid-cols-2 gap-4">
@@ -59,7 +51,8 @@ export const SponsoredProjects = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...project, title: e.target.value };
                                     setFormData({ ...formData, sponsoredProjects: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                                 required
                             />
                         </div>
@@ -73,7 +66,8 @@ export const SponsoredProjects = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...project, fundingAgency: e.target.value };
                                     setFormData({ ...formData, sponsoredProjects: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                                 required
                             />
                         </div>
@@ -87,7 +81,8 @@ export const SponsoredProjects = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...project, financialOutlay: parseInt(e.target.value) };
                                     setFormData({ ...formData, sponsoredProjects: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                                 required
                             />
                         </div>
@@ -101,7 +96,8 @@ export const SponsoredProjects = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...project, startDate: e.target.value };
                                     setFormData({ ...formData, sponsoredProjects: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                                 required
                             />
                         </div>
@@ -115,8 +111,9 @@ export const SponsoredProjects = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...project, endDate: e.target.value };
                                     setFormData({ ...formData, sponsoredProjects: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
                                 required
+                                disabled={true}
                             />
                         </div>
                         <div>
@@ -129,7 +126,8 @@ export const SponsoredProjects = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...project, investigators: e.target.value };
                                     setFormData({ ...formData, sponsoredProjects: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                                 required
                             />
                         </div>
@@ -143,7 +141,8 @@ export const SponsoredProjects = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...project, piInstitute: e.target.value };
                                     setFormData({ ...formData, sponsoredProjects: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                                 required
                             />
                         </div>
@@ -156,12 +155,15 @@ export const SponsoredProjects = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...project, status: e.target.value as 'Started' | 'Completed' | 'In Progress' };
                                     setFormData({ ...formData, sponsoredProjects: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
                                 required
+                                disabled={true}
                             >
                                 <option value="Started">Started</option>
                                 <option value="In Progress">In Progress</option>
                                 <option value="Completed">Completed</option>
+                                <option value="Ongoing">Ongoing</option>
+                                <option value="Terminated">Terminated</option>
                             </select>
                         </div>
                         <div>
@@ -174,7 +176,8 @@ export const SponsoredProjects = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...project, fundReceived: parseInt(e.target.value) };
                                     setFormData({ ...formData, sponsoredProjects: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                                 required
                             />
                         </div>
@@ -191,13 +194,13 @@ export const SponsoredProjects = ({ formData, setFormData }: Props) => {
                     </button>
                 </div>
             ))}
-            <button
+            {/* <button
                 type="button"
                 onClick={handleAddProject}
                 className="w-full p-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-600"
             >
                 + Add Sponsored Project
-            </button>
+            </button> */}
         </section>
     );
 }; 
