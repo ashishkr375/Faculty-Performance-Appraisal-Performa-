@@ -81,7 +81,7 @@ const SECTION_DESCRIPTIONS = {
             otherSupervisors: "Other supervisors' details (if any)",
             sciPublications: "Number of SCI publications during reported period",
             scopusPublications: "Number of Scopus publications during reported period",
-            currentStatus: "Latest status (Comprehensive/Pre-submission/Submitted/Awarded)",
+            currentStatus: "Latest status (Comprehensive/Pre-submission/Submitted/Awarded/Ongoing)",
             statusDate: "Date of latest status"
         }
     },
@@ -142,10 +142,9 @@ export default function Step3Page() {
                         },
                         calculatedMarks: data?.calculatedMarks || 0
                     });
-                } else {
                     const facultyData = await fetchFacultyData(session?.user?.email || '');
                     const phdSupervision = facultyData?.phd_candidates?.map(candidate => ({
-                        studentName: candidate.student_name,
+                        studentName: candidate.student_name + " (" +candidate.roll_no + ")",
                         rollNo: candidate.roll_no,
                         registrationYear: candidate.registration_year,
                         status: candidate.current_status,
@@ -156,7 +155,95 @@ export default function Step3Page() {
                         scopusPublications: 0,
                         currentStatus: candidate.current_status,
                         // statusDate: new Date().toISOString().split('T')[0]
-                        statusDate:null
+                        statusDate:candidate.completion_year
+                    })) || [];
+    
+                    const journalPapers = facultyData?.journal_papers?.map(paper => ({
+                        authors: paper.authors,
+                        title: paper.title,
+                        journal: paper.journal_name,
+                        volume: paper.volume,
+                        year: paper.publication_year,
+                        pages: paper.pages,
+                        quartile: paper.journal_quartile,
+                        publicationDate: paper.publication_date.split("T")[0],
+                        studentInvolved: paper.student_involved ? 'Yes' : 'No',
+                        doi: paper.doi_url,
+                    })) || [];
+    
+                    const conferencePapers = facultyData?.conference_papers?.map(paper => ({
+                        authors: paper.authors,
+                        title: paper.title,
+                        conference: paper.conference_name,
+                        location: paper.location,
+                        year: paper.conference_year,
+                        pages: paper.pages,
+                        indexing: paper.indexing,
+                        foreignAuthor: paper.foreign_author,
+                        studentInvolved: paper.student_involved,
+                        doi: paper.doi,
+                    })) || [];
+    
+                    const books = {
+                        textbooks: facultyData?.textbooks?.map(book => ({
+                            title: book.title,
+                            authors: book.authors,
+                            publisher: book.publisher,
+                            isbn: book.isbn,
+                            year: book.year,
+                            scopusIndexed: book.scopus === "Yes",
+                            doi: book.doi,
+                            pages:book.pages
+                        })) || [],
+                        editedBooks: facultyData?.edited_books?.map(book => ({
+                            title: book.title,
+                            authors: book.editors,
+                            publisher: book.publisher,
+                            isbn: book.isbn,
+                            year: book.year,
+                            scopusIndexed: book.scopus === "Yes",
+                            doi: book.doi,
+                            pages:book.pages,
+                            editors:book.editors
+                        })) || [],
+                        chapters: facultyData?.book_chapters?.map(chapter => ({
+                            chapterTitle: chapter.chapter_title,
+                            authors: chapter.authors,
+                            bookTitle: chapter.book_title,
+                            publisher: chapter.publisher,
+                            isbn: chapter.isbn,
+                            year: chapter.year,
+                            scopusIndexed: chapter.scopus === "Yes",
+                            doi: chapter.doi,
+                            pages:chapter.pages,
+                            
+                        })) || [],
+                    };
+    
+                    const calculatedMarks = formData?.calculatedMarks || 0;
+    
+                    setFormData({
+                        phdSupervision,
+                        journalPapers,
+                        conferencePapers,
+                        books,
+                        calculatedMarks,
+                    });
+                } else {
+                    const facultyData = await fetchFacultyData(session?.user?.email || '');
+                    const phdSupervision = facultyData?.phd_candidates?.map(candidate => ({
+                        studentName: candidate.student_name + " (" +candidate.roll_no + ")",
+                        rollNo: candidate.roll_no,
+                        registrationYear: candidate.registration_year,
+                        status: candidate.current_status,
+                        stipendType: candidate.registration_type,
+                        researchArea: candidate.research_area,
+                        otherSupervisors: candidate.other_supervisors,
+                        sciPublications: 0,
+                        scopusPublications: 0,
+                        currentStatus: candidate.current_status,
+                        // statusDate: new Date().toISOString().split('T')[0]
+                        statusDate:candidate.completion_year
                     })) || [];
     
                     const journalPapers = facultyData?.journal_papers?.map(paper => ({
@@ -439,7 +526,8 @@ export default function Step3Page() {
                                             updated[index] = { ...student, studentName: e.target.value };
                                             setFormData({ ...formData, phdSupervision: updated });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                         placeholder="Student Name"
                                         required
                                     />
@@ -455,9 +543,10 @@ export default function Step3Page() {
                                                 updated[index] = { ...student, registrationYear: e.target.value };
                                                 setFormData({ ...formData, phdSupervision: updated });
                                             }}
-                                            className="w-1/2 p-2 border rounded"
+                                            className="w-1/2 p-2 border rounded bg-gray-200"
                                             placeholder="Year"
                                             required
+                                            disabled={true}
                                         />
                                         <select
                                             value={student.status}
@@ -484,7 +573,8 @@ export default function Step3Page() {
                                             updated[index] = { ...student, researchArea: e.target.value };
                                             setFormData({ ...formData, phdSupervision: updated });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                         required
                                     />
                                 </div>
@@ -498,7 +588,8 @@ export default function Step3Page() {
                                             updated[index] = { ...student, otherSupervisors: e.target.value };
                                             setFormData({ ...formData, phdSupervision: updated });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                     />
                                 </div>
                                 <div>
@@ -545,40 +636,44 @@ export default function Step3Page() {
                                             updated[index] = { ...student, currentStatus: e.target.value };
                                             setFormData({ ...formData, phdSupervision: updated });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
                                         required
+                                        disabled={true}                                        
                                     >
                                         <option value="">Select Status</option>
                                         <option value="Comprehensive done">Comprehensive done</option>
                                         <option value="Pre-submission done">Pre-submission done</option>
                                         <option value="Thesis submitted">Thesis submitted</option>
                                         <option value="Awarded">Awarded</option>
+                                        <option value="Ongoing">Ongoing</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block mb-2">Status Date </label>
+                                    {/* <label className="block mb-2">Status Date </label> */}
+                                    <label className="block mb-2">Completion Year </label>
                                     <input
-                                        type="date"
+                                        type="text"
                                         value={student.statusDate}
                                         onChange={(e) => {
                                             const updated = [...formData.phdSupervision];
                                             updated[index] = { ...student, statusDate: e.target.value };
                                             setFormData({ ...formData, phdSupervision: updated });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                         required
                                     />
                                 </div>
                             </div>
                         </div>
                     ))}
-                    <button
+                    {/* <button
                         type="button"
                         onClick={handleAddPhDStudent}
                         className="w-full p-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-600"
                     >
                         + Add PhD Student
-                    </button>
+                    </button> */}
                 </section>
 
                 {/* Journal Papers Section */}
@@ -615,7 +710,8 @@ export default function Step3Page() {
                                             updated[index] = { ...paper, authors: e.target.value };
                                             setFormData({ ...formData, journalPapers: updated });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                         required
                                     />
                                 </div>
@@ -629,7 +725,8 @@ export default function Step3Page() {
                                             updated[index] = { ...paper, title: e.target.value };
                                             setFormData({ ...formData, journalPapers: updated });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                         required
                                     />
                                 </div>
@@ -643,7 +740,8 @@ export default function Step3Page() {
                                             updated[index] = { ...paper, journal: e.target.value };
                                             setFormData({ ...formData, journalPapers: updated });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                         required
                                     />
                                 </div>
@@ -657,7 +755,8 @@ export default function Step3Page() {
                                             updated[index] = { ...paper, volume: e.target.value };
                                             setFormData({ ...formData, journalPapers: updated });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                     />
                                 </div>
                                 <div>
@@ -670,7 +769,8 @@ export default function Step3Page() {
                                             updated[index] = { ...paper, year: e.target.value };
                                             setFormData({ ...formData, journalPapers: updated });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                     />
                                 </div>
                                 <div>
@@ -683,7 +783,8 @@ export default function Step3Page() {
                                             updated[index] = { ...paper, pages: e.target.value };
                                             setFormData({ ...formData, journalPapers: updated });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                     />
                                 </div>
                                 <div>
@@ -699,6 +800,7 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             setFormData({ ...formData, journalPapers: updated });
                                         }}
                                         className="w-full p-2 border rounded"
+                                        
                                     >
                                         <option value="Q1">Q1</option>
                                         <option value="Q2">Q2</option>
@@ -718,7 +820,8 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...paper, publicationDate: e.target.value };
                                             setFormData({ ...formData, journalPapers: updated });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                     />
                                 </div>
                                 <div>
@@ -744,19 +847,20 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...paper, doi: e.target.value };
                                             setFormData({ ...formData, journalPapers: updated });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                     />
                                 </div>
                             </div>
                         </div>
                     ))}
-                    <button
+                    {/* <button
                         type="button"
                         onClick={handleAddJournalPaper}
                         className="w-full p-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-600"
                     >
                         + Add Journal Paper
-                    </button>
+                    </button> */}
                 </section>
 
                 {/* Conference Papers Section */}
@@ -782,7 +886,8 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...paper, authors: e.target.value };
                                             setFormData({ ...formData, conferencePapers: updated });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                         required
                                     />
                                 </div>
@@ -796,7 +901,8 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...paper, title: e.target.value };
                                             setFormData({ ...formData, conferencePapers: updated });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                         required
                                     />
                                 </div>
@@ -810,7 +916,8 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...paper, conference: e.target.value };
                                             setFormData({ ...formData, conferencePapers: updated });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                         required
                                     />
                                 </div>
@@ -824,7 +931,8 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...paper, location: e.target.value };
                                             setFormData({ ...formData, conferencePapers: updated });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                     />
                                 </div>
                                 <div>
@@ -837,7 +945,8 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...paper, year: e.target.value };
                                             setFormData({ ...formData, conferencePapers: updated });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                     />
                                 </div>
                                 <div>
@@ -850,7 +959,8 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...paper, pages: e.target.value };
                                             setFormData({ ...formData, conferencePapers: updated });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                     />
                                 </div>
                                 <div>
@@ -879,7 +989,8 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...paper, foreignAuthor: e.target.value };
                                             setFormData({ ...formData, conferencePapers: updated });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                     />
                                 </div>
                                 <div>
@@ -892,7 +1003,7 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...paper, studentInvolved: e.target.value };
                                             setFormData({ ...formData, conferencePapers: updated });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
                                     />
                                 </div>
                                 <div>
@@ -905,19 +1016,21 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...paper, doi: e.target.value };
                                             setFormData({ ...formData, conferencePapers: updated });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                     />
+                                    
                                 </div>
                             </div>
                         </div>
                     ))}
-                    <button
+                    {/* <button
                         type="button"
                         onClick={handleAddConferencePaper}
                         className="w-full p-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-600"
                     >
                         + Add Conference Paper
-                    </button>
+                    </button> */}
                 </section>
 
                 {/* Books Section */}
@@ -944,8 +1057,9 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...book, title: e.target.value };
                                             setFormData({ ...formData, books: { ...formData.books, textbooks: updated } });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
                                         required
+                                        disabled={true}
                                     />
                                 </div>
                                 <div>
@@ -958,8 +1072,9 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...book, authors: e.target.value };
                                             setFormData({ ...formData, books: { ...formData.books, textbooks: updated } });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
                                         required
+                                        disabled={true}
                                     />
                                 </div>
                                 <div>
@@ -972,7 +1087,8 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...book, publisher: e.target.value };
                                             setFormData({ ...formData, books: { ...formData.books, textbooks: updated } });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                     />
                                 </div>
                                 <div>
@@ -985,7 +1101,8 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...book, isbn: e.target.value };
                                             setFormData({ ...formData, books: { ...formData.books, textbooks: updated } });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                     />
                                 </div>
                                 <div>
@@ -998,7 +1115,8 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...book, year: e.target.value };
                                             setFormData({ ...formData, books: { ...formData.books, textbooks: updated } });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                     />
                                 </div>
                                 <div>
@@ -1012,6 +1130,7 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             setFormData({ ...formData, books: { ...formData.books, textbooks: updated } });
                                         }}
                                         className="w-full p-2 border rounded"
+                                        
                                     />
                                 </div>
                                 <div>
@@ -1024,19 +1143,20 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...book, doi: e.target.value };
                                             setFormData({ ...formData, books: { ...formData.books, textbooks: updated } });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                     />
                                 </div>
                             </div>
                         </div>
                     ))}
-                    <button
+                    {/* <button
                         type="button"
                         onClick={handleAddTextBook}
                         className="w-full p-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-600"
                     >
                         + Add Textbook
-                    </button>
+                    </button> */}
 
                     <h3 className="text-lg font-medium mb-3 mt-6">Edited Books</h3>
                     {formData.books.editedBooks.map((book, index) => (
@@ -1059,7 +1179,8 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...book, title: e.target.value };
                                             setFormData({ ...formData, books: { ...formData.books, editedBooks: updated } });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                         required
                                     />
                                 </div>
@@ -1073,8 +1194,9 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...book, editors: e.target.value };
                                             setFormData({ ...formData, books: { ...formData.books, editedBooks: updated } });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
                                         required
+                                        disabled={true}
                                     />
                                 </div>
                                 <div>
@@ -1087,7 +1209,8 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...book, publisher: e.target.value };
                                             setFormData({ ...formData, books: { ...formData.books, editedBooks: updated } });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                     />
                                 </div>
                                 <div>
@@ -1100,7 +1223,8 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...book, isbn: e.target.value };
                                             setFormData({ ...formData, books: { ...formData.books, editedBooks: updated } });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                     />
                                 </div>
                                 <div>
@@ -1113,7 +1237,9 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...book, year: e.target.value };
                                             setFormData({ ...formData, books: { ...formData.books, editedBooks: updated } });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
+                                    
                                     />
                                 </div>
                                 <div>
@@ -1126,7 +1252,8 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...book, scopusIndexed: e.target.checked };
                                             setFormData({ ...formData, books: { ...formData.books, editedBooks: updated } });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded "
+                                        
                                     />
                                 </div>
                                 <div>
@@ -1139,19 +1266,20 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...book, doi: e.target.value };
                                             setFormData({ ...formData, books: { ...formData.books, editedBooks: updated } });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                     />
                                 </div>
                             </div>
                         </div>
                     ))}
-                    <button
+                    {/* <button
                         type="button"
                         onClick={handleAddEditedBook}
                         className="w-full p-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-600"
                     >
                         + Add Edited Book
-                    </button>
+                    </button> */}
 
                     <h3 className="text-lg font-medium mb-3 mt-6">Book Chapters</h3>
                     {formData.books.chapters.map((chapter, index) => (
@@ -1174,7 +1302,8 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...chapter, authors: e.target.value };
                                             setFormData({ ...formData, books: { ...formData.books, chapters: updated } });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                         required
                                     />
                                 </div>
@@ -1188,7 +1317,8 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...chapter, chapterTitle: e.target.value };
                                             setFormData({ ...formData, books: { ...formData.books, chapters: updated } });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                         required
                                     />
                                 </div>
@@ -1202,7 +1332,8 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...chapter, bookTitle: e.target.value };
                                             setFormData({ ...formData, books: { ...formData.books, chapters: updated } });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                     />
                                 </div>
                                 <div>
@@ -1215,7 +1346,8 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...chapter, pages: e.target.value };
                                             setFormData({ ...formData, books: { ...formData.books, chapters: updated } });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                     />
                                 </div>
                                 <div>
@@ -1228,7 +1360,8 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...chapter, publisher: e.target.value };
                                             setFormData({ ...formData, books: { ...formData.books, chapters: updated } });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                     />
                                 </div>
                                 <div>
@@ -1241,7 +1374,8 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...chapter, isbn: e.target.value };
                                             setFormData({ ...formData, books: { ...formData.books, chapters: updated } });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                     />
                                 </div>
                                 <div>
@@ -1254,7 +1388,8 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...chapter, year: e.target.value };
                                             setFormData({ ...formData, books: { ...formData.books, chapters: updated } });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                     />
                                 </div>
                                 <div>
@@ -1280,19 +1415,20 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...chapter, doi: e.target.value };
                                             setFormData({ ...formData, books: { ...formData.books, chapters: updated } });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                     />
                                 </div>
                             </div>
                         </div>
                     ))}
-                    <button
+                    {/* <button
                         type="button"
                         onClick={handleAddBookChapter}
                         className="w-full p-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-600"
                     >
                         + Add Book Chapter
-                    </button>
+                    </button> */}
                 </section>
 
                 <div className="flex justify-between mt-6">

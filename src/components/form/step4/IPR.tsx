@@ -56,8 +56,9 @@ export const IPR = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...item, title: e.target.value };
                                     setFormData({ ...formData, ipr: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
                                 required
+                                disabled={true}
                             />
                         </div>
                         <div>
@@ -69,8 +70,9 @@ export const IPR = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...item, type: e.target.value as 'Patent' | 'Design' | 'Copyright' };
                                     setFormData({ ...formData, ipr: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
                                 required
+                                disabled={true}
                             >
                                 <option value="Patent">Patent</option>
                                 <option value="Design">Design</option>
@@ -87,8 +89,9 @@ export const IPR = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...item, registrationDate: e.target.value };
                                     setFormData({ ...formData, ipr: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
                                 required
+                                disabled={true}
                             />
                         </div>
                         <div>
@@ -101,7 +104,8 @@ export const IPR = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...item, publicationDate: e.target.value };
                                     setFormData({ ...formData, ipr: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                             />
                         </div>
                         <div>
@@ -114,7 +118,8 @@ export const IPR = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...item, grantDate: e.target.value };
                                     setFormData({ ...formData, ipr: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                             />
                         </div>
                         <div>
@@ -127,7 +132,8 @@ export const IPR = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...item, grantNumber: e.target.value };
                                     setFormData({ ...formData, ipr: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                             />
                         </div>
                         <div>
@@ -140,7 +146,8 @@ export const IPR = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...item, applicant: e.target.value };
                                     setFormData({ ...formData, ipr: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                                 required
                             />
                         </div>
@@ -154,8 +161,9 @@ export const IPR = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...item, inventors: e.target.value };
                                     setFormData({ ...formData, ipr: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
                                 required
+                                disabled={true}
                             />
                         </div>
                     </div>
@@ -171,13 +179,13 @@ export const IPR = ({ formData, setFormData }: Props) => {
                     </button>
                 </div>
             ))}
-            <button
+            {/* <button
                 type="button"
                 onClick={handleAddIPR}
                 className="w-full p-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-600"
             >
                 + Add IPR
-            </button>
+            </button> */}
         </section>
     );
 }; 

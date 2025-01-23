@@ -82,7 +82,6 @@ const Step4Page = () => {
                 const data = response.ok ? await response.json() : null;
                 if (data && Object.keys(data).length > 0) {
                     setFormData(data);
-                } else {
                     const facultyData = await fetchFacultyData(session?.user?.email || '');
                     const sponsoredProjects = facultyData?.sponsored_projects?.map(project => ({
                         title: project.project_title,
@@ -100,15 +99,15 @@ const Step4Page = () => {
                         fundingAgency: project.funding_agency,
                         financialOutlay: parseFloat(project.financial_outlay),
                         startDate: project.start_date.split("T")[0],
-                        period: `${project.start_date} - ${project.end_date}`,
+                        period: project.period_months,
                         investigators: project.investigators,
                         status: project.status || 'In Progress',
                     })) || [];
                     const ipr = facultyData?.ipr?.map(iprItem => ({
                         title: iprItem.title,
-                        registrationDate: iprItem.registration_date || '',
-                        publicationDate: iprItem.publication_date || '',
-                        grantDate: iprItem.grant_date || '',
+                        registrationDate: iprItem.registration_date.split("T")[0] || '',
+                        publicationDate: iprItem.publication_date.split('T')[0] || '',
+                        grantDate: iprItem.grant_date.split("T")[0] || '',
                         grantNumber: iprItem.grant_no || iprItem.patent_number,
                         applicant: iprItem.applicant_name || '',
                         inventors: iprItem.inventors || '',
@@ -117,7 +116,105 @@ const Step4Page = () => {
                     const startups = facultyData?.startups?.map(startup => ({
                         name: startup.startup_name,
                         incubationPlace: startup.incubation_place || '',
-                        registrationDate: startup.registration_date || '',
+                        registrationDate: startup.registration_date.split("T")[0] || '',
+                        owners: startup.owners_founders || '',
+                        annualIncome: parseFloat(startup.annual_income) || 0,
+                        panNumber: startup.pan_number || '',
+                    })) || [];
+                    const internships = facultyData?.internships?.map(internship => ({
+                        studentName: internship.student_name || '',
+                        qualification: internship.qualification || '',
+                        affiliation: internship.affiliation || '',
+                        projectTitle: internship.project_title || '',
+                        startDate: internship.start_date.split("T")[0],
+                        endDate: internship.end_date.split("T")[0],
+                        isExternal: internship.student_type === 'External',
+                    })) || [];
+                    const industryLabs = [];
+                    const calculatedMarks = formData?.calculatedMarks || 0;
+                    const journalPapers = facultyData?.journal_papers?.map(paper => ({
+                        authors: paper.authors,
+                        title: paper.title,
+                        journalName: paper.journal_name,
+                        volume: paper.volume,
+                        publicationYear: paper.publication_year,
+                        pages: paper.pages,
+                        journalQuartile: paper.journal_quartile,
+                        publicationDate: paper.publication_date,
+                        studentInvolved: paper.student_involved,
+                        studentDetails: paper.student_details,
+                        doiUrl: paper.doi_url,
+                    })) || [];
+                    const teachingEngagement = facultyData?.teaching_engagement?.map(teaching => ({
+                        semester: teaching.semester,
+                        level: teaching.level,
+                        courseNumber: teaching.course_number,
+                        courseTitle: teaching.course_title,
+                        courseType: teaching.course_type,
+                        studentCount: teaching.student_count,
+                        lectures: teaching.lectures,
+                        tutorials: teaching.tutorials,
+                        practicals: teaching.practicals,
+                        totalTheory: teaching.total_theory,
+                        labHours: teaching.lab_hours,
+                        yearsOffered: teaching.years_offered,
+                    })) || [];
+                    const workExperience = facultyData?.work_experience?.map(work => ({
+                        workExperience: work.work_experiences,
+                        institute: work.institute,
+                        startDate: work.start_date.split("T")[0],
+                        endDate: work.end_date.split("T")[0],
+                    })) || [];
+                    setFormData({
+                        sponsoredProjects,
+                        consultancyProjects,
+                        ipr,
+                        startups,
+                        internships,
+                        industryLabs,
+                        calculatedMarks,
+                        journalPapers,
+                        teachingEngagement,
+                        workExperience,
+                    });
+
+                }
+                 else {
+                    const facultyData = await fetchFacultyData(session?.user?.email || '');
+                    const sponsoredProjects = facultyData?.sponsored_projects?.map(project => ({
+                        title: project.project_title,
+                        fundingAgency: project.funding_agency,
+                        financialOutlay: parseFloat(project.financial_outlay),
+                        startDate: project.start_date.split("T")[0],
+                        endDate: project.end_date.split("T")[0],
+                        investigators: project.investigators,
+                        piInstitute: project.pi_institute || '',
+                        status: project.status || 'In Progress',
+                        fundReceived: parseFloat(project.funds_received) || 0,
+                    })) || [];
+                    const consultancyProjects = facultyData?.consultancy_projects?.map(project => ({
+                        title: project.project_title,
+                        fundingAgency: project.funding_agency,
+                        financialOutlay: parseFloat(project.financial_outlay),
+                        startDate: project.start_date.split("T")[0],
+                        period: project.period_months,
+                        investigators: project.investigators,
+                        status: project.status || 'In Progress',
+                    })) || [];
+                    const ipr = facultyData?.ipr?.map(iprItem => ({
+                        title: iprItem.title,
+                        registrationDate: iprItem.registration_date.split("T")[0] || '',
+                        publicationDate: iprItem.publication_date.split('T')[0] || '',
+                        grantDate: iprItem.grant_date.split("T")[0] || '',
+                        grantNumber: iprItem.grant_no || iprItem.patent_number,
+                        applicant: iprItem.applicant_name || '',
+                        inventors: iprItem.inventors || '',
+                        type: iprItem.type as 'Patent' | 'Design' | 'Copyright',
+                    })) || [];
+                    const startups = facultyData?.startups?.map(startup => ({
+                        name: startup.startup_name,
+                        incubationPlace: startup.incubation_place || '',
+                        registrationDate: startup.registration_date.split("T")[0] || '',
                         owners: startup.owners_founders || '',
                         annualIncome: parseFloat(startup.annual_income) || 0,
                         panNumber: startup.pan_number || '',

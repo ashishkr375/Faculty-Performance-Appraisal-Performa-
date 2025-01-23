@@ -7,8 +7,8 @@ import type { TeachingCourse } from '@/types/form';
 import Loading from '@/app/loading';
 import { fetchFacultyData } from '@/lib/fetchFacultyData';
 
-const COURSE_LEVELS = ['UG I', 'UG II', 'PG', 'Ph.D.'] as const;
-const SEMESTERS = ['Spring', 'Summer', 'Autumn'] as const;
+const COURSE_LEVELS = ['UG', 'PG', 'PhD','Undergraduate','Postgraduate'] as const;
+const SEMESTERS = ['Spring', 'Summer', 'Autumn',"Fall","1","2","3","4","5","6","7","8"] as const;
 
 // Add descriptions for each section
 const SECTION_DESCRIPTIONS = {
@@ -140,6 +140,67 @@ export default function Step2Page() {
                         ...prevData,
                         ...existingData,
                     }));
+                    const facultyData = await fetchFacultyData(session?.user?.email || '');
+                    let courses = [];
+                    if (facultyData?.teaching_engagement) {
+                        courses = facultyData.teaching_engagement.map((engagement) => ({
+                            semester: engagement.semester,
+                            courseNo: engagement.course_number,
+                            title: engagement.course_title,
+                            studentCount: engagement.student_count,
+                            academicYear: engagement.academic_year,
+                            teachingHoursPerWeek: engagement.teaching_hours_per_week,
+                            level: engagement.level,
+                            type: engagement.course_type,
+                            weeklyLoadL: engagement.lectures,
+                            weeklyLoadT: engagement.tutorials,
+                            weeklyLoadP: engagement.practicals,
+                            totalTheoryHours: engagement.total_theory,
+                            totalLabHours: engagement.lab_hours,
+                            yearsOffered: engagement.years_offered,
+                        }));
+                    }
+
+                    const projectSupervision = { btech: [], mtech: [] };
+                    if (facultyData?.project_supervision) {
+                        facultyData.project_supervision.forEach((project) => {
+                            const projectData = {
+                                title: project.project_title,
+                                students: project.student_details,
+                                internalSupervisors: project.internal_supervisors,
+                                externalSupervisors: project.external_supervisors,
+                            };
+
+                            if (project.category === 'Undergraduate') {
+                                projectSupervision.btech.push(projectData);
+                            } else if (project.category === 'Postgraduate') {
+                                projectSupervision.mtech.push(projectData);
+                            }
+                        });
+                    }
+
+                    let workshopsConferences = [];
+                    if (facultyData?.workshops_conferences) {
+                        workshopsConferences = facultyData.workshops_conferences.map((event) => ({
+                            id: event.id,
+                            email: event.email,
+                            event_type: event.event_type,
+                            role: event.role,
+                            event_name: event.event_name,
+                            sponsored_by: event.sponsored_by,
+                            start_date: event.start_date,
+                            end_date: event.end_date,
+                            participants_count: event.participants_count,
+                        }));
+                    }
+
+                    setFormData(prevData => ({
+                        ...prevData,
+                        teachingEngagement: { courses:courses },
+                        projectSupervision,
+                        workshopsConferences,
+                    }));
+
                 } else {
                     const facultyData = await fetchFacultyData(session?.user?.email || '');
                     let courses = [];
@@ -396,7 +457,7 @@ export default function Step2Page() {
                 </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6" >
                 {formData.teachingEngagement.courses.map((course, index) => (
                     <div key={index} className="border p-4 rounded-lg bg-white shadow-sm">
                         <div className="grid grid-cols-2 gap-4 mb-4">
@@ -405,7 +466,8 @@ export default function Step2Page() {
                                 <select
                                     value={course.semester}
                                     onChange={(e) => handleCourseChange(index, 'semester', e.target.value)}
-                                    className="w-full p-2 border rounded"
+                                    className="w-full p-2 border rounded bg-gray-200"
+                                    disabled={true}
                                     required
                                 >
                                     <option value="">Select Semester</option>
@@ -421,8 +483,9 @@ export default function Step2Page() {
                                 <select
                                     value={course.level}
                                     onChange={(e) => handleCourseChange(index, 'level', e.target.value)}
-                                    className="w-full p-2 border rounded"
+                                    className="w-full p-2 border rounded bg-gray-200"
                                     required
+                                    disabled={true}
                                 >
                                     <option value="">Select Level</option>
                                     {COURSE_LEVELS.map((level) => (
@@ -438,9 +501,10 @@ export default function Step2Page() {
                                     type="text"
                                     value={course.courseNo}
                                     onChange={(e) => handleCourseChange(index, 'courseNo', e.target.value)}
-                                    className="w-full p-2 border rounded"
+                                    className="w-full p-2 border rounded bg-gray-200"
                                     placeholder="e.g., CS101"
                                     required
+                                    disabled={true}
                                 />
                             </div>
                             <div>
@@ -449,9 +513,10 @@ export default function Step2Page() {
                                     type="text"
                                     value={course.title}
                                     onChange={(e) => handleCourseChange(index, 'title', e.target.value)}
-                                    className="w-full p-2 border rounded"
+                                    className="w-full p-2 border rounded bg-gray-200"
                                     placeholder="e.g., Introduction to Programming"
                                     required
+                                    disabled={true}
                                 />
                             </div>
                             <div>
@@ -459,7 +524,8 @@ export default function Step2Page() {
                                 <select
                                     value={course.type}
                                     onChange={(e) => handleCourseChange(index, 'type', e.target.value)}
-                                    className="w-full p-2 border rounded"
+                                    className="w-full p-2 border rounded bg-gray-200"
+                                    disabled={true}
                                 >
                                     <option value="Core">Core</option>
                                     <option value="Elective">Elective</option>
@@ -471,8 +537,9 @@ export default function Step2Page() {
                                     type="number"
                                     value={course.studentCount}
                                     onChange={(e) => handleCourseChange(index, 'studentCount', parseInt(e.target.value))}
-                                    className="w-full p-2 border rounded"
+                                    className="w-full p-2 border rounded bg-gray-200"
                                     required
+                                    disabled={true}
                                 />
                             </div>
                             <div>
@@ -482,25 +549,28 @@ export default function Step2Page() {
                                         type="number"
                                         value={course.weeklyLoadL}
                                         onChange={(e) => handleCourseChange(index, 'weeklyLoadL', parseInt(e.target.value))}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
                                         placeholder="L"
                                         required
+                                        disabled={true}
                                     />
                                     <input
                                         type="number"
                                         value={course.weeklyLoadT}
                                         onChange={(e) => handleCourseChange(index, 'weeklyLoadT', parseInt(e.target.value))}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
                                         placeholder="T"
                                         required
+                                        disabled={true}
                                     />
                                     <input
                                         type="number"
                                         value={course.weeklyLoadP}
                                         onChange={(e) => handleCourseChange(index, 'weeklyLoadP', parseInt(e.target.value))}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
                                         placeholder="P"
                                         required
+                                        disabled={true}
                                     />
                                 </div>
                             </div>
@@ -511,28 +581,31 @@ export default function Step2Page() {
                                         type="number"
                                         value={course.totalTheoryHours}
                                         onChange={(e) => handleCourseChange(index, 'totalTheoryHours', parseInt(e.target.value))}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
                                         placeholder="Theory"
                                         required
+                                        disabled={true}
                                     />
                                     <input
                                         type="number"
                                         value={course.totalLabHours}
                                         onChange={(e) => handleCourseChange(index, 'totalLabHours', parseInt(e.target.value))}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
                                         placeholder="Lab"
                                         required
+                                        disabled={true}
                                     />
                                 </div>
                             </div>
                             <div>
                                 <label className="block mb-2">Years Offered</label>
                                 <input
-                                    type="number"
+                                    type="text"
                                     value={course.yearsOffered}
                                     onChange={(e) => handleCourseChange(index, 'yearsOffered', parseInt(e.target.value))}
-                                    className="w-full p-2 border rounded"
+                                    className="w-full p-2 border rounded bg-gray-200"
                                     required
+                                    disabled={true}
                                 />
                             </div>
                         </div>
@@ -546,13 +619,13 @@ export default function Step2Page() {
                     </div>
                 ))}
 
-                <button
+                {/* <button
                     type="button"
                     onClick={handleAddCourse}
                     className="w-full p-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-600"
                 >
                     + Add Course
-                </button>
+                </button> */}
 
                 {/* Innovations Section */}
                 <div className="mt-8">
@@ -699,8 +772,9 @@ export default function Step2Page() {
                                                     }
                                                 });
                                             }}
-                                            className="w-full p-2 border rounded"
+                                            className="w-full p-2 border rounded bg-gray-200"
                                             required
+                                            disabled={true}
                                         />
                                     </div>
                                     <div>
@@ -719,8 +793,9 @@ export default function Step2Page() {
                                                     }
                                                 });
                                             }}
-                                            className="w-full p-2 border rounded"
+                                            className="w-full p-2 border rounded bg-gray-200"
                                             required
+                                            disabled={true}
                                         />
                                     </div>
                                     <div>
@@ -739,7 +814,8 @@ export default function Step2Page() {
                                                     }
                                                 });
                                             }}
-                                            className="w-full p-2 border rounded"
+                                            className="w-full p-2 border rounded bg-gray-200"
+                                            disabled={true}
                                         />
                                     </div>
                                     <div>
@@ -758,7 +834,8 @@ export default function Step2Page() {
                                                     }
                                                 });
                                             }}
-                                            className="w-full p-2 border rounded"
+                                            className="w-full p-2 border rounded bg-gray-200"
+                                            disabled={true}
                                         />
                                     </div>
                                 </div>
@@ -780,13 +857,13 @@ export default function Step2Page() {
                                 </button>
                             </div>
                         ))}
-                        <button
+                        {/* <button
                             type="button"
                             onClick={handleAddBTechProject}
                             className="w-full p-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-600"
                         >
                             + Add B.Tech Project
-                        </button>
+                        </button> */}
                     </div>
 
                     {/* M.Tech/MSc/MCA/MBA Projects */}
@@ -812,7 +889,8 @@ export default function Step2Page() {
                                                     }
                                                 });
                                             }}
-                                            className="w-full p-2 border rounded"
+                                            className="w-full p-2 border rounded bg-gray-200"
+                                            disabled={true}
                                             required
                                         />
                                     </div>
@@ -832,7 +910,8 @@ export default function Step2Page() {
                                                     }
                                                 });
                                             }}
-                                            className="w-full p-2 border rounded"
+                                            className="w-full p-2 border rounded bg-gray-200"
+                                            disabled={true}
                                             required
                                         />
                                     </div>
@@ -852,7 +931,8 @@ export default function Step2Page() {
                                                     }
                                                 });
                                             }}
-                                            className="w-full p-2 border rounded"
+                                            className="w-full p-2 border rounded bg-gray-200"
+                                            disabled={true}
                                         />
                                     </div>
                                     <div>
@@ -871,7 +951,8 @@ export default function Step2Page() {
                                                     }
                                                 });
                                             }}
-                                            className="w-full p-2 border rounded"
+                                            className="w-full p-2 border rounded bg-gray-200"
+                                            disabled={true}
                                         />
                                     </div>
                                 </div>
@@ -893,13 +974,13 @@ export default function Step2Page() {
                                 </button>
                             </div>
                         ))}
-                        <button
+                        {/* <button
                             type="button"
                             onClick={handleAddMTechProject}
                             className="w-full p-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-600"
                         >
                             + Add M.Tech/MSc/MCA/MBA Project
-                        </button>
+                        </button> */}
                     </div>
                 </div>
 

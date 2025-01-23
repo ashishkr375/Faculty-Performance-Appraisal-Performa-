@@ -44,9 +44,10 @@ export const InstituteLevelActivities = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...activity, role: e.target.value };
                                     setFormData({ ...formData, instituteLevelActivities: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
                                 placeholder="e.g., HOD, Dean, Warden"
                                 required
+                                disabled={true}
                             />
                         </div>
                         <div>
@@ -59,7 +60,8 @@ export const InstituteLevelActivities = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...activity, duration: e.target.value };
                                     setFormData({ ...formData, instituteLevelActivities: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                                 placeholder="e.g., Jan 2023 - June 2023"
                                 required
                             />
@@ -94,14 +96,14 @@ export const InstituteLevelActivities = ({ formData, setFormData }: Props) => {
                     </button>
                 </div>
             ))}
-            <button
+            {/* <button
                 type="button"
                 onClick={handleAddActivity}
                 className="w-full p-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-600"
 
             >
                 + Add Institute Level Activity
-            </button>
+            </button> */}
         </section>
     );
 }; 

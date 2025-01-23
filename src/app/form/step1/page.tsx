@@ -14,7 +14,7 @@ interface BasicInfo {
     jointFaculty: string;
     jointFacultyDepartment: string;
     appraisalPeriodStart: string;
-    appraisalPeriodEnd: string;
+    // appraisalPeriodEnd: string;
 }
 
 export default function Step1Page() {
@@ -27,7 +27,7 @@ export default function Step1Page() {
         jointFaculty: '',
         jointFacultyDepartment: '',
         appraisalPeriodStart: '',
-        appraisalPeriodEnd: ''
+        // appraisalPeriodEnd: ''
     });
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
@@ -55,7 +55,7 @@ export default function Step1Page() {
                         ...prevData,
                         ...existingData,
                         appraisalPeriodStart: existingData.appraisalPeriodStart || '',
-                        appraisalPeriodEnd: existingData.appraisalPeriodEnd || ''
+                        // appraisalPeriodEnd: existingData.appraisalPeriodEnd || ''
                     }));
                 } else {
                     console.log('No existing data, fetching from faculty API');
@@ -70,7 +70,7 @@ export default function Step1Page() {
                             jointFaculty: '',
                             jointFacultyDepartment: '',
                             appraisalPeriodStart: '',
-                            appraisalPeriodEnd: ''
+                            // appraisalPeriodEnd: ''
                         }));
                     }
                 }
@@ -109,7 +109,7 @@ export default function Step1Page() {
                 jointFaculty: formData.jointFaculty || '',
                 jointFacultyDepartment: formData.jointFacultyDepartment || '',
                 appraisalPeriodStart: formData.appraisalPeriodStart,
-                appraisalPeriodEnd: formData.appraisalPeriodEnd
+                // appraisalPeriodEnd: formData.appraisalPeriodEnd
             };
 
             const response = await fetch('/api/save-part', {
@@ -218,7 +218,8 @@ export default function Step1Page() {
                                 />
                             </div>
                             <div>
-                                <label className="block mb-2">Appraisal Period Start Year</label>
+                                {/* <label className="block mb-2">Appraisal Period Start Year</label> */}
+                                <label className="block mb-2">For which year you are applying for Faculty Appraisal Form</label>
                                 <select
                                     value={getYearFromDate(formData.appraisalPeriodStart)}
                                     onChange={(e) => {
@@ -242,7 +243,7 @@ export default function Step1Page() {
                                     ))}
                                 </select>
                             </div>
-                            <div>
+                            {/* <div>
                                 <label className="block mb-2">Appraisal Period End Year</label>
                                 <select
                                     value={getYearFromDate(formData.appraisalPeriodEnd)}
@@ -266,10 +267,11 @@ export default function Step1Page() {
                                         </option>
                                     ))}
                                 </select>
-                            </div>
+                            </div> */}
                         </div>
                         <p className="text-center mb-2">
-                            Appraisal Period: January 01, {getYearFromDate(formData.appraisalPeriodStart)} to December 31, {getYearFromDate(formData.appraisalPeriodEnd)}
+                            {/* Appraisal Period: January 01, {getYearFromDate(formData.appraisalPeriodStart)} to December 31, {getYearFromDate(formData.appraisalPeriodEnd)} */}
+                            Appraisal Form for the Year {getYearFromDate(formData.appraisalPeriodStart)}
                         </p>
                         <div className="flex justify-end mt-6">
                             <button

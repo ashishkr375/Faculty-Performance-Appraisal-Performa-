@@ -75,6 +75,38 @@ const Step5Page = () => {
                         ...prevData,
                         ...data,
                     }));
+                    const facultyData = await fetchFacultyData(session?.user?.email || '');
+
+                    if (facultyData) {
+                        const workshopsConferences = facultyData?.workshops_conferences?.map(workshop => ({
+                            event_type: workshop.event_type,
+                            role: workshop.role,
+                            event_name: workshop.event_name,
+                            sponsored_by: workshop.sponsored_by,
+                            start_date: workshop.start_date.split("T")[0],
+                            end_date: workshop.end_date.split("T")[0],
+                            participants_count: workshop.participants_count,
+                        })) || [];
+
+                        const organizationParticipation: OrganizationParticipation = {
+                            events: workshopsConferences.map(workshop => ({
+                                type: 'National',
+                                role: workshop.role,
+                                name: workshop.event_name,
+                                sponsor: workshop.sponsored_by,
+                                startDate: workshop.start_date.split("T")[0],
+                                endDate: workshop.end_date.split("T")[0],
+                                participants: workshop.participants_count,
+                            })),
+                            lectures:  [],
+                            onlineCourses:  [],
+                            visits:  [],
+                            outreachActivities:  [],
+                            calculatedMarks: formData?.calculatedMarks || 0,
+                        };
+
+                        setFormData(organizationParticipation);
+                    }
                 } else {
                     const facultyData = await fetchFacultyData(session?.user?.email || '');
 

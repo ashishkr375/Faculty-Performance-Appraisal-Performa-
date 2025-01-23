@@ -56,7 +56,8 @@ export const Startups = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...startup, name: e.target.value };
                                     setFormData({ ...formData, startups: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                                 required
                             />
                         </div>
@@ -70,7 +71,8 @@ export const Startups = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...startup, incubationPlace: e.target.value };
                                     setFormData({ ...formData, startups: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true} 
                                 placeholder="e.g., TBI NIT Patna"
                                 required
                             />
@@ -85,7 +87,8 @@ export const Startups = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...startup, registrationDate: e.target.value };
                                     setFormData({ ...formData, startups: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                                 required
                             />
                         </div>
@@ -99,7 +102,8 @@ export const Startups = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...startup, owners: e.target.value };
                                     setFormData({ ...formData, startups: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                                 required
                             />
                         </div>
@@ -113,7 +117,8 @@ export const Startups = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...startup, annualIncome: parseFloat(e.target.value) };
                                     setFormData({ ...formData, startups: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                                 required
                             />
                         </div>
@@ -127,7 +132,8 @@ export const Startups = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...startup, panNumber: e.target.value };
                                     setFormData({ ...formData, startups: updated });
                                 }}
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-200"
+                                disabled={true}
                                 required
                             />
                         </div>

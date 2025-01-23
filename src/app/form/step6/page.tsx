@@ -38,6 +38,13 @@ const Step6Page = () => {
         calculatedMarks: 0
     });
     const [loading, setLoading] = useState(true);
+    const formatDate = (date: string | Date) => {
+        const d = new Date(date);
+        if (isNaN(d.getTime())) {
+            return '';
+        }
+        return d.toLocaleDateString('en-CA');
+    };
 
     useEffect(() => {
         if (status === 'unauthenticated') {
@@ -56,19 +63,41 @@ const Step6Page = () => {
                         ...prevData,
                         ...existingData,
                     }));
+                    const facultyData = await fetchFacultyData(session?.user?.email || '');
+
+                    if (facultyData) {
+                        const instituteLevelActivities = facultyData?.institute_activities?.map(activity => ({
+                            role: activity.role_position,
+                            duration: `${formatDate(activity.start_date)} - ${activity.end_date === 'Continue' ? 'Continue' : formatDate(activity.end_date)}`,
+                            marks:  0,
+                        })) || [];
+
+                        const departmentLevelActivities = facultyData?.department_activities?.map(activity => ({
+                            activity: activity.activity_description,
+                            duration: `${formatDate(activity.start_date)} - ${activity.end_date === 'Continue' ? 'Continue' : formatDate(activity.end_date)}`,
+                            marks: 0,
+                        })) || [];
+
+                        const managementDevelopment: ManagementDevelopment = {
+                            instituteLevelActivities,
+                            departmentLevelActivities,
+                            calculatedMarks: formData?.calculatedMarks || 0,
+                        };
+                        setFormData(managementDevelopment);
+                    }
                 } else {
                     const facultyData = await fetchFacultyData(session?.user?.email || '');
 
                     if (facultyData) {
                         const instituteLevelActivities = facultyData?.institute_activities?.map(activity => ({
                             role: activity.role_position,
-                            duration: `${new Date(activity.start_date).toLocaleDateString()} - ${new Date(activity.end_date).toLocaleDateString()}`,
+                            duration: `${formatDate(activity.start_date)} - ${activity.end_date === 'Continue' ? 'Continue' : formatDate(activity.end_date)}`,
                             marks:  0,
                         })) || [];
 
                         const departmentLevelActivities = facultyData?.department_activities?.map(activity => ({
                             activity: activity.activity_description,
-                            duration: `${new Date(activity.start_date).toLocaleDateString()} - ${new Date(activity.end_date).toLocaleDateString()}`,
+                            duration:`${formatDate(activity.start_date)} - ${activity.end_date === 'Continue' ? 'Continue' : formatDate(activity.end_date)}`,
                             marks: 0,
                         })) || [];
 
