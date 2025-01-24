@@ -140,7 +140,10 @@ export default function Step3Page() {
                 const appraisalYear = new Date(appraisalPeriod).getFullYear();
     
                 const facultyData = await fetchFacultyData(session?.user?.email || '');
+
                 if (facultyData) {
+                    console.log(facultyData?.phd_candidates);
+
                     let phdSupervisionMarks = 0;
                     const phdSupervision = facultyData?.phd_candidates?.map(candidate => {
                         let marks = 0;
@@ -175,8 +178,8 @@ export default function Step3Page() {
                     const journalPapers = facultyData?.journal_papers?.map(paper => {
                         let marks = 0;
                         const publicationYear = new Date(paper.publication_date).getFullYear();
-    
-                        if (publicationYear >= appraisalYear) {
+                        // endYear >= appraisalYear && startYear <= appraisalYear
+                        if (publicationYear == appraisalYear) { //publicationYear>=appraisalYear
                             switch (paper.journal_quartile) {
                                 case 'Q1': marks = 4; break;
                                 case 'Q2': marks = 3; break;
@@ -217,7 +220,8 @@ export default function Step3Page() {
                     let conferencePapersMarks = 0;
                     const conferencePapers = facultyData?.conference_papers?.map(paper => {
                         const conferenceYear = new Date(paper.conference_year).getFullYear();
-                        if (conferenceYear >= appraisalYear) {
+                        // conferenceYear >= appraisalYear
+                        if (conferenceYear == appraisalYear) {
                             let marks = 0;
                             if (paper.indexing === 'SCOPUS' || paper.indexing === 'WOS') {
                                 marks = 0.5;
@@ -247,7 +251,8 @@ export default function Step3Page() {
                     const books = {
                         textbooks: facultyData?.textbooks?.map(book => {
                             const bookYear = book.year;
-                            if (bookYear >= appraisalYear) {
+                            // bookYear >= appraisalYear
+                            if (bookYear == appraisalYear) {
                                 booksMarks += 6;
                                 return {
                                     title: book.title,
@@ -266,7 +271,8 @@ export default function Step3Page() {
     
                         editedBooks: facultyData?.edited_books?.map(book => {
                             const bookYear = book.year;
-                            if (bookYear >= appraisalYear) {
+                            // bookYear >= appraisalYear
+                            if (bookYear == appraisalYear) {
                                 booksMarks += 4;
                                 return {
                                     title: book.title,
@@ -285,7 +291,8 @@ export default function Step3Page() {
     
                         chapters: facultyData?.book_chapters?.map(chapter => {
                             const chapterYear = chapter.year;
-                            if (chapterYear >= appraisalYear) {
+                            // chapterYear >= appraisalYear
+                            if (chapterYear == appraisalYear) {
                                 booksMarks += 2;
                                 return {
                                     chapterTitle: chapter.chapter_title,
@@ -566,6 +573,7 @@ export default function Step3Page() {
                                             <option value="FT">Full Time with Stipend under Institute</option>
                                             <option value="TEQIP">TEQIP</option>
                                             <option value="PT">Part Time</option>
+                                            {/* <option value="PT">pursuing phd</option> */}
                                         </select>
                                     </div>
                                 </div>
@@ -635,8 +643,9 @@ export default function Step3Page() {
                                 </div>
                                 <div>
                                     <label className="block mb-2">Current Status</label>
+                                    {/* <input type='text' value={student.status} /> */}
                                     <select
-                                        value={student.currentStatus}
+                                        value={student.status}
                                         onChange={(e) => {
                                             const updated = [...formData.phdSupervision];
                                             updated[index] = { ...student, currentStatus: e.target.value };

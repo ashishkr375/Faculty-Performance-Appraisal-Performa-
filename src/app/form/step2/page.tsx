@@ -151,7 +151,7 @@ export default function Step2Page() {
                                 const yearsOffered = engagement.years_offered.split('-');
                                 const startYear = parseInt(yearsOffered[0]);
                                 const endYear = parseInt(yearsOffered[1]);
-                                return (endYear >= appraisalYear);
+                                return (endYear >= appraisalYear && startYear <= appraisalYear);
                             })
                             .map((engagement) => ({
                                 semester: engagement.semester,
@@ -229,7 +229,7 @@ export default function Step2Page() {
                                 const yearsOffered = engagement.years_offered.split('-');
                                 const startYear = parseInt(yearsOffered[0]);
                                 const endYear = parseInt(yearsOffered[1]);
-                                return (endYear >= appraisalYear);
+                                return (endYear >= appraisalYear && startYear <= appraisalYear);
                             })
                             .map((engagement) => ({
                                 semester: engagement.semester,
@@ -256,7 +256,7 @@ export default function Step2Page() {
                             const startYear = parseInt(yearsOffered[0]);
                             const endYear = parseInt(yearsOffered[1]);
                     
-                            if (endYear >= appraisalYear)  {
+                            if (endYear >= appraisalYear && startYear <= appraisalYear)  {
                                 const projectData = {
                                     title: project.project_title,
                                     students: project.student_details,

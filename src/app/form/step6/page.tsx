@@ -69,7 +69,8 @@ const Step6Page = () => {
                             ?.filter(activity => {
                                 const endDate = new Date(activity.end_date === 'Continue' ? new Date() : activity.end_date);
                                 const endYear = endDate.getFullYear();
-                                return endYear >= appraisalYear;
+                                const startYear=new Date(activity.start_date).getFullYear()
+                                return (endYear >= appraisalYear && startYear <= appraisalYear);
                             })
                             .map(activity => {
                                 let marks = 0;
@@ -133,7 +134,8 @@ const Step6Page = () => {
                             ?.filter(activity => {
                                 const endDate = new Date(activity.end_date === 'Continue' ? new Date() : activity.end_date);
                                 const endYear = endDate.getFullYear();
-                                return endYear >= appraisalYear;
+                                const startYear=new Date(activity.start_date).getFullYear()
+                                return (endYear >= appraisalYear && startYear <= appraisalYear);
                             })
                             .map(activity => {
                                 let marks = 0.5;

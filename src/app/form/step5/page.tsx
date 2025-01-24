@@ -85,8 +85,10 @@ const Step5Page = () => {
                         const workshopsConferences = facultyData?.workshops_conferences?.map(workshop => {
                             let marks = 0;
                             const endDate = new Date(workshop.end_date);
+                            const endYear = endDate.getFullYear();
+                            const startYear = new Date(workshop.start_date).getFullYear();
     
-                            if (endDate.getFullYear() >= appraisalYear) {
+                            if (endYear >= appraisalYear && startYear <= appraisalYear) {
                                 if (workshop.event_type === 'Workshop' || workshop.event_type === 'FDP' || workshop.event_type === 'Short-Term Course') {
                                     if (workshop.role === 'Coordinator' || workshop.role === 'Convener') {
                                         marks = 2; 
@@ -123,7 +125,7 @@ const Step5Page = () => {
                                     marks,
                                 };
                             }
-                        }) || [];
+                        }).filter(workshop => workshop !== undefined) || [];
     
                         const organizationParticipation = {
                             events: workshopsConferences.map(workshop => ({
@@ -131,8 +133,8 @@ const Step5Page = () => {
                                 role: workshop.role,
                                 name: workshop.event_name,
                                 sponsor: workshop.sponsored_by,
-                                startDate: workshop.start_date.split("T")[0],
-                                endDate: workshop.end_date.split("T")[0],
+                                startDate: workshop.start_date,
+                                endDate: workshop.end_date,
                                 participants: workshop.participants_count,
                             })),
                             lectures: existingData?.lectures || [],
@@ -153,12 +155,13 @@ const Step5Page = () => {
                 }
             } catch (e) {
                 console.log(e);
+            } finally {
+                setLoading(false);
             }
         };
     
         fetchSavedData();
-        setLoading(false)
-    }, [status, router, session?.user?.email]);   
+    }, [status, router, session?.user?.email]);
 
 
     useEffect(() => {
