@@ -148,9 +148,16 @@ export default function Step2Page() {
                     if (facultyData?.teaching_engagement) {
                         courses = facultyData.teaching_engagement
                             .filter((engagement) => {
-                                const yearsOffered = engagement.years_offered.split('-');
-                                const startYear = parseInt(yearsOffered[0]);
-                                const endYear = parseInt(yearsOffered[1]);
+                                const yearsOffered=engagement.years_offered;
+                                let startYear,endYear;
+                                if (yearsOffered.includes('-')) {
+                                    const yearsArray = yearsOffered.split('-');
+                                    startYear = parseInt(yearsArray[0]);
+                                    endYear = parseInt(yearsArray[1]);
+                                } else {
+                                    startYear = parseInt(yearsOffered);
+                                    endYear = startYear;
+                                }
                                 return (endYear >= appraisalYear && startYear <= appraisalYear);
                             })
                             .map((engagement) => ({
@@ -226,9 +233,16 @@ export default function Step2Page() {
                     if (facultyData?.teaching_engagement) {
                         courses = facultyData.teaching_engagement
                             .filter((engagement) => {
-                                const yearsOffered = engagement.years_offered.split('-');
-                                const startYear = parseInt(yearsOffered[0]);
-                                const endYear = parseInt(yearsOffered[1]);
+                                const yearsOffered=engagement.years_offered;
+                                let startYear,endYear;
+                                if (yearsOffered.includes('-')) {
+                                    const yearsArray = yearsOffered.split('-');
+                                    startYear = parseInt(yearsArray[0]);
+                                    endYear = parseInt(yearsArray[1]);
+                                } else {
+                                    startYear = parseInt(yearsOffered);
+                                    endYear = startYear;
+                                }
                                 return (endYear >= appraisalYear && startYear <= appraisalYear);
                             })
                             .map((engagement) => ({
