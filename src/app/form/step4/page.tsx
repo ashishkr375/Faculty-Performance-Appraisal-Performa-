@@ -94,8 +94,9 @@ const Step4Page = () => {
                 if (facultyData) {
                     const sponsoredProjects = facultyData?.sponsored_projects?.map(project => {
                         const projectYear = new Date(project.end_date).getFullYear();
-                        if (projectYear < appraisalYear) return null;
-    
+                        const startYear=projectYear;
+                        const endYear=new Date(project.end_date).getFullYear();
+                        if (!(endYear >= appraisalYear && startYear <= appraisalYear)) return null;
                         let marks = 0;
                         if (project.funding_agency !== 'TEQIP' && project.funding_agency !== 'Institute grant') {
                             marks += 1;
@@ -125,7 +126,9 @@ const Step4Page = () => {
     
                     const consultancyProjects = facultyData?.consultancy_projects?.map(project => {
                         const projectYear = new Date(project.start_date).getFullYear();
-                        if (projectYear < appraisalYear) return null;
+                        const startYear=projectYear;
+                        const endYear=new Date(project.start_date).getFullYear();
+                        if (!(endYear >= appraisalYear && startYear <= appraisalYear)) return null;
     
                         let marks = 0;
                         const amount = parseFloat(project.financial_outlay);
@@ -148,7 +151,9 @@ const Step4Page = () => {
     
                     const ipr = facultyData?.ipr?.map(iprItem => {
                         const projectYear = new Date(iprItem.registration_date).getFullYear();
-                        if (projectYear < appraisalYear) return null;
+                        const startYear=projectYear;
+                        const endYear=new Date(iprItem.publication_date).getFullYear();
+                        if (!(endYear >= appraisalYear && startYear <= appraisalYear)) return null;
     
                         let marks = 0;
                         if (iprItem.type === 'Patent') {
@@ -174,7 +179,9 @@ const Step4Page = () => {
     
                     const startups = facultyData?.startups?.map(startup => {
                         const projectYear = new Date(startup.registration_date).getFullYear();
-                        if (projectYear < appraisalYear) return null;
+                        const startYear=projectYear;
+                        const endYear=new Date(startup.registration_date).getFullYear();
+                        if (!(endYear >= appraisalYear && startYear <= appraisalYear)) return null;
     
                         let marks = 0;
                         if (parseInt(startup.annual_income) >= 1000000) {
@@ -202,7 +209,9 @@ const Step4Page = () => {
     
                     const internships = facultyData?.internships?.map(internship => {
                         const projectYear = new Date(internship.start_date).getFullYear();
-                        if (projectYear < appraisalYear) return null;
+                        const startYear=projectYear;
+                        const endYear=new Date(internship.end_date).getFullYear();
+                        if (!(endYear >= appraisalYear && startYear <= appraisalYear)) return null;
     
                         let marks = 0;
                         if (internship.student_type === 'External') {

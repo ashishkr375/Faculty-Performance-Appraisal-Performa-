@@ -178,8 +178,8 @@ export default function Step3Page() {
                     const journalPapers = facultyData?.journal_papers?.map(paper => {
                         let marks = 0;
                         const publicationYear = new Date(paper.publication_date).getFullYear();
-    
-                        if (publicationYear >= appraisalYear) {
+                        // endYear >= appraisalYear && startYear <= appraisalYear
+                        if (publicationYear == appraisalYear) { //publicationYear>=appraisalYear
                             switch (paper.journal_quartile) {
                                 case 'Q1': marks = 4; break;
                                 case 'Q2': marks = 3; break;
@@ -220,7 +220,8 @@ export default function Step3Page() {
                     let conferencePapersMarks = 0;
                     const conferencePapers = facultyData?.conference_papers?.map(paper => {
                         const conferenceYear = new Date(paper.conference_year).getFullYear();
-                        if (conferenceYear >= appraisalYear) {
+                        // conferenceYear >= appraisalYear
+                        if (conferenceYear == appraisalYear) {
                             let marks = 0;
                             if (paper.indexing === 'SCOPUS' || paper.indexing === 'WOS') {
                                 marks = 0.5;
@@ -250,7 +251,8 @@ export default function Step3Page() {
                     const books = {
                         textbooks: facultyData?.textbooks?.map(book => {
                             const bookYear = book.year;
-                            if (bookYear >= appraisalYear) {
+                            // bookYear >= appraisalYear
+                            if (bookYear == appraisalYear) {
                                 booksMarks += 6;
                                 return {
                                     title: book.title,
@@ -269,7 +271,8 @@ export default function Step3Page() {
     
                         editedBooks: facultyData?.edited_books?.map(book => {
                             const bookYear = book.year;
-                            if (bookYear >= appraisalYear) {
+                            // bookYear >= appraisalYear
+                            if (bookYear == appraisalYear) {
                                 booksMarks += 4;
                                 return {
                                     title: book.title,
@@ -288,7 +291,8 @@ export default function Step3Page() {
     
                         chapters: facultyData?.book_chapters?.map(chapter => {
                             const chapterYear = chapter.year;
-                            if (chapterYear >= appraisalYear) {
+                            // chapterYear >= appraisalYear
+                            if (chapterYear == appraisalYear) {
                                 booksMarks += 2;
                                 return {
                                     chapterTitle: chapter.chapter_title,
