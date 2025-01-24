@@ -47,8 +47,9 @@ export default function Step1Page() {
             try {
                 // First try to get existing form data
                 const formResponse = await fetch('/api/get-part?step=1');
-                const existingData = formResponse.ok ? await formResponse.json() : null;
-
+                const data = formResponse.ok ? await formResponse.json() : null;
+                const existingData=data.stepData;
+                // console.error(data.appraisalPeriod)
                 if (existingData && Object.keys(existingData).length > 0) {
                     console.log('Using existing form data:', existingData);
                     setFormData(prevData => ({

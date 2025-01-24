@@ -121,212 +121,218 @@ export default function Step3Page() {
     const [hasAdminData, setHasAdminData] = useState(false);
 
     useEffect(() => {
-        const fetchData = async () => {
-            if (!session?.user?.email || status !== 'authenticated') {
-                return;
-            }
-            
-            setLoading(true);
+        const fetchSavedData = async () => {
             try {
-                const response = await fetch('/api/get-part?step=3');
-                const data = response.ok ? await response.json() : null;
-                if (data && Object.keys(data).length > 0) {
-                    setFormData({
-                        phdSupervision: data?.phdSupervision || [],
-                        journalPapers: data?.journalPapers || [],
-                        conferencePapers: data?.conferencePapers || [],
-                        books: {
-                            textbooks: data?.books?.textbooks || [],
-                            editedBooks: data?.books?.editedBooks || [],
-                            chapters: data?.books?.chapters || []
-                        },
-                        calculatedMarks: data?.calculatedMarks || 0
-                    });
-                    const facultyData = await fetchFacultyData(session?.user?.email || '');
-                    const phdSupervision = facultyData?.phd_candidates?.map(candidate => ({
-                        studentName: candidate.student_name + " (" +candidate.roll_no + ")",
-                        rollNo: candidate.roll_no,
-                        registrationYear: candidate.registration_year,
-                        status: candidate.current_status,
-                        stipendType: candidate.registration_type,
-                        researchArea: candidate.research_area,
-                        otherSupervisors: candidate.other_supervisors,
-                        sciPublications: 0,
-                        scopusPublications: 0,
-                        currentStatus: candidate.current_status,
-                        // statusDate: new Date().toISOString().split('T')[0]
-                        statusDate:candidate.completion_year
-                    })) || [];
+                setLoading(true);
+                if (status === 'unauthenticated') {
+                    router.push("/auth/signin");
+                    return;
+                }
     
-                    const journalPapers = facultyData?.journal_papers?.map(paper => ({
-                        authors: paper.authors,
-                        title: paper.title,
-                        journal: paper.journal_name,
-                        volume: paper.volume,
-                        year: paper.publication_year,
-                        pages: paper.pages,
-                        quartile: paper.journal_quartile,
-                        publicationDate: paper.publication_date.split("T")[0],
-                        studentInvolved: paper.student_involved ? 'Yes' : 'No',
-                        doi: paper.doi_url,
-                    })) || [];
+                const response = await fetch("/api/get-part?step=3");
+                if (!response.ok) {
+                    console.error("Failed to fetch data");
+                    setLoading(false);
+                    return;
+                }
     
-                    const conferencePapers = facultyData?.conference_papers?.map(paper => ({
-                        authors: paper.authors,
-                        title: paper.title,
-                        conference: paper.conference_name,
-                        location: paper.location,
-                        year: paper.conference_year,
-                        pages: paper.pages,
-                        indexing: paper.indexing,
-                        foreignAuthor: paper.foreign_author,
-                        studentInvolved: paper.student_involved,
-                        doi: paper.doi,
-                    })) || [];
+                const { stepData: existingData, appraisalPeriod } = await response.json();
+                const appraisalYear = new Date(appraisalPeriod).getFullYear();
     
+                const facultyData = await fetchFacultyData(session?.user?.email || '');
+                if (facultyData) {
+                    let phdSupervisionMarks = 0;
+                    const phdSupervision = facultyData?.phd_candidates?.map(candidate => {
+                        let marks = 0;
+                        const registrationYear = candidate.registration_year;
+                        const currentYear = new Date().getFullYear();
+                        const yearsInPhD = currentYear - registrationYear;
+    
+                        if (candidate.current_status === "Ongoing") {
+                            if (yearsInPhD <= 3) marks += 2;
+                            else if (yearsInPhD <= 5) marks += 1; 
+                        }
+                        if (candidate.current_status === "Awarded") {
+                            marks += 4;
+                        }
+    
+                        phdSupervisionMarks += marks;
+                        return marks > 0 ? {
+                            studentName: `${candidate.student_name} (${candidate.roll_no})`,
+                            rollNo: candidate.roll_no,
+                            registrationYear: candidate.registration_year,
+                            status: candidate.current_status,
+                            stipendType: candidate.registration_type,
+                            researchArea: candidate.research_area,
+                            otherSupervisors: candidate.other_supervisors,
+                            marks,
+                            statusDate: candidate.completion_year
+                        } : null;
+                    }).filter(candidate => candidate !== null) || [];
+    
+                    phdSupervisionMarks = Math.min(phdSupervisionMarks, 10);
+    
+                    const journalPapers = facultyData?.journal_papers?.map(paper => {
+                        let marks = 0;
+                        const publicationYear = new Date(paper.publication_date).getFullYear();
+    
+                        if (publicationYear >= appraisalYear) {
+                            switch (paper.journal_quartile) {
+                                case 'Q1': marks = 4; break;
+                                case 'Q2': marks = 3; break;
+                                case 'Q3': marks = 2; break;
+                                case 'Q4': marks = 1; break;
+                                default: marks = 0; break;
+                            }
+                            const isScopusIndexed = paper.journal_name && paper.journal_name.toLowerCase().includes('scopus');
+                            if (isScopusIndexed && marks === 0) {
+                                marks = 1;
+                            }
+    
+                            const authorCount = paper.authors.split(',').length;
+                            if (authorCount > 1) {
+                                marks = Math.floor(marks / authorCount);
+                            }
+    
+                            return marks > 0 ? {
+                                authors: paper.authors,
+                                title: paper.title,
+                                journal: paper.journal_name,
+                                volume: paper.volume,
+                                year: paper.publication_year,
+                                pages: paper.pages,
+                                quartile: paper.journal_quartile,
+                                publicationDate: paper.publication_date.split("T")[0],
+                                studentInvolved: paper.student_involved ? 'Yes' : 'No',
+                                doi: paper.doi_url,
+                                marks,
+                            } : null;
+                        }
+                        return null;
+                    }).filter(paper => paper !== null) || [];
+    
+                    const totalJournalMarks = journalPapers.reduce((total, paper) => total + (paper?.marks || 0), 0);
+                    const cappedJournalMarks = Math.min(totalJournalMarks, 10);
+    
+                    let conferencePapersMarks = 0;
+                    const conferencePapers = facultyData?.conference_papers?.map(paper => {
+                        const conferenceYear = new Date(paper.conference_year).getFullYear();
+                        if (conferenceYear >= appraisalYear) {
+                            let marks = 0;
+                            if (paper.indexing === 'SCOPUS' || paper.indexing === 'WOS') {
+                                marks = 0.5;
+                            } else {
+                                marks = 0.25;
+                            }
+                            conferencePapersMarks += marks;
+                            return {
+                                authors: paper.authors ? paper.authors.split(',').map(author => author.trim()) : [],
+                                title: paper.title,
+                                conference: paper.conference_name,
+                                location: paper.location,
+                                year: conferenceYear,
+                                pages: paper.pages,
+                                indexing: paper.indexing,
+                                studentInvolved: paper.student_involved,
+                                doi: paper.doi,
+                                marks
+                            };
+                        }
+                        return null;
+                    }).filter(paper => paper !== null) || [];
+    
+                    conferencePapersMarks = Math.min(conferencePapersMarks, 5);
+    
+                    let booksMarks = 0;
                     const books = {
-                        textbooks: facultyData?.textbooks?.map(book => ({
-                            title: book.title,
-                            authors: book.authors,
-                            publisher: book.publisher,
-                            isbn: book.isbn,
-                            year: book.year,
-                            scopusIndexed: book.scopus === "Yes",
-                            doi: book.doi,
-                            pages:book.pages
-                        })) || [],
-                        editedBooks: facultyData?.edited_books?.map(book => ({
-                            title: book.title,
-                            authors: book.editors,
-                            publisher: book.publisher,
-                            isbn: book.isbn,
-                            year: book.year,
-                            scopusIndexed: book.scopus === "Yes",
-                            doi: book.doi,
-                            pages:book.pages,
-                            editors:book.editors
-                        })) || [],
-                        chapters: facultyData?.book_chapters?.map(chapter => ({
-                            chapterTitle: chapter.chapter_title,
-                            authors: chapter.authors,
-                            bookTitle: chapter.book_title,
-                            publisher: chapter.publisher,
-                            isbn: chapter.isbn,
-                            year: chapter.year,
-                            scopusIndexed: chapter.scopus === "Yes",
-                            doi: chapter.doi,
-                            pages:chapter.pages,
-                            
-                        })) || [],
+                        textbooks: facultyData?.textbooks?.map(book => {
+                            const bookYear = book.year;
+                            if (bookYear >= appraisalYear) {
+                                booksMarks += 6;
+                                return {
+                                    title: book.title,
+                                    authors: book.authors,
+                                    publisher: book.publisher,
+                                    isbn: book.isbn,
+                                    year: bookYear,
+                                    scopusIndexed: book.scopus === "Yes",
+                                    doi: book.doi,
+                                    pages: book.pages,
+                                    marks: 6
+                                };
+                            }
+                            return null;
+                        }).filter(book => book !== null) || [],
+    
+                        editedBooks: facultyData?.edited_books?.map(book => {
+                            const bookYear = book.year;
+                            if (bookYear >= appraisalYear) {
+                                booksMarks += 4;
+                                return {
+                                    title: book.title,
+                                    authors: book.editors,
+                                    publisher: book.publisher,
+                                    isbn: book.isbn,
+                                    year: bookYear,
+                                    scopusIndexed: book.scopus === "Yes",
+                                    doi: book.doi,
+                                    pages: book.pages,
+                                    marks: 4 
+                                };
+                            }
+                            return null;
+                        }).filter(book => book !== null) || [],
+    
+                        chapters: facultyData?.book_chapters?.map(chapter => {
+                            const chapterYear = chapter.year;
+                            if (chapterYear >= appraisalYear) {
+                                booksMarks += 2;
+                                return {
+                                    chapterTitle: chapter.chapter_title,
+                                    authors: chapter.authors,
+                                    bookTitle: chapter.book_title,
+                                    publisher: chapter.publisher,
+                                    isbn: chapter.isbn,
+                                    year: chapterYear,
+                                    scopusIndexed: chapter.scopus === "Yes",
+                                    doi: chapter.doi,
+                                    pages: chapter.pages,
+                                    marks: 2 
+                                };
+                            }
+                            return null;
+                        }).filter(chapter => chapter !== null) || []
                     };
     
-                    const calculatedMarks = formData?.calculatedMarks || 0;
+                    booksMarks = Math.min(booksMarks, 6);
+    
+                    const totalMarks = Math.min(
+                        phdSupervisionMarks + cappedJournalMarks + conferencePapersMarks + booksMarks,
+                        40
+                    );
     
                     setFormData({
                         phdSupervision,
                         journalPapers,
                         conferencePapers,
                         books,
-                        calculatedMarks,
-                    });
-                } else {
-                    const facultyData = await fetchFacultyData(session?.user?.email || '');
-                    const phdSupervision = facultyData?.phd_candidates?.map(candidate => ({
-                        studentName: candidate.student_name + " (" +candidate.roll_no + ")",
-                        rollNo: candidate.roll_no,
-                        registrationYear: candidate.registration_year,
-                        status: candidate.current_status,
-                        stipendType: candidate.registration_type,
-                        researchArea: candidate.research_area,
-                        otherSupervisors: candidate.other_supervisors,
-                        sciPublications: 0,
-                        scopusPublications: 0,
-                        currentStatus: candidate.current_status,
-                        // statusDate: new Date().toISOString().split('T')[0]
-                        statusDate:candidate.completion_year
-                    })) || [];
-    
-                    const journalPapers = facultyData?.journal_papers?.map(paper => ({
-                        authors: paper.authors,
-                        title: paper.title,
-                        journal: paper.journal_name,
-                        volume: paper.volume,
-                        year: paper.publication_year,
-                        pages: paper.pages,
-                        quartile: paper.journal_quartile,
-                        publicationDate: paper.publication_date,
-                        studentInvolved: paper.student_involved ? 'Yes' : 'No',
-                        doi: paper.doi_url,
-                    })) || [];
-    
-                    const conferencePapers = facultyData?.conference_papers?.map(paper => ({
-                        authors: paper.authors,
-                        title: paper.title,
-                        conference: paper.conference_name,
-                        location: paper.location,
-                        year: paper.conference_year,
-                        pages: paper.pages,
-                        indexing: paper.indexing,
-                        foreignAuthor: paper.foreign_author,
-                        studentInvolved: paper.student_involved,
-                        doi: paper.doi,
-                    })) || [];
-    
-                    const books = {
-                        textbooks: facultyData?.textbooks?.map(book => ({
-                            title: book.title,
-                            authors: book.authors,
-                            publisher: book.publisher,
-                            isbn: book.isbn,
-                            year: book.year,
-                            scopusIndexed: book.scopus === "Yes",
-                            doi: book.doi,
-                            pages:book.pages
-                        })) || [],
-                        editedBooks: facultyData?.edited_books?.map(book => ({
-                            title: book.title,
-                            authors: book.editors,
-                            publisher: book.publisher,
-                            isbn: book.isbn,
-                            year: book.year,
-                            scopusIndexed: book.scopus === "Yes",
-                            doi: book.doi,
-                            pages:book.pages,
-                            editors:book.editors
-                        })) || [],
-                        chapters: facultyData?.book_chapters?.map(chapter => ({
-                            chapterTitle: chapter.chapter_title,
-                            authors: chapter.authors,
-                            bookTitle: chapter.book_title,
-                            publisher: chapter.publisher,
-                            isbn: chapter.isbn,
-                            year: chapter.year,
-                            scopusIndexed: chapter.scopus === "Yes",
-                            doi: chapter.doi,
-                            pages:chapter.pages,
-                            
-                        })) || [],
-                    };
-    
-                    const calculatedMarks = formData?.calculatedMarks || 0;
-    
-                    setFormData({
-                        phdSupervision,
-                        journalPapers,
-                        conferencePapers,
-                        books,
-                        calculatedMarks,
+                        calculatedMarks: totalMarks,
+                        totalMarks,
                     });
                 }
+                setLoading(false);
             } catch (error) {
-                console.error('Error:', error);
-            } finally {
+                console.error("Error fetching data: ", error);
                 setLoading(false);
             }
         };
     
-        fetchData();
-    }, [session, status]);
+        fetchSavedData();
+    }, [status, router, session?.user?.email]);
+    
+    
+    
+    
 
     const handleAddPhDStudent = () => {
         setFormData({

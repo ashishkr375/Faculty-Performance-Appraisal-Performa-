@@ -169,6 +169,7 @@ export interface FacultyProfile {
         student_details: string;
         internal_supervisors: string;
         external_supervisors: string;
+        years_offered?:string;
       }>;
       workshops_conferences: Array<{
         id: string;

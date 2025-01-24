@@ -58,70 +58,74 @@ const Step5Page = () => {
         calculatedMarks: 0
     });
     const [loading, setLoading] = useState(true);
-
     useEffect(() => {
-        if (status === 'unauthenticated') {
-            router.push('/auth/signin');
-            return;
-        }
-
         const fetchSavedData = async () => {
             try {
-                const response = await fetch('/api/get-part?step=5');
-                const data = response.ok ? await response.json() : null;
-
-                if (data && Object.keys(data).length > 0) {
-                    setFormData(prevData => ({
-                        ...prevData,
-                        ...data,
-                    }));
-                    const facultyData = await fetchFacultyData(session?.user?.email || '');
-
-                    if (facultyData) {
-                        const workshopsConferences = facultyData?.workshops_conferences?.map(workshop => ({
-                            event_type: workshop.event_type,
-                            role: workshop.role,
-                            event_name: workshop.event_name,
-                            sponsored_by: workshop.sponsored_by,
-                            start_date: workshop.start_date.split("T")[0],
-                            end_date: workshop.end_date.split("T")[0],
-                            participants_count: workshop.participants_count,
-                        })) || [];
-
-                        const organizationParticipation: OrganizationParticipation = {
-                            events: workshopsConferences.map(workshop => ({
-                                type: 'National',
-                                role: workshop.role,
-                                name: workshop.event_name,
-                                sponsor: workshop.sponsored_by,
-                                startDate: workshop.start_date.split("T")[0],
-                                endDate: workshop.end_date.split("T")[0],
-                                participants: workshop.participants_count,
-                            })),
-                            lectures:  [],
-                            onlineCourses:  [],
-                            visits:  [],
-                            outreachActivities:  [],
-                            calculatedMarks: formData?.calculatedMarks || 0,
-                        };
-
-                        setFormData(organizationParticipation);
-                    }
+                if (status === 'unauthenticated') {
+                    router.push('/auth/signin');
+                    return;
+                }
+    
+                const response = await fetch("/api/get-part?step=5");
+    
+                if (!response.ok) {
+                    console.error("Failed to fetch data");
                 } else {
+                    const { stepData: existingData, appraisalPeriod } = await response.json();
+                    const appraisalYear = new Date(appraisalPeriod).getFullYear();
+    
                     const facultyData = await fetchFacultyData(session?.user?.email || '');
-
                     if (facultyData) {
-                        const workshopsConferences = facultyData?.workshops_conferences?.map(workshop => ({
-                            event_type: workshop.event_type,
-                            role: workshop.role,
-                            event_name: workshop.event_name,
-                            sponsored_by: workshop.sponsored_by,
-                            start_date: workshop.start_date.split("T")[0],
-                            end_date: workshop.end_date.split("T")[0],
-                            participants_count: workshop.participants_count,
-                        })) || [];
-
-                        const organizationParticipation: OrganizationParticipation = {
+                        let eventsMarks = 0;
+                        const lecturesMarks = 0;
+                        const onlineCoursesMarks = 0;
+                        const visitsMarks = 0;
+                        let outreachMarks = 0;
+    
+                        const workshopsConferences = facultyData?.workshops_conferences?.map(workshop => {
+                            let marks = 0;
+                            const endDate = new Date(workshop.end_date);
+    
+                            if (endDate.getFullYear() >= appraisalYear) {
+                                if (workshop.event_type === 'Workshop' || workshop.event_type === 'FDP' || workshop.event_type === 'Short-Term Course') {
+                                    if (workshop.role === 'Coordinator' || workshop.role === 'Convener') {
+                                        marks = 2; 
+                                    }
+                                } else if (workshop.event_type === 'GIAN') {
+                                    const durationWeeks = workshop.duration_weeks;
+                                    if (durationWeeks >= 2) {
+                                        marks = 2;
+                                    } else if (durationWeeks === 1) {
+                                        marks = 1;
+                                    }
+                                } else if (workshop.event_type === 'National/International Conference') {
+                                    if (workshop.role === 'Chairman' || workshop.role === 'Secretary') {
+                                        marks = 3;
+                                    }
+                                } else if (workshop.event_type === 'National Conference' || workshop.event_type === 'Workshop' || workshop.event_type === 'Webinar' || workshop.event_type === 'Expert Lecture') {
+                                    marks = 1;
+                                }
+    
+                                eventsMarks += marks;
+    
+                                if (eventsMarks > 6) {
+                                    eventsMarks = 6;
+                                }
+    
+                                return {
+                                    event_type: workshop.event_type,
+                                    role: workshop.role,
+                                    event_name: workshop.event_name,
+                                    sponsored_by: workshop.sponsored_by,
+                                    start_date: workshop.start_date.split("T")[0],
+                                    end_date: workshop.end_date.split("T")[0],
+                                    participants_count: workshop.participants_count,
+                                    marks,
+                                };
+                            }
+                        }) || [];
+    
+                        const organizationParticipation = {
                             events: workshopsConferences.map(workshop => ({
                                 type: 'National',
                                 role: workshop.role,
@@ -131,25 +135,31 @@ const Step5Page = () => {
                                 endDate: workshop.end_date.split("T")[0],
                                 participants: workshop.participants_count,
                             })),
-                            lectures:  [],
-                            onlineCourses:  [],
-                            visits:  [],
-                            outreachActivities:  [],
-                            calculatedMarks: formData?.calculatedMarks || 0,
+                            lectures: existingData?.lectures || [],
+                            onlineCourses: existingData?.onlineCourses || [],
+                            visits: existingData?.visits || [],
+                            outreachActivities: facultyData?.outreach_activities?.map(activity => {
+                                outreachMarks += 1;
+                                if (outreachMarks > 7) {
+                                    outreachMarks = 7;
+                                }
+                                return activity;
+                            }) || [],
+                            calculatedMarks: eventsMarks + lecturesMarks + onlineCoursesMarks + visitsMarks + outreachMarks,
                         };
-
+    
                         setFormData(organizationParticipation);
                     }
                 }
-            } catch (error) {
-                console.error('Error fetching saved data:', error);
-            } finally {
-                setLoading(false);
+            } catch (e) {
+                console.log(e);
             }
         };
-
+    
         fetchSavedData();
-    }, [status, router, session?.user?.email]);
+        setLoading(false)
+    }, [status, router, session?.user?.email]);   
+
 
     useEffect(() => {
         // Calculate marks whenever form data changes

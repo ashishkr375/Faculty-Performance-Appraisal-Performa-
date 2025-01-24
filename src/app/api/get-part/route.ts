@@ -32,7 +32,8 @@ export async function GET(request: NextRequest) {
 
         // Ensure we return a serializable object
         const stepData = form ? form[`step${step}`] : {};
-        return NextResponse.json(JSON.parse(JSON.stringify(stepData)));
+        const appraisalPeriod = form && form['step1'] ? form['step1'].appraisalPeriodStart : process.env.NEXT_PUBLIC_DEFAULT_YEAR;
+        return NextResponse.json({ stepData, appraisalPeriod });
 
     } catch (error) {
         console.error('Error fetching form data:', error);
