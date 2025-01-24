@@ -63,6 +63,10 @@ export const DepartmentLevelActivities = ({ formData, setFormData }: Props) => {
                             />
                         </div>
                     </div>
+                    <div>
+                    <label className="block mb-2">Marks Claimed</label>
+                    <input type="text" className='w-full p-2 border rounded bg-gray-200' disabled={true} value={activity.marks} />
+                    </div>
                     <button
                         type="button"
                         onClick={() => {

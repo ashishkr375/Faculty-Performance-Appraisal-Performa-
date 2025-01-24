@@ -51,74 +51,123 @@ const Step6Page = () => {
             router.push('/auth/signin');
             return;
         }
-
+    
         const fetchSavedData = async () => {
             try {
-                const response = await fetch('/api/get-part?step=6');
-
-                const existingData = response.ok ? await response.json() : null;
-
-                if (existingData && Object.keys(existingData).length > 0) {
-                    setFormData(prevData => ({
-                        ...prevData,
-                        ...existingData,
-                    }));
-                    const facultyData = await fetchFacultyData(session?.user?.email || '');
-
-                    if (facultyData) {
-                        const instituteLevelActivities = facultyData?.institute_activities?.map(activity => ({
-                            role: activity.role_position,
-                            duration: `${formatDate(activity.start_date)} - ${activity.end_date === 'Continue' ? 'Continue' : formatDate(activity.end_date)}`,
-                            marks:  0,
-                        })) || [];
-
-                        const departmentLevelActivities = facultyData?.department_activities?.map(activity => ({
-                            activity: activity.activity_description,
-                            duration: `${formatDate(activity.start_date)} - ${activity.end_date === 'Continue' ? 'Continue' : formatDate(activity.end_date)}`,
-                            marks: 0,
-                        })) || [];
-
-                        const managementDevelopment: ManagementDevelopment = {
-                            instituteLevelActivities,
-                            departmentLevelActivities,
-                            calculatedMarks: formData?.calculatedMarks || 0,
-                        };
-                        setFormData(managementDevelopment);
-                    }
+                const response = await fetch("/api/get-part?step=6");
+    
+                if (!response.ok) {
+                    console.error("Failed to fetch data");
                 } else {
+                    const { stepData: existingData, appraisalPeriod } = await response.json();
+                    const appraisalYear = new Date(appraisalPeriod).getFullYear();
+    
                     const facultyData = await fetchFacultyData(session?.user?.email || '');
-
                     if (facultyData) {
-                        const instituteLevelActivities = facultyData?.institute_activities?.map(activity => ({
-                            role: activity.role_position,
-                            duration: `${formatDate(activity.start_date)} - ${activity.end_date === 'Continue' ? 'Continue' : formatDate(activity.end_date)}`,
-                            marks:  0,
-                        })) || [];
-
-                        const departmentLevelActivities = facultyData?.department_activities?.map(activity => ({
-                            activity: activity.activity_description,
-                            duration:`${formatDate(activity.start_date)} - ${activity.end_date === 'Continue' ? 'Continue' : formatDate(activity.end_date)}`,
-                            marks: 0,
-                        })) || [];
-
-                        const managementDevelopment: ManagementDevelopment = {
+                        let instituteMarks = 0;
+                        const instituteLevelActivities = facultyData?.institute_activities
+                            ?.filter(activity => {
+                                const endDate = new Date(activity.end_date === 'Continue' ? new Date() : activity.end_date);
+                                const endYear = endDate.getFullYear();
+                                return endYear >= appraisalYear;
+                            })
+                            .map(activity => {
+                                let marks = 0;
+                                switch (activity.role_position) {
+                                    case 'Head of the Department':
+                                    case 'Dean':
+                                    case 'Chief Warden':
+                                    case 'Professor In charge (Training and placement)':
+                                    case 'Advisor (Estate)':
+                                    case 'Chief Vigilance Officer':
+                                    case 'PI (Exam)':
+                                    case 'TEQIP (Coordinator)':
+                                    case 'Chief Proctor':
+                                        marks = 2;
+                                        break;
+                                    case 'Warden':
+                                    case 'Assistant warden':
+                                    case 'Associate Dean':
+                                    case 'Chairman':
+                                    case 'Convener institute academic committees':
+                                    case 'Faculty In charge Computer Center':
+                                    case 'Faculty In charge Information and Technology Services':
+                                    case 'Faculty In charge Library':
+                                    case 'Faculty In charge Admission':
+                                    case 'Faculty In charge student activities':
+                                    case 'Coordinator/Incharge IIC/SC/ST cell':
+                                    case 'NCC':
+                                    case 'Annual report':
+                                    case 'Technical Events':
+                                    case 'Cultural events':
+                                    case 'NKN':
+                                    case 'GIAN':
+                                    case 'Yoga':
+                                    case 'Raj Bhasha':
+                                    case 'Security':
+                                        marks = 1;
+                                        break;
+                                    case 'Chairman and Convener of different standing committee':
+                                    case 'Faculty in charge of different Units':
+                                        marks = 0.5;
+                                        break;
+                                    default:
+                                        marks = 0;
+                                }
+    
+                                instituteMarks += marks;
+    
+                                if (instituteMarks > 10) {
+                                    instituteMarks = 10;
+                                }
+    
+                                return {
+                                    role: activity.role_position,
+                                    duration: `${formatDate(activity.start_date)} - ${activity.end_date === 'Continue' ? 'Continue' : formatDate(activity.end_date)}`,
+                                    marks: marks,
+                                };
+                            }) || [];
+    
+                        let departmentMarks = 0;
+                        const departmentLevelActivities = facultyData?.department_activities
+                            ?.filter(activity => {
+                                const endDate = new Date(activity.end_date === 'Continue' ? new Date() : activity.end_date);
+                                const endYear = endDate.getFullYear();
+                                return endYear >= appraisalYear;
+                            })
+                            .map(activity => {
+                                let marks = 0.5;
+                                departmentMarks += marks;
+    
+                                if (departmentMarks > 5) {
+                                    departmentMarks = 5; 
+                                }
+    
+                                return {
+                                    activity: activity.activity_description,
+                                    duration: `${formatDate(activity.start_date)} - ${activity.end_date === 'Continue' ? 'Continue' : formatDate(activity.end_date)}`,
+                                    marks: marks,
+                                };
+                            }) || [];
+    
+                        const managementDevelopment = {
                             instituteLevelActivities,
                             departmentLevelActivities,
                             calculatedMarks: formData?.calculatedMarks || 0,
                         };
+    
                         setFormData(managementDevelopment);
                     }
                 }
-            } catch (error) {
-                console.error('Error fetching saved data:', error);
+            } catch (e) {
+                console.log(e);
             } finally {
                 setLoading(false);
             }
         };
-
+    
         fetchSavedData();
-    }, [status, router, session?.user?.email]);
-
+    }, [status, router, session?.user?.email, formData?.calculatedMarks]);
     useEffect(() => {
         // Calculate marks whenever form data changes
         const marks = calculateStep6Marks(formData);

@@ -68,7 +68,8 @@ export const InstituteLevelActivities = ({ formData, setFormData }: Props) => {
                         </div>
                         <div>
                             <label className="block mb-2">Marks Claimed</label>
-                            <select
+                            <input type="text" className='w-full p-2 border rounded bg-gray-200' disabled={true} value={activity.marks} />
+                            {/* <select
                                 value={activity.marks}
                                 onChange={(e) => {
                                     const updated = [...formData.instituteLevelActivities];
@@ -81,7 +82,7 @@ export const InstituteLevelActivities = ({ formData, setFormData }: Props) => {
                                 <option value="2">2 marks/semester (HOD/Dean level)</option>
                                 <option value="1">1 mark/semester (Warden/Associate Dean)</option>
                                 <option value="0.5">0.5 marks/semester (Committee Chair)</option>
-                            </select>
+                            </select> */}
                         </div>
                     </div>
                     <button

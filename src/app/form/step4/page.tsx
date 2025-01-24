@@ -72,99 +72,165 @@ const Step4Page = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (status === 'unauthenticated') {
-            router.push('/auth/signin');
-        }
-    
         const fetchSavedData = async () => {
             try {
-                const response = await fetch('/api/get-part?step=4');
-                const data = response.ok ? await response.json() : null;
-                if (data && Object.keys(data).length > 0) {
-                    setFormData(data);
-                    const facultyData = await fetchFacultyData(session?.user?.email || '');
-                    const sponsoredProjects = facultyData?.sponsored_projects?.map(project => ({
-                        title: project.project_title,
-                        fundingAgency: project.funding_agency,
-                        financialOutlay: parseFloat(project.financial_outlay),
-                        startDate: project.start_date.split("T")[0],
-                        endDate: project.end_date.split("T")[0],
-                        investigators: project.investigators,
-                        piInstitute: project.pi_institute || '',
-                        status: project.status || 'In Progress',
-                        fundReceived: parseFloat(project.funds_received) || 0,
-                    })) || [];
-                    const consultancyProjects = facultyData?.consultancy_projects?.map(project => ({
-                        title: project.project_title,
-                        fundingAgency: project.funding_agency,
-                        financialOutlay: parseFloat(project.financial_outlay),
-                        startDate: project.start_date.split("T")[0],
-                        period: project.period_months,
-                        investigators: project.investigators,
-                        status: project.status || 'In Progress',
-                    })) || [];
-                    const ipr = facultyData?.ipr?.map(iprItem => ({
-                        title: iprItem.title,
-                        registrationDate: iprItem.registration_date.split("T")[0] || '',
-                        publicationDate: iprItem.publication_date.split('T')[0] || '',
-                        grantDate: iprItem.grant_date.split("T")[0] || '',
-                        grantNumber: iprItem.grant_no || iprItem.patent_number,
-                        applicant: iprItem.applicant_name || '',
-                        inventors: iprItem.inventors || '',
-                        type: iprItem.type as 'Patent' | 'Design' | 'Copyright',
-                    })) || [];
-                    const startups = facultyData?.startups?.map(startup => ({
-                        name: startup.startup_name,
-                        incubationPlace: startup.incubation_place || '',
-                        registrationDate: startup.registration_date.split("T")[0] || '',
-                        owners: startup.owners_founders || '',
-                        annualIncome: parseFloat(startup.annual_income) || 0,
-                        panNumber: startup.pan_number || '',
-                    })) || [];
-                    const internships = facultyData?.internships?.map(internship => ({
-                        studentName: internship.student_name || '',
-                        qualification: internship.qualification || '',
-                        affiliation: internship.affiliation || '',
-                        projectTitle: internship.project_title || '',
-                        startDate: internship.start_date.split("T")[0],
-                        endDate: internship.end_date.split("T")[0],
-                        isExternal: internship.student_type === 'External',
-                    })) || [];
+                setLoading(true);
+                if (status === 'unauthenticated') {
+                    router.push("/auth/signin");
+                    return;
+                }
+    
+                const response = await fetch("/api/get-part?step=4");
+                if (!response.ok) {
+                    console.error("Failed to fetch data");
+                    setLoading(false);
+                    return;
+                }
+    
+                const { stepData: existingData, appraisalPeriod } = await response.json();
+                const appraisalYear = new Date(appraisalPeriod).getFullYear();
+    
+                const facultyData = await fetchFacultyData(session?.user?.email || '');
+                if (facultyData) {
+                    const sponsoredProjects = facultyData?.sponsored_projects?.map(project => {
+                        const projectYear = new Date(project.end_date).getFullYear();
+                        if (projectYear < appraisalYear) return null;
+    
+                        let marks = 0;
+                        if (project.funding_agency !== 'TEQIP' && project.funding_agency !== 'Institute grant') {
+                            marks += 1;
+                        }
+                        if (project.status === 'Completed' || project.status === 'Ongoing') {
+                            if (parseInt(project.financial_outlay) <= 500000) {
+                                marks += 3;
+                            } else if (parseInt(project.financial_outlay) <= 1000000) {
+                                marks += 4;
+                            } else {
+                                marks += 5;
+                            }
+                        }
+                        return marks > 0 ? {
+                            title: project.project_title,
+                            fundingAgency: project.funding_agency,
+                            financialOutlay: parseFloat(project.financial_outlay),
+                            startDate: project.start_date.split("T")[0],
+                            endDate: project.end_date.split("T")[0],
+                            investigators: project.investigators,
+                            piInstitute: project.pi_institute || '',
+                            status: project.status || 'In Progress',
+                            fundReceived: parseFloat(project.funds_received) || 0,
+                            marks,
+                        } : null;
+                    }).filter(project => project !== null) || [];
+    
+                    const consultancyProjects = facultyData?.consultancy_projects?.map(project => {
+                        const projectYear = new Date(project.start_date).getFullYear();
+                        if (projectYear < appraisalYear) return null;
+    
+                        let marks = 0;
+                        const amount = parseFloat(project.financial_outlay);
+                        if (amount <= 50000) {
+                            marks += 1;
+                        } else {
+                            marks += Math.min(Math.floor(amount / 50000), 8);
+                        }
+                        return marks > 0 ? {
+                            title: project.project_title,
+                            fundingAgency: project.funding_agency,
+                            financialOutlay: amount,
+                            startDate: project.start_date.split("T")[0],
+                            period: project.period_months,
+                            investigators: project.investigators,
+                            status: project.status || 'In Progress',
+                            marks,
+                        } : null;
+                    }).filter(project => project !== null) || [];
+    
+                    const ipr = facultyData?.ipr?.map(iprItem => {
+                        const projectYear = new Date(iprItem.registration_date).getFullYear();
+                        if (projectYear < appraisalYear) return null;
+    
+                        let marks = 0;
+                        if (iprItem.type === 'Patent') {
+                            marks += 3;
+                        } else if (iprItem.type === 'Design' || iprItem.type === 'Copyright') {
+                            marks += 1;
+                        }
+                        if (iprItem.publication_date) {
+                            marks += 2;
+                        }
+                        return marks > 0 ? {
+                            title: iprItem.title,
+                            registrationDate: iprItem.registration_date.split("T")[0] || '',
+                            publicationDate: iprItem.publication_date.split('T')[0] || '',
+                            grantDate: iprItem.grant_date.split("T")[0] || '',
+                            grantNumber: iprItem.grant_no || iprItem.patent_number,
+                            applicant: iprItem.applicant_name || '',
+                            inventors: iprItem.inventors || '',
+                            type: iprItem.type,
+                            marks,
+                        } : null;
+                    }).filter(iprItem => iprItem !== null) || [];
+    
+                    const startups = facultyData?.startups?.map(startup => {
+                        const projectYear = new Date(startup.registration_date).getFullYear();
+                        if (projectYear < appraisalYear) return null;
+    
+                        let marks = 0;
+                        if (parseInt(startup.annual_income) >= 1000000) {
+                            marks += 6;
+                        } else if (parseInt(startup.annual_income) >= 500000) {
+                            marks += 5;
+                        } else if (parseInt(startup.annual_income) >= 100000) {
+                            marks += 4;
+                        } else if (parseInt(startup.annual_income) >= 50000) {
+                            marks += 3;
+                        }
+                        if (startup.registration_date) {
+                            marks += 2;
+                        }
+                        return marks > 0 ? {
+                            name: startup.startup_name,
+                            incubationPlace: startup.incubation_place || '',
+                            registrationDate: startup.registration_date.split("T")[0] || '',
+                            owners: startup.owners_founders || '',
+                            annualIncome: parseFloat(startup.annual_income) || 0,
+                            panNumber: startup.pan_number || '',
+                            marks,
+                        } : null;
+                    }).filter(startup => startup !== null) || [];
+    
+                    const internships = facultyData?.internships?.map(internship => {
+                        const projectYear = new Date(internship.start_date).getFullYear();
+                        if (projectYear < appraisalYear) return null;
+    
+                        let marks = 0;
+                        if (internship.student_type === 'External') {
+                            marks += 2;
+                        } else {
+                            marks += 1;
+                        }
+                        return marks > 0 ? {
+                            studentName: internship.student_name || '',
+                            qualification: internship.qualification || '',
+                            affiliation: internship.affiliation || '',
+                            projectTitle: internship.project_title || '',
+                            startDate: internship.start_date.split("T")[0],
+                            endDate: internship.end_date.split("T")[0],
+                            isExternal: internship.student_type === 'External',
+                            marks,
+                        } : null;
+                    }).filter(internship => internship !== null) || [];
+    
                     const industryLabs = [];
-                    const calculatedMarks = formData?.calculatedMarks || 0;
-                    const journalPapers = facultyData?.journal_papers?.map(paper => ({
-                        authors: paper.authors,
-                        title: paper.title,
-                        journalName: paper.journal_name,
-                        volume: paper.volume,
-                        publicationYear: paper.publication_year,
-                        pages: paper.pages,
-                        journalQuartile: paper.journal_quartile,
-                        publicationDate: paper.publication_date,
-                        studentInvolved: paper.student_involved,
-                        studentDetails: paper.student_details,
-                        doiUrl: paper.doi_url,
-                    })) || [];
-                    const teachingEngagement = facultyData?.teaching_engagement?.map(teaching => ({
-                        semester: teaching.semester,
-                        level: teaching.level,
-                        courseNumber: teaching.course_number,
-                        courseTitle: teaching.course_title,
-                        courseType: teaching.course_type,
-                        studentCount: teaching.student_count,
-                        lectures: teaching.lectures,
-                        tutorials: teaching.tutorials,
-                        practicals: teaching.practicals,
-                        totalTheory: teaching.total_theory,
-                        labHours: teaching.lab_hours,
-                        yearsOffered: teaching.years_offered,
-                    })) || [];
-                    const workExperience = facultyData?.work_experience?.map(work => ({
-                        workExperience: work.work_experiences,
-                        institute: work.institute,
-                        startDate: work.start_date.split("T")[0],
-                        endDate: work.end_date.split("T")[0],
-                    })) || [];
+                    const totalMarks = [
+                        ...sponsoredProjects,
+                        ...consultancyProjects,
+                        ...ipr,
+                        ...startups,
+                        ...internships
+                    ].reduce((total, item) => total + (item?.marks || 0), 0);
+    
                     setFormData({
                         sponsoredProjects,
                         consultancyProjects,
@@ -172,120 +238,26 @@ const Step4Page = () => {
                         startups,
                         internships,
                         industryLabs,
-                        calculatedMarks,
-                        journalPapers,
-                        teachingEngagement,
-                        workExperience,
-                    });
-
-                }
-                 else {
-                    const facultyData = await fetchFacultyData(session?.user?.email || '');
-                    const sponsoredProjects = facultyData?.sponsored_projects?.map(project => ({
-                        title: project.project_title,
-                        fundingAgency: project.funding_agency,
-                        financialOutlay: parseFloat(project.financial_outlay),
-                        startDate: project.start_date.split("T")[0],
-                        endDate: project.end_date.split("T")[0],
-                        investigators: project.investigators,
-                        piInstitute: project.pi_institute || '',
-                        status: project.status || 'In Progress',
-                        fundReceived: parseFloat(project.funds_received) || 0,
-                    })) || [];
-                    const consultancyProjects = facultyData?.consultancy_projects?.map(project => ({
-                        title: project.project_title,
-                        fundingAgency: project.funding_agency,
-                        financialOutlay: parseFloat(project.financial_outlay),
-                        startDate: project.start_date.split("T")[0],
-                        period: project.period_months,
-                        investigators: project.investigators,
-                        status: project.status || 'In Progress',
-                    })) || [];
-                    const ipr = facultyData?.ipr?.map(iprItem => ({
-                        title: iprItem.title,
-                        registrationDate: iprItem.registration_date.split("T")[0] || '',
-                        publicationDate: iprItem.publication_date.split('T')[0] || '',
-                        grantDate: iprItem.grant_date.split("T")[0] || '',
-                        grantNumber: iprItem.grant_no || iprItem.patent_number,
-                        applicant: iprItem.applicant_name || '',
-                        inventors: iprItem.inventors || '',
-                        type: iprItem.type as 'Patent' | 'Design' | 'Copyright',
-                    })) || [];
-                    const startups = facultyData?.startups?.map(startup => ({
-                        name: startup.startup_name,
-                        incubationPlace: startup.incubation_place || '',
-                        registrationDate: startup.registration_date.split("T")[0] || '',
-                        owners: startup.owners_founders || '',
-                        annualIncome: parseFloat(startup.annual_income) || 0,
-                        panNumber: startup.pan_number || '',
-                    })) || [];
-                    const internships = facultyData?.internships?.map(internship => ({
-                        studentName: internship.student_name || '',
-                        qualification: internship.qualification || '',
-                        affiliation: internship.affiliation || '',
-                        projectTitle: internship.project_title || '',
-                        startDate: internship.start_date.split("T")[0],
-                        endDate: internship.end_date.split("T")[0],
-                        isExternal: internship.student_type === 'External',
-                    })) || [];
-                    const industryLabs = [];
-                    const calculatedMarks = formData?.calculatedMarks || 0;
-                    const journalPapers = facultyData?.journal_papers?.map(paper => ({
-                        authors: paper.authors,
-                        title: paper.title,
-                        journalName: paper.journal_name,
-                        volume: paper.volume,
-                        publicationYear: paper.publication_year,
-                        pages: paper.pages,
-                        journalQuartile: paper.journal_quartile,
-                        publicationDate: paper.publication_date,
-                        studentInvolved: paper.student_involved,
-                        studentDetails: paper.student_details,
-                        doiUrl: paper.doi_url,
-                    })) || [];
-                    const teachingEngagement = facultyData?.teaching_engagement?.map(teaching => ({
-                        semester: teaching.semester,
-                        level: teaching.level,
-                        courseNumber: teaching.course_number,
-                        courseTitle: teaching.course_title,
-                        courseType: teaching.course_type,
-                        studentCount: teaching.student_count,
-                        lectures: teaching.lectures,
-                        tutorials: teaching.tutorials,
-                        practicals: teaching.practicals,
-                        totalTheory: teaching.total_theory,
-                        labHours: teaching.lab_hours,
-                        yearsOffered: teaching.years_offered,
-                    })) || [];
-                    const workExperience = facultyData?.work_experience?.map(work => ({
-                        workExperience: work.work_experiences,
-                        institute: work.institute,
-                        startDate: work.start_date.split("T")[0],
-                        endDate: work.end_date.split("T")[0],
-                    })) || [];
-                    setFormData({
-                        sponsoredProjects,
-                        consultancyProjects,
-                        ipr,
-                        startups,
-                        internships,
-                        industryLabs,
-                        calculatedMarks,
-                        journalPapers,
-                        teachingEngagement,
-                        workExperience,
+                        calculatedMarks: totalMarks,
+                        totalMarks,
                     });
                 }
+                if (existingData) {
+                    setFormData(prevData => ({
+                        ...prevData,
+                        industryLabs: existingData.IndustryLabs || [],
+                    }));
+                }
+                setLoading(false);
             } catch (error) {
-                console.error('Error fetching saved data:', error);
-            } finally {
+                console.error("Error fetching data: ", error);
                 setLoading(false);
             }
         };
     
         fetchSavedData();
-    }, [status, router, session?.user?.email]);   
-
+    }, [status, router, session?.user?.email]);
+    
     useEffect(() => {
         // Calculate marks whenever form data changes
         const marks = calculateStep4Marks(formData);

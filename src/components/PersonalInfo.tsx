@@ -20,8 +20,8 @@ export function PersonalInfo({ data }: PersonalInfoProps) {
         <div className="personal-info mb-8">
             <div className="mb-4">
                 <p className="text-center mb-2">
-                    {/* Appraisal Period: January 01, {startYear} to December 31, {endYear} */}
-                    Appraisal Period: January 01, {startYear}
+                    Appraisal Period: January 01, {startYear} to December 31, {startYear}
+                    {/* Appraisal Period: January 01, {startYear} */}
                 </p>
                 <p className="text-sm text-gray-600 text-center mb-4">
                     Note: Please mention each and every information only for the appraisal period.

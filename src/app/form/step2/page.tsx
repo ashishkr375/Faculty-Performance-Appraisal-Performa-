@@ -133,8 +133,11 @@ export default function Step2Page() {
             setLoading(true);
             try {
                 const formResponse = await fetch('/api/get-part?step=2');
-                const existingData = formResponse.ok ? await formResponse.json() : null;
-
+                const formData = formResponse.ok ? await formResponse.json() : null;
+                const existingData=formData.stepData;
+                const appraisalPeriod=formData.appraisalPeriod;
+                const appraisalYear = new Date(appraisalPeriod).getFullYear();
+                const nextYear = appraisalYear + 1;
                 if (existingData && Object.keys(existingData).length > 0) {
                     setFormData(prevData => ({
                         ...prevData,
@@ -143,38 +146,54 @@ export default function Step2Page() {
                     const facultyData = await fetchFacultyData(session?.user?.email || '');
                     let courses = [];
                     if (facultyData?.teaching_engagement) {
-                        courses = facultyData.teaching_engagement.map((engagement) => ({
-                            semester: engagement.semester,
-                            courseNo: engagement.course_number,
-                            title: engagement.course_title,
-                            studentCount: engagement.student_count,
-                            academicYear: engagement.academic_year,
-                            teachingHoursPerWeek: engagement.teaching_hours_per_week,
-                            level: engagement.level,
-                            type: engagement.course_type,
-                            weeklyLoadL: engagement.lectures,
-                            weeklyLoadT: engagement.tutorials,
-                            weeklyLoadP: engagement.practicals,
-                            totalTheoryHours: engagement.total_theory,
-                            totalLabHours: engagement.lab_hours,
-                            yearsOffered: engagement.years_offered,
-                        }));
+                        courses = facultyData.teaching_engagement
+                            .filter((engagement) => {
+                                const yearsOffered = engagement.years_offered.split('-');
+                                const startYear = parseInt(yearsOffered[0]);
+                                const endYear = parseInt(yearsOffered[1]);
+                                return (endYear >= appraisalYear);
+                            })
+                            .map((engagement) => ({
+                                semester: engagement.semester,
+                                courseNo: engagement.course_number,
+                                title: engagement.course_title,
+                                studentCount: engagement.student_count,
+                                academicYear: engagement.academic_year,
+                                teachingHoursPerWeek: engagement.teaching_hours_per_week,
+                                level: engagement.level,
+                                type: engagement.course_type,
+                                weeklyLoadL: engagement.lectures,
+                                weeklyLoadT: engagement.tutorials,
+                                weeklyLoadP: engagement.practicals,
+                                totalTheoryHours: engagement.total_theory,
+                                totalLabHours: engagement.lab_hours,
+                                yearsOffered: engagement.years_offered,
+                            }));
                     }
-
-                    const projectSupervision = { btech: [], mtech: [] };
+                    const projectSupervision = { btech: [], mtech: [],mca:[],mba:[] };
                     if (facultyData?.project_supervision) {
                         facultyData.project_supervision.forEach((project) => {
-                            const projectData = {
-                                title: project.project_title,
-                                students: project.student_details,
-                                internalSupervisors: project.internal_supervisors,
-                                externalSupervisors: project.external_supervisors,
-                            };
-
-                            if (project.category === 'Undergraduate') {
-                                projectSupervision.btech.push(projectData);
-                            } else if (project.category === 'Postgraduate') {
-                                projectSupervision.mtech.push(projectData);
+                            const yearsOffered = project.years_offered? project.years_offered.split('-'):['2024','2025']; //checking edge cases for filter part 
+                            const startYear = parseInt(yearsOffered[0]);
+                            const endYear = parseInt(yearsOffered[1]);
+                    
+                            if (endYear >= appraisalYear)  {
+                                const projectData = {
+                                    title: project.project_title,
+                                    students: project.student_details,
+                                    internalSupervisors: project.internal_supervisors,
+                                    externalSupervisors: project.external_supervisors,
+                                };
+                    
+                                if (project.category === 'Undergraduate' || project.category === 'UG') {
+                                    projectSupervision.btech.push(projectData);
+                                } else if (project.category === 'Postgraduate' || project.category === 'PG') {
+                                    projectSupervision.mtech.push(projectData);
+                                } else if (project.category === 'MCA') {
+                                    projectSupervision.mca.push(projectData);
+                                } else if (project.category === 'MBA') {
+                                    projectSupervision.mba.push(projectData);
+                                }
                             }
                         });
                     }
@@ -205,38 +224,55 @@ export default function Step2Page() {
                     const facultyData = await fetchFacultyData(session?.user?.email || '');
                     let courses = [];
                     if (facultyData?.teaching_engagement) {
-                        courses = facultyData.teaching_engagement.map((engagement) => ({
-                            semester: engagement.semester,
-                            courseNo: engagement.course_number,
-                            title: engagement.course_title,
-                            studentCount: engagement.student_count,
-                            academicYear: engagement.academic_year,
-                            teachingHoursPerWeek: engagement.teaching_hours_per_week,
-                            level: engagement.level,
-                            type: engagement.course_type,
-                            weeklyLoadL: engagement.lectures,
-                            weeklyLoadT: engagement.tutorials,
-                            weeklyLoadP: engagement.practicals,
-                            totalTheoryHours: engagement.total_theory,
-                            totalLabHours: engagement.lab_hours,
-                            yearsOffered: engagement.years_offered,
-                        }));
+                        courses = facultyData.teaching_engagement
+                            .filter((engagement) => {
+                                const yearsOffered = engagement.years_offered.split('-');
+                                const startYear = parseInt(yearsOffered[0]);
+                                const endYear = parseInt(yearsOffered[1]);
+                                return (endYear >= appraisalYear);
+                            })
+                            .map((engagement) => ({
+                                semester: engagement.semester,
+                                courseNo: engagement.course_number,
+                                title: engagement.course_title,
+                                studentCount: engagement.student_count,
+                                academicYear: engagement.academic_year,
+                                teachingHoursPerWeek: engagement.teaching_hours_per_week,
+                                level: engagement.level,
+                                type: engagement.course_type,
+                                weeklyLoadL: engagement.lectures,
+                                weeklyLoadT: engagement.tutorials,
+                                weeklyLoadP: engagement.practicals,
+                                totalTheoryHours: engagement.total_theory,
+                                totalLabHours: engagement.lab_hours,
+                                yearsOffered: engagement.years_offered,
+                            }));
                     }
 
-                    const projectSupervision = { btech: [], mtech: [] };
+                    const projectSupervision = { btech: [], mtech: [],mca:[],mba:[] };
                     if (facultyData?.project_supervision) {
                         facultyData.project_supervision.forEach((project) => {
-                            const projectData = {
-                                title: project.project_title,
-                                students: project.student_details,
-                                internalSupervisors: project.internal_supervisors,
-                                externalSupervisors: project.external_supervisors,
-                            };
-
-                            if (project.category === 'Undergraduate') {
-                                projectSupervision.btech.push(projectData);
-                            } else if (project.category === 'Postgraduate') {
-                                projectSupervision.mtech.push(projectData);
+                            const yearsOffered = project.years_offered? project.years_offered.split('-'):['2024','2025']; //checking edge cases for filter part 
+                            const startYear = parseInt(yearsOffered[0]);
+                            const endYear = parseInt(yearsOffered[1]);
+                    
+                            if (endYear >= appraisalYear)  {
+                                const projectData = {
+                                    title: project.project_title,
+                                    students: project.student_details,
+                                    internalSupervisors: project.internal_supervisors,
+                                    externalSupervisors: project.external_supervisors,
+                                };
+                    
+                                if (project.category === 'Undergraduate' || project.category === 'UG') {
+                                    projectSupervision.btech.push(projectData);
+                                } else if (project.category === 'Postgraduate' || project.category === 'PG') {
+                                    projectSupervision.mtech.push(projectData);
+                                } else if (project.category === 'MCA') {
+                                    projectSupervision.mca.push(projectData);
+                                } else if (project.category === 'MBA') {
+                                    projectSupervision.mba.push(projectData);
+                                }
                             }
                         });
                     }
