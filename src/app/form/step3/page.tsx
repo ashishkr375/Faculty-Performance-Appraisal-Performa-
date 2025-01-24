@@ -140,7 +140,10 @@ export default function Step3Page() {
                 const appraisalYear = new Date(appraisalPeriod).getFullYear();
     
                 const facultyData = await fetchFacultyData(session?.user?.email || '');
+
                 if (facultyData) {
+                    console.log(facultyData?.phd_candidates);
+
                     let phdSupervisionMarks = 0;
                     const phdSupervision = facultyData?.phd_candidates?.map(candidate => {
                         let marks = 0;
@@ -566,6 +569,7 @@ export default function Step3Page() {
                                             <option value="FT">Full Time with Stipend under Institute</option>
                                             <option value="TEQIP">TEQIP</option>
                                             <option value="PT">Part Time</option>
+                                            {/* <option value="PT">pursuing phd</option> */}
                                         </select>
                                     </div>
                                 </div>
@@ -635,8 +639,9 @@ export default function Step3Page() {
                                 </div>
                                 <div>
                                     <label className="block mb-2">Current Status</label>
+                                    {/* <input type='text' value={student.status} /> */}
                                     <select
-                                        value={student.currentStatus}
+                                        value={student.status}
                                         onChange={(e) => {
                                             const updated = [...formData.phdSupervision];
                                             updated[index] = { ...student, currentStatus: e.target.value };
