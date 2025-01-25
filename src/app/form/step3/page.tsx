@@ -171,7 +171,7 @@ export default function Step3Page() {
                             marks,
                             statusDate: candidate.completion_year
                         } : null;
-                    }).filter(candidate => candidate !== null) || [];
+                    }).filter(candidate => candidate !== null && candidate.registrationYear <=appraisalYear) || [];
     
                     phdSupervisionMarks = Math.min(phdSupervisionMarks, 10);
     
