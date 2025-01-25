@@ -183,10 +183,11 @@ export default function Step2Page() {
                             // const yearsOffered = project.years_offered? project.years_offered.split('-'):['2024','2025']; //checking edge cases for filter part 
                             // const startYear = parseInt(yearsOffered[0]);
                             // const endYear = parseInt(yearsOffered[1]);
-                            const startYear=project.start_year != null ? new Date(parseInt((project.start_year))).getFullYear() : appraisalYear;
-                            const endYear = project.end_year !== null && project.end_year !== 'continue' 
-                                ? new Date(parseInt(project.end_year)).getFullYear() 
-                                : (project.end_year === 'continue' ? new Date().getFullYear() : appraisalYear);
+                            
+                            const startYear=project.start_date != null ? new Date(parseInt((project.start_date))).getFullYear() : appraisalYear;
+                            const endYear = project.end_date !== null && project.end_date !== 'continue' 
+                                ? new Date(parseInt(project.end_date)).getFullYear() 
+                                : (project.end_date === 'continue' ? new Date().getFullYear() : appraisalYear);
                             if (endYear >= appraisalYear && startYear <= appraisalYear)  {
                                 const projectData = {
                                     title: project.project_title,
@@ -275,11 +276,11 @@ export default function Step2Page() {
                             // const yearsOffered = project.years_offered? project.years_offered.split('-'):['2024','2025']; //checking edge cases for filter part 
                             // const startYear = parseInt(yearsOffered[0]);
                             // const endYear = parseInt(yearsOffered[1]);
-                            const startYear=project.start_year != null ? new Date(parseInt((project.start_year))).getFullYear() : appraisalYear;
-                            const endYear = project.end_year !== null && project.end_year !== 'continue' 
-                                ? new Date(parseInt(project.end_year)).getFullYear() 
-                                : (project.end_year === 'continue' ? new Date().getFullYear() : appraisalYear);
-
+                            const startYear=project.start_date != null ? new Date(parseInt((project.start_date))).getFullYear() : appraisalYear;
+                            const endYear = project.end_date !== null && project.end_date !== 'continue' 
+                                ? new Date(parseInt(project.end_date)).getFullYear() 
+                                : (project.end_date === 'continue' ? new Date().getFullYear() : appraisalYear);
+                                
                             if (endYear >= appraisalYear && startYear <= appraisalYear)  {
                                 const projectData = {
                                     title: project.project_title,

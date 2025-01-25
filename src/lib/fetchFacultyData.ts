@@ -170,8 +170,8 @@ export interface FacultyProfile {
         internal_supervisors: string;
         external_supervisors: string;
         years_offered?:string;
-        start_year:string;
-        end_year:string;
+        start_date:string;
+        end_date:string;
       }>;
       workshops_conferences: Array<{
         id: string;
