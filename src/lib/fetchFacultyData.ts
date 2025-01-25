@@ -41,7 +41,7 @@ export interface FacultyProfile {
         title: string;
         authors: string;
         conference_name: string;
-        conference_year: string;
+        conference_year: number;
         conference_location: string;
         doi_url: string;
         location:string;

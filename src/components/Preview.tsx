@@ -229,17 +229,23 @@ interface PreviewProps {
 
 const printStyles = `
 @media print {
-    @page {
-        margin: 1.5cm;
-        size: A4;
+@media print {
+     @page {
+        margin-top: 25mm;  /* Set top margin */
+        margin-bottom: 20mm;  /* Set bottom margin */
+        margin-left: 10mm;  /* Set left margin */
+        margin-right: 10mm;  /* Set right margin */
+        size: legal;
     }
 
     body {
+        font-family: "Times New Roman", Times, serif;
+        line-height: 1.5;
         margin: 0;
         padding: 0;
     }
 
-    .preview-container {
+        .preview-container {
         padding: 0 !important;
         max-width: none !important;
         
@@ -249,7 +255,7 @@ const printStyles = `
         display: none !important;
     }
 
-    .page-break {
+        .page-break {
         page-break-before: always;
     }
 
@@ -258,6 +264,28 @@ const printStyles = `
         margin-header: 0;
         margin-footer: 0;
     }
+
+     pre, code {
+        font-family: "Courier New", Courier, monospace;
+        font-size: 12px;
+    }
+
+    table {
+        width: 100%;
+        table-layout: fixed;
+        margin-bottom: 20px;
+        border-collapse: collapse;
+        page-break-inside: avoid;
+    }
+
+    th, td {
+        padding: 3px;
+        border: 1px solid black;
+        text-align: left;
+        word-wrap: break-word;
+        overflow: hidden;
+        white-space: normal;
+        font-size: 10px;
 }
 `;
 
@@ -430,7 +458,7 @@ export default function Preview({ formData }: PreviewProps) {
                         </p>
 
                         {/* Course Tables */}
-                        {['Summer', 'Autumn', 'Spring'].map(semester => {
+                        {['Summer', 'Autumn', 'Spring','Fall',"1","2",'3',"4","5","6","7"].map(semester => {
                             // Check if teachingEngagement and courses exist before accessing
                             const courses = formData.step2?.teachingEngagement?.courses || [];
                             const semesterCourses = courses.filter(course => course.semester === semester);

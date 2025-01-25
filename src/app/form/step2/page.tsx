@@ -177,40 +177,41 @@ export default function Step2Page() {
                                 yearsOffered: engagement.years_offered,
                             }));
                     }
-                    const projectSupervision = { btech: [], mtech: [],mca:[],mba:[] };
-                    if (facultyData?.project_supervision) {
-                        facultyData.project_supervision.forEach((project) => {
-                            // const yearsOffered = project.years_offered? project.years_offered.split('-'):['2024','2025']; //checking edge cases for filter part 
-                            // const startYear = parseInt(yearsOffered[0]);
-                            // const endYear = parseInt(yearsOffered[1]);
-                            
-                            const startYear=project.start_date != null ? new Date(parseInt((project.start_date))).getFullYear() : appraisalYear;
-                            const endYear = project.end_date !== null && project.end_date !== 'continue' 
-                                ? new Date(parseInt(project.end_date)).getFullYear() 
-                                : (project.end_date === 'continue' ? new Date().getFullYear() : appraisalYear);
-                            if (endYear >= appraisalYear && startYear <= appraisalYear)  {
-                                const projectData = {
-                                    title: project.project_title,
-                                    students: project.student_details,
-                                    internalSupervisors: project.internal_supervisors,
-                                    externalSupervisors: project.external_supervisors,
-                                };
-                    
-                                if (project.category === 'Undergraduate' || project.category === 'UG') {
-                                    projectSupervision.btech.push(projectData);
-                                } else if (project.category === 'Postgraduate' || project.category === 'PG') {
-                                    projectSupervision.mtech.push(projectData);
-                                } else if (project.category === 'MCA') {
-                                    projectSupervision.mca.push(projectData);
-                                } else if (project.category === 'MBA') {
-                                    projectSupervision.mba.push(projectData);
-                                }
-                                else if (project.category === 'MSC') {
-                                    projectSupervision.mba.push(projectData);
-                                }
-                            }
-                        });
-                    }
+                    const projectSupervision = { btech: [], mtech: [], mca: [], mba: [] };
+// console.log(facultyData?.project_supervision)
+if (facultyData?.project_supervision) {
+    facultyData.project_supervision.forEach((project) => {
+        const startDate = project.start_date ? new Date(project.start_date) : null;
+        const endDate = project.end_date && project.end_date !== 'continue' 
+                        ? new Date(project.end_date) 
+                        : (project.end_date === 'continue' ? new Date() : null);
+
+        const startYear = startDate ? startDate.getFullYear() : appraisalYear;
+        const endYear = endDate ? endDate.getFullYear() : (project.end_date === 'continue' ? new Date().getFullYear() : appraisalYear);
+
+        if (endYear >= appraisalYear && startYear <= appraisalYear) {
+            const projectData = {
+                title: project.project_title,
+                students: project.student_details,
+                internalSupervisors: project.internal_supervisors,
+                externalSupervisors: project.external_supervisors,
+            };
+
+            if (project.category === 'Undergraduate' || project.category === 'UG' || project.category ==='BTech') {
+                projectSupervision.btech.push(projectData);
+            } else if (project.category === 'Postgraduate' || project.category === 'PG' || project.category ==='MTech') {
+                projectSupervision.mtech.push(projectData);
+            } else if (project.category === 'MCA') {
+                projectSupervision.mtech.push(projectData);
+            } else if (project.category === 'MBA') {
+                projectSupervision.mtech.push(projectData);
+            }else if (project.category === 'MSC') {
+                projectSupervision.mtech.push(projectData);
+            }
+        }
+    });
+}
+
 
                     let workshopsConferences = [];
                     if (facultyData?.workshops_conferences) {
@@ -289,16 +290,16 @@ export default function Step2Page() {
                                     externalSupervisors: project.external_supervisors,
                                 };
                     
-                                if (project.category === 'Undergraduate' || project.category === 'UG') {
+                                if (project.category === 'Undergraduate' || project.category === 'UG' || project.category ==='BTech') {
                                     projectSupervision.btech.push(projectData);
-                                } else if (project.category === 'Postgraduate' || project.category === 'PG') {
+                                } else if (project.category === 'Postgraduate' || project.category === 'PG' || project.category ==='MTech') {
                                     projectSupervision.mtech.push(projectData);
                                 } else if (project.category === 'MCA') {
-                                    projectSupervision.mca.push(projectData);
+                                    projectSupervision.mtech.push(projectData);
                                 } else if (project.category === 'MBA') {
-                                    projectSupervision.mba.push(projectData);
+                                    projectSupervision.mtech.push(projectData);
                                 }else if (project.category === 'MSC') {
-                                    projectSupervision.mba.push(projectData);
+                                    projectSupervision.mtech.push(projectData);
                                 }
                             }
                         });
