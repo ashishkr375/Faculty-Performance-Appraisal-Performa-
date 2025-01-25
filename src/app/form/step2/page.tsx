@@ -180,11 +180,14 @@ export default function Step2Page() {
                     const projectSupervision = { btech: [], mtech: [],mca:[],mba:[] };
                     if (facultyData?.project_supervision) {
                         facultyData.project_supervision.forEach((project) => {
-                            const yearsOffered = project.years_offered? project.years_offered.split('-'):['2024','2025']; //checking edge cases for filter part 
-                            const startYear = parseInt(yearsOffered[0]);
-                            const endYear = parseInt(yearsOffered[1]);
-                    
-                            if (endYear >= appraisalYear)  {
+                            // const yearsOffered = project.years_offered? project.years_offered.split('-'):['2024','2025']; //checking edge cases for filter part 
+                            // const startYear = parseInt(yearsOffered[0]);
+                            // const endYear = parseInt(yearsOffered[1]);
+                            const startYear=project.start_year != null ? new Date(parseInt((project.start_year))).getFullYear() : appraisalYear;
+                            const endYear = project.end_year !== null && project.end_year !== 'continue' 
+                                ? new Date(parseInt(project.end_year)).getFullYear() 
+                                : (project.end_year === 'continue' ? new Date().getFullYear() : appraisalYear);
+                            if (endYear >= appraisalYear && startYear <= appraisalYear)  {
                                 const projectData = {
                                     title: project.project_title,
                                     students: project.student_details,
@@ -199,6 +202,9 @@ export default function Step2Page() {
                                 } else if (project.category === 'MCA') {
                                     projectSupervision.mca.push(projectData);
                                 } else if (project.category === 'MBA') {
+                                    projectSupervision.mba.push(projectData);
+                                }
+                                else if (project.category === 'MSC') {
                                     projectSupervision.mba.push(projectData);
                                 }
                             }
@@ -266,10 +272,14 @@ export default function Step2Page() {
                     const projectSupervision = { btech: [], mtech: [],mca:[],mba:[] };
                     if (facultyData?.project_supervision) {
                         facultyData.project_supervision.forEach((project) => {
-                            const yearsOffered = project.years_offered? project.years_offered.split('-'):['2024','2025']; //checking edge cases for filter part 
-                            const startYear = parseInt(yearsOffered[0]);
-                            const endYear = parseInt(yearsOffered[1]);
-                    
+                            // const yearsOffered = project.years_offered? project.years_offered.split('-'):['2024','2025']; //checking edge cases for filter part 
+                            // const startYear = parseInt(yearsOffered[0]);
+                            // const endYear = parseInt(yearsOffered[1]);
+                            const startYear=project.start_year != null ? new Date(parseInt((project.start_year))).getFullYear() : appraisalYear;
+                            const endYear = project.end_year !== null && project.end_year !== 'continue' 
+                                ? new Date(parseInt(project.end_year)).getFullYear() 
+                                : (project.end_year === 'continue' ? new Date().getFullYear() : appraisalYear);
+
                             if (endYear >= appraisalYear && startYear <= appraisalYear)  {
                                 const projectData = {
                                     title: project.project_title,
@@ -285,6 +295,8 @@ export default function Step2Page() {
                                 } else if (project.category === 'MCA') {
                                     projectSupervision.mca.push(projectData);
                                 } else if (project.category === 'MBA') {
+                                    projectSupervision.mba.push(projectData);
+                                }else if (project.category === 'MSC') {
                                     projectSupervision.mba.push(projectData);
                                 }
                             }
