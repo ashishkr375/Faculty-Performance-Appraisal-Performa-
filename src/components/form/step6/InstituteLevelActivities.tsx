@@ -47,7 +47,6 @@ export const InstituteLevelActivities = ({ formData, setFormData }: Props) => {
                                 className="w-full p-2 border rounded bg-gray-200"
                                 placeholder="e.g., HOD, Dean, Warden"
                                 required
-                                disabled={true}
                             />
                         </div>
                         <div>
@@ -61,14 +60,12 @@ export const InstituteLevelActivities = ({ formData, setFormData }: Props) => {
                                     setFormData({ ...formData, instituteLevelActivities: updated });
                                 }}
                                 className="w-full p-2 border rounded bg-gray-200"
-                                disabled={true}
                                 placeholder="e.g., Jan 2023 - June 2023"
                                 required
                             />
                         </div>
                         <div>
                             <label className="block mb-2">Marks Claimed</label>
-                            {/* <input type="text" className='w-full p-2 border rounded bg-gray-200' disabled={true} value={activity.marks} /> */}
                             <select
                                 value={activity.marks}
                                 onChange={(e) => {
@@ -101,10 +98,10 @@ export const InstituteLevelActivities = ({ formData, setFormData }: Props) => {
                 type="button"
                 onClick={handleAddActivity}
                 className="w-full p-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-600"
-
+                
             >
                 + Add Institute Level Activity
             </button> */}
         </section>
     );
-}; 
+};

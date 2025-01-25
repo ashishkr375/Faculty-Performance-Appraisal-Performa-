@@ -39,7 +39,7 @@ interface ConferencePaper {
     title: string;
     conference: string;
     location: string;
-    year: string;
+    year: number;
     pages: string;
     indexing: string;
     foreignAuthor: string;
@@ -219,7 +219,8 @@ export default function Step3Page() {
     
                     let conferencePapersMarks = 0;
                     const conferencePapers = facultyData?.conference_papers?.map(paper => {
-                        const conferenceYear = new Date(paper.conference_year).getFullYear();
+                        // const conferenceYear = new Date(paper.conference_year).getFullYear();
+                        const conferenceYear = paper.conference_year
                         // conferenceYear >= appraisalYear
                         if (conferenceYear == appraisalYear) {
                             let marks = 0;
@@ -239,6 +240,7 @@ export default function Step3Page() {
                                 indexing: paper.indexing,
                                 studentInvolved: paper.student_involved,
                                 doi: paper.doi,
+                                foreignAuthor:paper.foreign_author,
                                 marks
                             };
                         }
@@ -277,6 +279,7 @@ export default function Step3Page() {
                                 return {
                                     title: book.title,
                                     authors: book.editors,
+                                    editors:book.editors,
                                     publisher: book.publisher,
                                     isbn: book.isbn,
                                     year: bookYear,
@@ -1004,8 +1007,8 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...paper, foreignAuthor: e.target.value };
                                             setFormData({ ...formData, conferencePapers: updated });
                                         }}
-                                        className="w-full p-2 border rounded bg-gray-200"
-                                        disabled={true}
+                                        className="w-full p-2 border rounded "
+                                        // disabled={true}
                                     />
                                 </div>
                                 <div>

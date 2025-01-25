@@ -113,7 +113,7 @@ const Step6Page = () => {
                                         marks = 0.5;
                                         break;
                                     default:
-                                        marks = 0;
+                                        marks = 0.5;
                                 }
     
                                 instituteMarks += marks;

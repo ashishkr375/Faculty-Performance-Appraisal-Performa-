@@ -38,7 +38,7 @@ export function calculateStep2Marks(formData: any): number {
 
     // Handle project supervision
     const btechProjects = formData?.step2?.projectSupervision?.btech || formData?.projectSupervision?.btech || [];
-    const mtechProjects = formData?.step2?.projectSupervision?.mtech || formData?.projectSupervision?.mtech || [];
+    const mtechProjects = formData?.step2?.projectSupervision?.mtech || formData?.projectSupervision?.mtech ||  formData?.projectSupervision?.mca ||  formData?.projectSupervision?.mba|| [];
     
     marks += btechProjects.length * 2; // 2 marks per B.Tech project
     marks += mtechProjects.length * 3; // 3 marks per M.Tech project
