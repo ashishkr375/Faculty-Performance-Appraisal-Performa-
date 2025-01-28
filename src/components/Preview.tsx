@@ -308,8 +308,8 @@ export default function Preview({ formData }: PreviewProps) {
     const sponsoredRDMarks = (formData.step4.calculatedMarks);
     // const organizationMarks = calculateMarks.organizationParticipation(formData.step5);
     const organizationMarks = (formData.step5.calculatedMarks);
-    const managementMarks = (formData.step6.calculatedMarks);
-    // const managementMarks = calculateMarks.managementDevelopment(formData.step6);
+    // const managementMarks = (formData.step6.calculatedMarks);
+    const managementMarks = calculateMarks.managementDevelopment(formData.step6);
     const totalMarks = instructionalMarks + researchMarks + sponsoredRDMarks + 
                       organizationMarks + managementMarks;
 
