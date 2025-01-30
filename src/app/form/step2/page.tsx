@@ -8,7 +8,7 @@ import Loading from '@/app/loading';
 import { fetchFacultyData } from '@/lib/fetchFacultyData';
 
 const COURSE_LEVELS = ['UG', 'PG', 'PhD','Undergraduate','Postgraduate'] as const;
-const SEMESTERS = ['Spring', 'Summer', 'Autumn',"Fall","1","2","3","4","5","6","7","8"] as const;
+const SEMESTERS = ['Spring', 'Summer', 'Autumn',"Fall","1","2","3","4","5","6","7","8","9","10"] as const;
 
 // Add descriptions for each section
 const SECTION_DESCRIPTIONS = {
