@@ -169,7 +169,7 @@ const Step6Page = () => {
         };
     
         fetchSavedData();
-    }, [status, router, session?.user?.email, formData?.calculatedMarks]);
+    }, [status, router, session?.user?.email]);
     useEffect(() => {
         // Calculate marks whenever form data changes
         const marks = calculateStep6Marks(formData);

@@ -637,8 +637,9 @@ export default function Step3Page() {
                                                 updated[index] = { ...student, scopusPublications: parseInt(e.target.value) };
                                                 setFormData({ ...formData, phdSupervision: updated });
                                             }}
-                                            className="w-1/2 p-2 border rounded"
+                                            className="w-1/2 p-2 border rounded bg-gray-200"
                                             placeholder="Scopus"
+                                            
                                             min="0"
                                         />
                                         

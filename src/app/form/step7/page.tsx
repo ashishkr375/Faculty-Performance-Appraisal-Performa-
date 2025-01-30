@@ -28,8 +28,8 @@ const Step7Page = () => {
                 const response = await fetch('/api/get-part?step=7');
                 if (response.ok) {
                     // console.log("adk",response)
-                    const data = await response.json();
-                    setFormData(data.stepData.stepData);
+                    const {stepData,appraisalPeriod} = await response.json();
+                    setFormData(stepData);
                 }
             } catch (error) {
                 console.error('Error fetching saved data:', error);

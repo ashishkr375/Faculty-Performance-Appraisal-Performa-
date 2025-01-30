@@ -65,7 +65,17 @@ export const DepartmentLevelActivities = ({ formData, setFormData }: Props) => {
                     </div>
                     <div>
                     <label className="block mb-2">Marks Claimed</label>
-                    <input type="text" className='w-full p-2 border rounded'  value={activity.marks} />
+                    <input
+                        type="number"
+                        className="w-full p-2 border rounded"
+                        value={activity.marks}
+                        onChange={(e) => {
+                            const updated = [...formData.departmentLevelActivities];
+                            updated[index] = { ...activity, marks: parseFloat(e.target.value) };
+                            setFormData({ ...formData, departmentLevelActivities: updated });
+                        }}
+                        required
+                    />
                     </div>
                     <button
                         type="button"
