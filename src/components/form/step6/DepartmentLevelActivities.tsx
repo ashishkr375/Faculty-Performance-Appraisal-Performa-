@@ -77,7 +77,7 @@ export const DepartmentLevelActivities = ({ formData, setFormData }: Props) => {
                         required
                     />
                     </div>
-                    <button
+                    {/* <button
                         type="button"
                         onClick={() => {
                             const updated = formData.departmentLevelActivities.filter((_, i) => i !== index);
@@ -86,7 +86,7 @@ export const DepartmentLevelActivities = ({ formData, setFormData }: Props) => {
                         className="mt-2 text-red-500 underline"
                     >
                         Remove Activity
-                    </button>
+                    </button> */}
                 </div>
             ))}
             {/* <button

@@ -82,7 +82,7 @@ export const InstituteLevelActivities = ({ formData, setFormData }: Props) => {
                             </select>
                         </div>
                     </div>
-                    <button
+                    {/* <button
                         type="button"
                         onClick={() => {
                             const updated = formData.instituteLevelActivities.filter((_, i) => i !== index);
@@ -91,7 +91,7 @@ export const InstituteLevelActivities = ({ formData, setFormData }: Props) => {
                         className="mt-2 text-red-500 underline"
                     >
                         Remove Activity
-                    </button>
+                    </button> */}
                 </div>
             ))}
             {/* <button
