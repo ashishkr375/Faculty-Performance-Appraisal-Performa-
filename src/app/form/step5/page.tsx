@@ -100,12 +100,14 @@ const Step5Page = () => {
                                     } else if (durationWeeks === 1) {
                                         marks = 1;
                                     }
-                                } else if (workshop.event_type === 'National/International Conference') {
+                                } else if (workshop.event_type === 'National' || workshop.event_type==='International') {
                                     if (workshop.role === 'Chairman' || workshop.role === 'Secretary') {
                                         marks = 3;
                                     }
-                                } else if (workshop.event_type === 'National Conference' || workshop.event_type === 'Workshop' || workshop.event_type === 'Webinar' || workshop.event_type === 'Expert Lecture') {
+                                } else if (workshop.event_type === 'National' || workshop.event_type === 'Workshop' || workshop.event_type === 'Webinar' || workshop.event_type === 'Expert Lecture') {
                                     marks = 1;
+                                }else{
+                                    marks=1;
                                 }
     
                                 eventsMarks += marks;
@@ -129,7 +131,7 @@ const Step5Page = () => {
     
                         const organizationParticipation = {
                             events: workshopsConferences.map(workshop => ({
-                                type: 'National',
+                                type: workshop.event_type,
                                 role: workshop.role,
                                 name: workshop.event_name,
                                 sponsor: workshop.sponsored_by,

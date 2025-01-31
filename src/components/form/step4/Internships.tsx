@@ -153,7 +153,7 @@ export const Internships = ({ formData, setFormData }: Props) => {
                             </div>
                         </div>
                     </div>
-                    <button
+                    {/* <button
                         type="button"
                         onClick={() => {
                             const updated = formData.internships.filter((_, i) => i !== index);
@@ -162,7 +162,7 @@ export const Internships = ({ formData, setFormData }: Props) => {
                         className="mt-2 text-red-500 underline"
                     >
                         Remove Internship
-                    </button>
+                    </button> */}
                 </div>
             ))}
             {/* <button
