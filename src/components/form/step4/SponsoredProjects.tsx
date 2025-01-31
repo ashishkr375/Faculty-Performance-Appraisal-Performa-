@@ -182,7 +182,7 @@ export const SponsoredProjects = ({ formData, setFormData }: Props) => {
                             />
                         </div>
                     </div>
-                    <button
+                    {/* <button
                         type="button"
                         onClick={() => {
                             const updated = formData.sponsoredProjects.filter((_, i) => i !== index);
@@ -191,7 +191,7 @@ export const SponsoredProjects = ({ formData, setFormData }: Props) => {
                         className="mt-2 text-red-500 text-sm"
                     >
                         Remove Project
-                    </button>
+                    </button> */}
                 </div>
             ))}
             {/* <button

@@ -151,7 +151,7 @@ export default function Step3Page() {
                         const currentYear = new Date().getFullYear();
                         const yearsInPhD = currentYear - registrationYear;
     
-                        if (candidate.current_status === "Ongoing") {
+                        if (candidate.current_status != "Awarded") {
                             if (yearsInPhD <= 3) marks += 2;
                             else if (yearsInPhD <= 5) marks += 1; 
                         }
@@ -224,7 +224,7 @@ export default function Step3Page() {
                         // conferenceYear >= appraisalYear
                         if (conferenceYear == appraisalYear) {
                             let marks = 0;
-                            if (paper.indexing === 'SCOPUS' || paper.indexing === 'WOS') {
+                            if (paper.indexing === 'SCOPUS' || paper.indexing === 'Web of Science') {
                                 marks = 0.5;
                             } else {
                                 marks = 0.25;
@@ -358,7 +358,7 @@ export default function Step3Page() {
                 sciPublications: 0,
                 scopusPublications: 0,
                 currentStatus: '',
-                statusDate: ''
+                statusDate: '',
             }]
         });
     };
@@ -549,7 +549,7 @@ export default function Step3Page() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block mb-2">Registration Year and Status</label>
+                                    <label className="block mb-2">Registration Year and Type</label>
                                     <div className="flex gap-2">
                                         <input
                                             type="text"
@@ -565,17 +565,19 @@ export default function Step3Page() {
                                             disabled={true}
                                         />
                                         <select
-                                            value={student.status}
+                                            value={student.stipendType}
+                                            disabled={true}
                                             onChange={(e) => {
                                                 const updated = [...formData.phdSupervision];
                                                 updated[index] = { ...student, status: e.target.value as 'FT' | 'PT' };
                                                 setFormData({ ...formData, phdSupervision: updated });
                                             }}
-                                            className="w-1/2 p-2 border rounded"
+                                            className="w-1/2 p-2 border rounded bg-gray-200"
                                         >
-                                            <option value="FT">Full Time with Stipend under Institute</option>
-                                            <option value="TEQIP">TEQIP</option>
-                                            <option value="PT">Part Time</option>
+                                            <option value="Full Time">Full Time</option>
+                                            <option value="Part Time">Part Time</option>
+                                            <option value="SRF">SRF</option>
+                                            <option value="JRF">JRF</option>
                                             {/* <option value="PT">pursuing phd</option> */}
                                         </select>
                                     </div>
@@ -660,9 +662,9 @@ export default function Step3Page() {
                                         disabled={true}                                        
                                     >
                                         <option value="">Select Status</option>
-                                        <option value="Comprehensive done">Comprehensive done</option>
-                                        <option value="Pre-submission done">Pre-submission done</option>
-                                        <option value="Thesis submitted">Thesis submitted</option>
+                                        <option value="Comprehension">Comprehensive done</option>
+                                        <option value="Presubmission ">Pre-submission done</option>
+                                        <option value="Thesis_Submitted">Thesis submitted</option>
                                         <option value="Awarded">Awarded</option>
                                         <option value="Ongoing">Ongoing</option>
                                     </select>
@@ -818,7 +820,7 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...paper, quartile: e.target.value as 'Q1' | 'Q2' | 'Q3' | 'Q4' };
                                             setFormData({ ...formData, journalPapers: updated });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200" disabled={true}
                                         
                                     >
                                         <option value="Q1">Q1</option>
@@ -991,7 +993,8 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...paper, indexing: e.target.value as 'SCOPUS' | 'Web of Science' | 'Non-indexed' };
                                             setFormData({ ...formData, conferencePapers: updated });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        disabled={true}
+                                        className="w-full p-2 border rounded bg-gray-300"
                                     >
                                         <option value="SCOPUS">SCOPUS</option>
                                         <option value="Web of Science">Web of Science</option>
@@ -1003,12 +1006,13 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                     <input
                                         type="text"
                                         value={paper.foreignAuthor}
+                                        disabled={true}
                                         onChange={(e) => {
                                             const updated = [...formData.conferencePapers];
                                             updated[index] = { ...paper, foreignAuthor: e.target.value };
                                             setFormData({ ...formData, conferencePapers: updated });
                                         }}
-                                        className="w-full p-2 border rounded "
+                                        className="w-full p-2 border rounded bg-gray-300 "
                                         // disabled={true}
                                     />
                                 </div>

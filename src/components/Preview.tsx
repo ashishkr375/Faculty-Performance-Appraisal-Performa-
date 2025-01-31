@@ -656,7 +656,8 @@ export default function Preview({ formData }: PreviewProps) {
                                     <td className="border p-2">{paper.quartile}</td>
                                     <td className="border p-2">{formatDate(paper.publicationDate)}</td>
                                     <td className="border p-2">{paper.studentInvolved}</td>
-                                    <td className="border p-2">{paper.doi}</td>
+                                    <td className="border p-2" style={{ wordBreak: 'break-word' }}>
+                                    {paper.doi}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -699,7 +700,8 @@ export default function Preview({ formData }: PreviewProps) {
                                     <td className="border p-2">{paper.indexing}</td>
                                     <td className="border p-2">{paper.foreignAuthor}</td>
                                     <td className="border p-2">{paper.studentInvolved}</td>
-                                    <td className="border p-2">{paper.doi}</td>
+                                    <td className="border p-2" style={{ wordBreak: 'break-word' }}>
+                                    {paper.doi}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -736,7 +738,8 @@ export default function Preview({ formData }: PreviewProps) {
                                         <td className="border p-2">{book.isbn}</td>
                                         <td className="border p-2">{book.year}</td>
                                         <td className="border p-2">{book.scopusIndexed ? 'Yes' : 'No'}</td>
-                                        <td className="border p-2">{book.doi}</td>
+                                        <td className="border p-2" style={{ wordBreak: 'break-word' }}>
+                                    {book.doi}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -769,7 +772,8 @@ export default function Preview({ formData }: PreviewProps) {
                                         <td className="border p-2">{book.isbn}</td>
                                         <td className="border p-2">{book.year}</td>
                                         <td className="border p-2">{book.scopusIndexed ? 'Yes' : 'No'}</td>
-                                        <td className="border p-2">{book.doi}</td>
+                                        <td className="border p-2" style={{ wordBreak: 'break-word' }}>
+                                    {book.doi}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -806,7 +810,8 @@ export default function Preview({ formData }: PreviewProps) {
                                         <td className="border p-2">{chapter.isbn}</td>
                                         <td className="border p-2">{chapter.year}</td>
                                         <td className="border p-2">{chapter.scopusIndexed ? 'Yes' : 'No'}</td>
-                                        <td className="border p-2">{chapter.doi}</td>
+                                        <td className="border p-2" style={{ wordBreak: 'break-word' }}>
+                                    {chapter.doi}</td>
                                     </tr>
                                 ))}
                             </tbody>

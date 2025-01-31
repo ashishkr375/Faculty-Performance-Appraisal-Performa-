@@ -38,12 +38,16 @@ export const Events = ({ formData, setFormData }: Props) => {
                                     const updated = [...formData.events];
                                     updated[index] = { ...event, type: e.target.value as 'National' | 'International' };
                                     setFormData({ ...formData, events: updated });
-                                }}
-                                className="w-full p-2 border rounded"
+                                }}disabled={true}
+                                className="w-full p-2 border rounded bg-gray-300"
                                 required
                             >
                                 <option value="National">National</option>
                                 <option value="International">International</option>
+                                <option value="Symposium">Symposium</option>
+                                <option value="Seminar">Seminar</option>
+                                <option value="Conference">Conference</option>
+                                <option value="Workshop">Workshop</option>
                             </select>
                         </div>
                         <div>
@@ -138,7 +142,7 @@ export const Events = ({ formData, setFormData }: Props) => {
                             />
                         </div>
                     </div>
-                    <button
+                    {/* <button
                         type="button"
                         onClick={() => {
                             const updated = formData.events.filter((_, i) => i !== index);
@@ -147,7 +151,7 @@ export const Events = ({ formData, setFormData }: Props) => {
                         className="mt-2 text-red-500 underline"
                     >
                         Remove Event
-                    </button>
+                    </button> */}
                 </div>
             ))}
             {/* <button

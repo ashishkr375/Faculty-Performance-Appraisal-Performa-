@@ -199,15 +199,18 @@ if (facultyData?.project_supervision) {
 
             if (project.category === 'Undergraduate' || project.category === 'UG' || project.category ==='BTech') {
                 projectSupervision.btech.push(projectData);
-            } else if (project.category === 'Postgraduate' || project.category === 'PG' || project.category ==='MTech') {
-                projectSupervision.mtech.push(projectData);
-            } else if (project.category === 'MCA') {
-                projectSupervision.mtech.push(projectData);
-            } else if (project.category === 'MBA') {
-                projectSupervision.mtech.push(projectData);
-            }else if (project.category === 'MSC') {
+            } else{
                 projectSupervision.mtech.push(projectData);
             }
+            // else if (project.category === 'Postgraduate' || project.category === 'PG' || project.category ==='MTech') {
+            //     projectSupervision.mtech.push(projectData);
+            // } else if (project.category === 'MCA') {
+            //     projectSupervision.mtech.push(projectData);
+            // } else if (project.category === 'MBA') {
+            //     projectSupervision.mtech.push(projectData);
+            // }else if (project.category === 'MSC') {
+            //     projectSupervision.mtech.push(projectData);
+            // }
         }
     });
 }
@@ -292,15 +295,18 @@ if (facultyData?.project_supervision) {
                     
                                 if (project.category === 'Undergraduate' || project.category === 'UG' || project.category ==='BTech') {
                                     projectSupervision.btech.push(projectData);
-                                } else if (project.category === 'Postgraduate' || project.category === 'PG' || project.category ==='MTech') {
-                                    projectSupervision.mtech.push(projectData);
-                                } else if (project.category === 'MCA') {
-                                    projectSupervision.mtech.push(projectData);
-                                } else if (project.category === 'MBA') {
-                                    projectSupervision.mtech.push(projectData);
-                                }else if (project.category === 'MSC') {
+                                }else{
                                     projectSupervision.mtech.push(projectData);
                                 }
+                                //  else if (project.category === 'Postgraduate' || project.category === 'PG' || project.category ==='MTech') {
+                                //     projectSupervision.mtech.push(projectData);
+                                // } else if (project.category === 'MCA') {
+                                //     projectSupervision.mtech.push(projectData);
+                                // } else if (project.category === 'MBA') {
+                                //     projectSupervision.mtech.push(projectData);
+                                // }else if (project.category === 'MSC') {
+                                //     projectSupervision.mtech.push(projectData);
+                                // }
                             }
                         });
                     }
@@ -673,13 +679,13 @@ if (facultyData?.project_supervision) {
                                 />
                             </div>
                         </div>
-                        <button
+                        {/* <button
                             type="button"
                             onClick={() => handleRemoveCourse(index)}
                             className="text-red-500 text-sm"
                         >
                             Remove Course
-                        </button>
+                        </button> */}
                     </div>
                 ))}
 
@@ -903,7 +909,7 @@ if (facultyData?.project_supervision) {
                                         />
                                     </div>
                                 </div>
-                                <button
+                                {/* <button
                                     type="button"
                                     onClick={() => {
                                         const updated = formData.projectSupervision.btech.filter((_, i) => i !== index);
@@ -918,7 +924,7 @@ if (facultyData?.project_supervision) {
                                     className="mt-2 text-red-500 underline"
                                 >
                                     Remove Project
-                                </button>
+                                </button> */}
                             </div>
                         ))}
                         {/* <button
@@ -1020,7 +1026,7 @@ if (facultyData?.project_supervision) {
                                         />
                                     </div>
                                 </div>
-                                <button
+                                {/* <button
                                     type="button"
                                     onClick={() => {
                                         const updated = formData.projectSupervision.mtech.filter((_, i) => i !== index);
@@ -1035,7 +1041,7 @@ if (facultyData?.project_supervision) {
                                     className="mt-2 text-red-500 text-sm"
                                 >
                                     Remove Project
-                                </button>
+                                </button> */}
                             </div>
                         ))}
                         {/* <button

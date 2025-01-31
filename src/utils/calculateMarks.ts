@@ -159,14 +159,37 @@ export const calculateStep5Marks = (formData: any) => {
 export const calculateStep6Marks = (formData: any) => {
     let marks = 0;
 
-    // Institute Level (max 10 marks)
+    const getNumberOfSemesters = (duration: string) => {
+        const [startDate, endDate] = duration.split(" - ");
+        const start = new Date(startDate);
+        const end = endDate === 'Continue' ? new Date() : new Date(endDate);
+
+        let semesters = 0;
+
+        const startMonth = start.getMonth();
+        const endMonth = end.getMonth();
+
+        if (start.getFullYear() === end.getFullYear()) {
+            if (startMonth <= 5 && endMonth >= 6) {
+                semesters = 2;
+            } else {
+                semesters = 1;
+            }
+        } else {
+            semesters = 2;
+        }
+
+        return semesters;
+    };
+
     formData.instituteLevelActivities.forEach((activity: any) => {
-        marks += activity.marks;
+        const semesters = getNumberOfSemesters(activity.duration);
+        marks += activity.marks * semesters;
     });
 
-    // Department Level (max 5 marks)
     formData.departmentLevelActivities.forEach((activity: any) => {
-        marks += activity.marks;
+        const semesters = getNumberOfSemesters(activity.duration);
+        marks += activity.marks * semesters;
     });
 
     return Math.min(marks, 15);

@@ -167,7 +167,7 @@ export const IPR = ({ formData, setFormData }: Props) => {
                             />
                         </div>
                     </div>
-                    <button
+                    {/* <button
                         type="button"
                         onClick={() => {
                             const updated = formData.ipr.filter((_, i) => i !== index);
@@ -176,7 +176,7 @@ export const IPR = ({ formData, setFormData }: Props) => {
                         className="mt-2 text-red-500"
                     >
                         Remove IPR
-                    </button>
+                    </button> */}
                 </div>
             ))}
             {/* <button

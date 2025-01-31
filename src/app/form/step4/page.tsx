@@ -93,9 +93,9 @@ const Step4Page = () => {
                 const facultyData = await fetchFacultyData(session?.user?.email || '');
                 if (facultyData) {
                     const sponsoredProjects = facultyData?.sponsored_projects?.map(project => {
-                        const projectYear = new Date(project.end_date).getFullYear();
-                        const startYear=projectYear;
-                        const endYear=new Date(project.end_date).getFullYear();
+                        const endYear =project.end_date? new Date(project.end_date).getFullYear():new Date().getFullYear();
+                        const startYear=new Date(project.start_date).getFullYear();
+                        // const endYear=new Date(project.end_date).getFullYear();
                         if (!(endYear >= appraisalYear && startYear <= appraisalYear)) return null;
                         let marks = 0;
                         if (project.funding_agency !== 'TEQIP' && project.funding_agency !== 'Institute grant') {
@@ -115,7 +115,7 @@ const Step4Page = () => {
                             fundingAgency: project.funding_agency,
                             financialOutlay: parseFloat(project.financial_outlay),
                             startDate: project.start_date.split("T")[0],
-                            endDate: project.end_date.split("T")[0],
+                            endDate:project.end_date? project.end_date.split("T")[0]:null,
                             investigators: project.investigators,
                             piInstitute: project.pi_institute || '',
                             status: project.status || 'In Progress',
@@ -158,7 +158,7 @@ const Step4Page = () => {
                         let marks = 0;
                         if (iprItem.type === 'Patent') {
                             marks += 3;
-                        } else if (iprItem.type === 'Design' || iprItem.type === 'Copyright') {
+                        } else if (iprItem.type === 'Industrial Design' || iprItem.type === 'Copyright') {
                             marks += 1;
                         }
                         if (iprItem.publication_date) {
@@ -210,7 +210,7 @@ const Step4Page = () => {
                     const internships = facultyData?.internships?.map(internship => {
                         const projectYear = new Date(internship.start_date).getFullYear();
                         const startYear=projectYear;
-                        const endYear=new Date(internship.end_date).getFullYear();
+                        const endYear=internship.end_date ? new Date(internship.end_date).getFullYear():new Date().getFullYear();
                         if (!(endYear >= appraisalYear && startYear <= appraisalYear)) return null;
     
                         let marks = 0;
@@ -225,7 +225,7 @@ const Step4Page = () => {
                             affiliation: internship.affiliation || '',
                             projectTitle: internship.project_title || '',
                             startDate: internship.start_date.split("T")[0],
-                            endDate: internship.end_date.split("T")[0],
+                            endDate:internship.end_date? internship.end_date.split("T")[0]:null,
                             isExternal: internship.student_type === 'External',
                             marks,
                         } : null;

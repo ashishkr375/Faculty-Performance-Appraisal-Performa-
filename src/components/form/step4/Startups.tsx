@@ -138,7 +138,7 @@ export const Startups = ({ formData, setFormData }: Props) => {
                             />
                         </div>
                     </div>
-                    <button
+                    {/* <button
                         type="button"
                         onClick={() => {
                             const updated = formData.startups.filter((_, i) => i !== index);
@@ -147,7 +147,7 @@ export const Startups = ({ formData, setFormData }: Props) => {
                         className="mt-2 text-red-500 underline"
                     >
                         Remove Startup
-                    </button>
+                    </button> */}
                 </div>
             ))}
             <button
