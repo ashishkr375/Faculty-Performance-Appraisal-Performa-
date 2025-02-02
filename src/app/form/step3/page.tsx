@@ -262,7 +262,7 @@ export default function Step3Page() {
                                     publisher: book.publisher,
                                     isbn: book.isbn,
                                     year: bookYear,
-                                    scopusIndexed: book.scopus === "Yes",
+                                    scopusIndexed: book.scopus.toLowerCase() === "yes",
                                     doi: book.doi,
                                     pages: book.pages,
                                     marks: 6
@@ -283,7 +283,7 @@ export default function Step3Page() {
                                     publisher: book.publisher,
                                     isbn: book.isbn,
                                     year: bookYear,
-                                    scopusIndexed: book.scopus === "Yes",
+                                    scopusIndexed: book.scopus.toLowerCase() === "yes",
                                     doi: book.doi,
                                     pages: book.pages,
                                     marks: 4 
@@ -304,7 +304,7 @@ export default function Step3Page() {
                                     publisher: chapter.publisher,
                                     isbn: chapter.isbn,
                                     year: chapterYear,
-                                    scopusIndexed: chapter.scopus === "Yes",
+                                    scopusIndexed: chapter.scopus.toLowerCase() === "yes",
                                     doi: chapter.doi,
                                     pages: chapter.pages,
                                     marks: 2 
@@ -1153,7 +1153,7 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             setFormData({ ...formData, books: { ...formData.books, textbooks: updated } });
                                         }}
                                         className="w-full p-2 border rounded"
-                                        
+                                        disabled={true}
                                     />
                                 </div>
                                 <div>
@@ -1275,6 +1275,7 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...book, scopusIndexed: e.target.checked };
                                             setFormData({ ...formData, books: { ...formData.books, editedBooks: updated } });
                                         }}
+                                        disabled={true}
                                         className="w-full p-2 border rounded "
                                         
                                     />
@@ -1425,6 +1426,7 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...chapter, scopusIndexed: e.target.checked };
                                             setFormData({ ...formData, books: { ...formData.books, chapters: updated } });
                                         }}
+                                        disabled={true}
                                         className="w-full p-2 border rounded"
                                     />
                                 </div>

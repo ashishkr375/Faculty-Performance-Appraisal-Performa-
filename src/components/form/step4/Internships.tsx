@@ -147,7 +147,8 @@ export const Internships = ({ formData, setFormData }: Props) => {
                                         updated[index] = { ...internship, isExternal: e.target.checked };
                                         setFormData({ ...formData, internships: updated });
                                     }}
-                                    className="mr-2"
+                                    className="mr-2 text-gray-200"
+                                    disabled={true}
                                 />
                                 <span>External Student</span>
                             </div>
