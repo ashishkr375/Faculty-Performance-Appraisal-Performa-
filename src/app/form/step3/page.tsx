@@ -514,6 +514,11 @@ export default function Step3Page() {
     return (
         <div className="max-w-4xl mx-auto p-6">
             <h1 className="text-2xl font-bold mb-6">Research Papers & Publications</h1>
+            <div className="mb-4 text-right">
+                <span className="font-semibold">Total Marks: </span>
+                <span className="text-blue-600">{formData.calculatedMarks}</span>
+                <span className="text-gray-600">/40</span>
+            </div>
             <form onSubmit={handleSubmit} className="space-y-8">
                 {/* PhD Supervision Section */}
                 <section>
@@ -639,7 +644,7 @@ export default function Step3Page() {
                                                 updated[index] = { ...student, scopusPublications: parseInt(e.target.value) };
                                                 setFormData({ ...formData, phdSupervision: updated });
                                             }}
-                                            className="w-1/2 p-2 border rounded bg-gray-200"
+                                            className="w-1/2 p-2 border rounded"
                                             placeholder="Scopus"
                                             
                                             min="0"
@@ -855,7 +860,8 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                             updated[index] = { ...paper, studentInvolved: e.target.value };
                                             setFormData({ ...formData, journalPapers: updated });
                                         }}
-                                        className="w-full p-2 border rounded"
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
                                     />
                                 </div>
                                 <div>

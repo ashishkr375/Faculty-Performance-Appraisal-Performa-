@@ -32,6 +32,7 @@ const SECTION_DESCRIPTIONS = {
 const Step6Page = () => {
     const { data: session, status } = useSession();
     const router = useRouter();
+    const [marks,setmarks]=useState(0);
     const [formData, setFormData] = useState<ManagementDevelopment>({
         instituteLevelActivities: [],
         departmentLevelActivities: [],
@@ -170,6 +171,11 @@ const Step6Page = () => {
     
         fetchSavedData();
     }, [status, router, session?.user?.email]);
+
+    useEffect(()=>{
+        setmarks(calculateStep6Marks(formData))
+    },[formData])
+
     useEffect(() => {
         // Calculate marks whenever form data changes
         const marks = calculateStep6Marks(formData);
@@ -204,10 +210,16 @@ const Step6Page = () => {
         return <div>Loading...</div>;
     }
 
+    
+
     return (
         <div className="max-w-4xl mx-auto p-6">
             <h1 className="text-2xl font-bold mb-6">Management & Institutional Development Elements</h1>
-            
+            <div className="mb-4 text-right">
+                <span className="font-semibold">Total Marks: </span>
+                <span className="text-blue-600">{marks}</span>
+                <span className="text-gray-600">/15</span>
+            </div>
             <form onSubmit={handleSubmit} className="space-y-8">
                 <section>
                     <h2 className="text-xl font-semibold mb-2">{SECTION_DESCRIPTIONS.instituteLevelRoles.title}</h2>

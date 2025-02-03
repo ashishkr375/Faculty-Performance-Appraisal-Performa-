@@ -150,13 +150,13 @@ export const Startups = ({ formData, setFormData }: Props) => {
                     </button> */}
                 </div>
             ))}
-            <button
+            {/* <button
                 type="button"
                 onClick={handleAddStartup}
                 className="w-full p-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-600"
             >
                 + Add Startup
-            </button>
+            </button> */}
         </section>
     );
 }; 
