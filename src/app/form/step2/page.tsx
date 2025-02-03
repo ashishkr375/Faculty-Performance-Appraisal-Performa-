@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react';
 import type { TeachingCourse } from '@/types/form';
 import Loading from '@/app/loading';
 import { fetchFacultyData } from '@/lib/fetchFacultyData';
+import { calculateStep2Marks } from '@/utils/calculateMarks';
 
 const COURSE_LEVELS = ['UG', 'PG', 'PhD','Undergraduate','Postgraduate'] as const;
 const SEMESTERS = ['Spring', 'Summer', 'Autumn',"Fall","1","2","3","4","5","6","7","8","9","10"] as const;
@@ -104,7 +105,7 @@ export default function Step2Page() {
     const [loading, setLoading] = useState(true);
     const [yearRange, setYearRange] = useState<{ start: string; end: string }>({ start: '', end: '' });
     const [hasAdminData, setHasAdminData] = useState(false);
-
+    const [marks,setmarks]=useState(0);
     useEffect(() => {
         const fetchYearRange = async () => {
             try {
@@ -123,6 +124,10 @@ export default function Step2Page() {
 
         fetchYearRange();
     }, []);
+
+useEffect(()=>{
+setmarks(calculateStep2Marks(formData))
+},[formData])
 
     useEffect(() => {
         const fetchData = async () => {
@@ -508,6 +513,11 @@ if (facultyData?.project_supervision) {
     return (
         <div className="max-w-4xl mx-auto p-6">
             <h1 className="text-2xl font-bold mb-2">Teaching Engagement</h1>
+            <div className="mb-4 text-right">
+                <span className="font-semibold">Total Marks: </span>
+                <span className="text-blue-600">{marks}</span>
+                <span className="text-gray-600">/25</span>
+            </div>
             <p className="text-gray-600 mb-6">{SECTION_DESCRIPTIONS.teachingEngagement.description}</p>
 
             {hasAdminData && (

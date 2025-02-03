@@ -56,9 +56,13 @@ export const IndustryLabs = ({ formData, setFormData }: Props) => {
                                 type="number"
                                 value={lab.fundReceived}
                                 onChange={(e) => {
+                                    const newValue=parseFloat(e.target.value);
+                                    if (newValue >=0 ){
                                     const updated = [...formData.industryLabs];
                                     updated[index] = { ...lab, fundReceived: parseFloat(e.target.value) };
                                     setFormData({ ...formData, industryLabs: updated });
+                                    }
+                                    
                                 }}
                                 className="w-full p-2 border rounded"
                                 required
