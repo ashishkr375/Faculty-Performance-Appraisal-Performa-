@@ -236,7 +236,7 @@ export default function Step1Page() {
                                     <option value="">Select Year</option>
                                     {Array.from(
                                         { length: 10 }, 
-                                        (_, i) => new Date().getFullYear() - 5 + i
+                                        (_, i) => new Date().getFullYear()-1 + i
                                     ).map(year => (
                                         <option key={year} value={year.toString()}>
                                             {year}

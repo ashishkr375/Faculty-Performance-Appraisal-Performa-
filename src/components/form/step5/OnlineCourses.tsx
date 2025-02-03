@@ -94,9 +94,12 @@ export const OnlineCourses = ({ formData, setFormData }: Props) => {
                                 type="number"
                                 value={course.duration}
                                 onChange={(e) => {
-                                    const updated = [...formData.onlineCourses];
+                                    const newDuration=parseInt(e.target.value);
+                                    if (newDuration >=0){
+                                        const updated = [...formData.onlineCourses];
                                     updated[index] = { ...course, duration: parseInt(e.target.value) };
                                     setFormData({ ...formData, onlineCourses: updated });
+                                    }
                                 }}
                                 className="w-full p-2 border rounded"
                                 required

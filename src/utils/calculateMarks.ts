@@ -165,22 +165,49 @@ export const calculateStep6Marks = (formData: any) => {
         const end = endDate === 'Continue' ? new Date() : new Date(endDate);
 
         let semesters = 0;
-
-        const startMonth = start.getMonth();
-        const endMonth = end.getMonth();
-
-        if (start.getFullYear() === end.getFullYear()) {
-            if (startMonth <= 5 && endMonth >= 6) {
-                semesters = 2;
+        
+        const startYear = start.getFullYear();
+        const endYear = end.getFullYear();
+        const baseEndDate = new Date(startYear, 5, 30);
+        const isValidSemester = (start: Date, end: Date) => {
+            const monthsDifference = (end.getFullYear() - start.getFullYear()) * 12 + end.getMonth() - start.getMonth();
+            return monthsDifference >= 4;
+        };
+        if (startYear === endYear) {
+            if (start <= baseEndDate && end >= baseEndDate) {
+                if (isValidSemester(start, baseEndDate) && isValidSemester(baseEndDate, end)) {
+                    semesters = 2;
+                } else if (isValidSemester(start, baseEndDate)) {
+                    semesters = 1;
+                } else if (isValidSemester(baseEndDate, end)) {
+                    semesters = 1;
+                }
             } else {
-                semesters = 1;
+                if (isValidSemester(start, end)) {
+                    semesters = 1;
+                }
             }
         } else {
-            semesters = 2;
+            const firstSemesterEnd = new Date(startYear, 5, 30);
+            if (isValidSemester(start, firstSemesterEnd)) {
+                semesters++;
+            }
+            const secondSemesterStart = new Date(startYear, 6, 1);
+            if (isValidSemester(secondSemesterStart, end)) {
+                semesters++;
+            }
+            const secondYearStart = new Date(endYear, 0, 1);
+            const secondYearEnd = new Date(endYear, 5, 30);
+            if (isValidSemester(secondYearStart, secondYearEnd)) {
+                semesters++;
+            }
+            const secondYearSecondSemesterStart = new Date(endYear, 6, 1);
+            if (isValidSemester(secondYearSecondSemesterStart, end)) {
+                semesters++;
+            }
         }
-
         return semesters;
-    };
+    };    
 
     formData.instituteLevelActivities.forEach((activity: any) => {
         const semesters = getNumberOfSemesters(activity.duration);
