@@ -6,9 +6,9 @@ export default withAuth(
         const url=req.nextUrl;
         const session=req.cookies.get("next-auth.session-token");
         const pathname=url.pathname;
-        // if(!session){
-        //     return NextResponse.redirect(new URL("/auth/signin",req.url));
-        // }
+        if(!session){
+            return NextResponse.redirect(new URL("/auth/signin",req.url));
+        }
         const progressRes=await fetch(`${req.nextUrl.origin}/api/get-progress`,{
             headers:{
                 Cookie:`next-auth.session-token=${session.value}`
