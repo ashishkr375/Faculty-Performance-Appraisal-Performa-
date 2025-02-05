@@ -64,10 +64,8 @@ export default function Dashboard() {
                 <div className="space-y-4">
                     {steps.map((step) => {
                         const isCompleted = formProgress.completedSteps.includes(step.number);
-                        const isNext = !isCompleted && 
-                            !formProgress.completedSteps.includes(step.number) && 
-                            (formProgress.completedSteps.length === 0 || 
-                             Math.max(...formProgress.completedSteps) === step.number - 1);
+                        const isStepOne=step.number === 1;
+                        const previousStepCompleted = formProgress.completedSteps.includes(step.number - 1);
 
                         return (
                             <div key={step.number} className="flex items-center justify-between p-4 bg-white rounded-lg shadow">
@@ -87,14 +85,21 @@ export default function Dashboard() {
                                         >
                                             Edit
                                         </Link>
-                                    ) : isNext ? (
+                                    ) : isStepOne ? (
                                         <Link
                                             href={step.path}
                                             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                                         >
                                             Complete
                                         </Link>
-                                    ) : (
+                                    ) : previousStepCompleted?(
+                                        <Link
+                                            href={step.path}
+                                            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                                        >
+                                            Next
+                                        </Link>
+                                    ): (
                                         <span className="text-gray-400">Locked</span>
                                     )}
                                 </div>
