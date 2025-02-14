@@ -142,7 +142,8 @@ const Step5Page = () => {
                             lectures: existingData?.lectures || [],
                             onlineCourses: existingData?.onlineCourses || [],
                             visits: existingData?.visits || [],
-                            outreachActivities: facultyData?.outreach_activities?.map(activity => {
+                            
+                            outreachActivities: existingData?.outreachActivities?.map(activity => {
                                 outreachMarks += 1;
                                 if (outreachMarks > 7) {
                                     outreachMarks = 7;
@@ -155,6 +156,7 @@ const Step5Page = () => {
                         setFormData(organizationParticipation);
                     }
                 }
+                
             } catch (e) {
                 console.log(e);
             } finally {
