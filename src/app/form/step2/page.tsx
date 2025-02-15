@@ -70,6 +70,7 @@ interface FormData {
     };
     innovations: string[];
     newLabs: string[];
+    ExperimentLabs:string[];
     otherTasks: string[];
     projectSupervision: {
         btech: Array<{
@@ -96,6 +97,7 @@ export default function Step2Page() {
         },
         innovations: [],
         newLabs: [],
+        ExperimentLabs:[],
         otherTasks: [],
         projectSupervision: {
             btech: [],
@@ -430,12 +432,30 @@ if (facultyData?.project_supervision) {
         });
     };
 
+    const handleAddExperiment = () => {
+        setFormData({
+            ...formData,
+            ExperimentLabs: [...formData.ExperimentLabs, '']
+        });
+    };
+
+    
+
     const handleLabChange = (index: number, value: string) => {
         const updatedLabs = [...formData.newLabs];
         updatedLabs[index] = value;
         setFormData({
             ...formData,
             newLabs: updatedLabs
+        });
+    };
+
+    const handleExperimentLabChange = (index: number, value: string) => {
+        const updatedLabs = [...formData.ExperimentLabs];
+        updatedLabs[index] = value;
+        setFormData({
+            ...formData,
+            ExperimentLabs: updatedLabs
         });
     };
 
@@ -743,7 +763,7 @@ if (facultyData?.project_supervision) {
                                     value={lab}
                                     onChange={(e) => handleLabChange(index, e.target.value)}
                                     className="w-full p-2 border rounded"
-                                    placeholder="Describe new lab/experiment..."
+                                    placeholder="Describe new lab"
                                 />
                                 <button
                                     type="button"
@@ -761,13 +781,48 @@ if (facultyData?.project_supervision) {
                             </div>
                         </div>
                     ))}
+                     {formData.ExperimentLabs?.length > 0 && formData.ExperimentLabs.map((lab, index) => (
+                        <div key={index} className="mb-4">
+                            <div className="flex gap-2">
+                                <input
+                                    type="text"
+                                    value={lab}
+                                    onChange={(e) => handleExperimentLabChange(index, e.target.value)}
+                                    className="w-full p-2 border rounded"
+                                    placeholder="Describe new experiment..."
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        const ExperimentLabs = formData.ExperimentLabs.filter((_, i) => i !== index);
+                                        setFormData({
+                                            ...formData,
+                                            ExperimentLabs: ExperimentLabs
+                                        });
+                                    }}
+                                    className="text-red-500"
+                                >
+                                    Remove
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                    <div className='flex flex-row gap-4 '>
                     <button
                         type="button"
                         onClick={handleAddLab}
                         className="w-full p-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-600"
                     >
-                        + Add Lab/Experiment
+                        + Add New Lab
                     </button>
+                    <button
+                        type="button"
+                        onClick={handleAddExperiment}
+                        className="w-full p-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-600"
+                    >
+                        + Add New Experiment
+                    </button>
+                    </div>
                 </div>
 
                 {/* Other Tasks Section */}
