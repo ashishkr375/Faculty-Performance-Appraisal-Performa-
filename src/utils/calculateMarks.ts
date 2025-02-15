@@ -25,6 +25,8 @@ export function calculateStep2ShowMarks(formData: any): number {
     marks += Math.min(innovations.length, 2);
     const newLabs = formData?.step2?.newLabs || formData?.newLabs || [];
     marks += newLabs.length * 2;
+    const experimentLabs=formData?.step2?.ExperimentLabs || formData?.ExperimentLabs || [];
+    marks+=experimentLabs.length;
     const otherTasks = formData?.step2?.otherTasks || formData?.otherTasks || [];
     marks += Math.min(otherTasks.length, 2);
     const btechProjects = formData?.step2?.projectSupervision?.btech || formData?.projectSupervision?.btech || [];
@@ -54,6 +56,9 @@ export function calculateStep2Marks(formData: any): number {
     // Handle new labs
     const newLabs = formData?.step2?.newLabs || formData?.newLabs || [];
     marks += newLabs.length * 2;
+
+    const experimentLabs=formData?.step2?.ExperimentLabs || formData?.ExperimentLabs || [];
+    marks+=experimentLabs.length;
 
     // Handle other tasks
     const otherTasks = formData?.step2?.otherTasks || formData?.otherTasks || [];
