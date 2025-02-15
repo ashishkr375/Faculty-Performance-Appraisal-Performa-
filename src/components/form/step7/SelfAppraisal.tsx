@@ -20,7 +20,7 @@ export const SelfAppraisalForm = ({ formData, setFormData }: Props) => {
                     Significant Achievements During the Assessment Period
                 </label>
                 <textarea
-                    value={formData.achievements}
+                    value={formData?.achievements}
                     onChange={(e) => setFormData({ ...formData, achievements: e.target.value })}
                     className="w-full p-2 border rounded"
                     rows={4}
@@ -34,7 +34,7 @@ export const SelfAppraisalForm = ({ formData, setFormData }: Props) => {
                     Areas Where You Need to Improve
                 </label>
                 <textarea
-                    value={formData.areasOfImprovement}
+                    value={formData?.areasOfImprovement}
                     onChange={(e) => setFormData({ ...formData, areasOfImprovement: e.target.value })}
                     className="w-full p-2 border rounded"
                     rows={4}
@@ -48,7 +48,7 @@ export const SelfAppraisalForm = ({ formData, setFormData }: Props) => {
                     Future Plans for Professional Development
                 </label>
                 <textarea
-                    value={formData.futurePlans}
+                    value={formData?.futurePlans}
                     onChange={(e) => setFormData({ ...formData, futurePlans: e.target.value })}
                     className="w-full p-2 border rounded"
                     rows={4}
@@ -62,7 +62,7 @@ export const SelfAppraisalForm = ({ formData, setFormData }: Props) => {
                     Support Required from the Institute
                 </label>
                 <textarea
-                    value={formData.supportRequired}
+                    value={formData?.supportRequired}
                     onChange={(e) => setFormData({ ...formData, supportRequired: e.target.value })}
                     className="w-full p-2 border rounded"
                     rows={4}
@@ -76,7 +76,7 @@ export const SelfAppraisalForm = ({ formData, setFormData }: Props) => {
                     Additional Comments
                 </label>
                 <textarea
-                    value={formData.additionalComments}
+                    value={formData?.additionalComments}
                     onChange={(e) => setFormData({ ...formData, additionalComments: e.target.value })}
                     className="w-full p-2 border rounded"
                     rows={4}

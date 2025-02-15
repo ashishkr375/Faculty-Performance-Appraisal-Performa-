@@ -301,7 +301,7 @@ export default function Preview({ formData }: PreviewProps) {
     };
 
     // Calculate all marks
-    const instructionalMarks = calculateMarks.instructionalElement(formData.step2);
+    const instructionalMarks = calculateMarks.instructionalElement(formData);
     // const researchMarks = calculateMarks.researchPublications(formData.step3);
     const researchMarks = (formData.step3.calculatedMarks);
     // const sponsoredRDMarks = calculateMarks.sponsoredRD(formData.step4);
@@ -621,7 +621,7 @@ export default function Preview({ formData }: PreviewProps) {
                                     <td className="border p-2">{student.sciPublications}</td>
                                     <td className="border p-2">{student.scopusPublications}</td>
                                     <td className="border p-2">{student.currentStatus}</td>
-                                    <td className="border p-2">{formatDate(student.statusDate)}</td>
+                                    <td className="border p-2">{student.statusDate ? formatDate(student.statusDate):"-"}</td>
                                 </tr>
                             ))}
                         </tbody>

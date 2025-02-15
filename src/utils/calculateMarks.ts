@@ -13,12 +13,35 @@ interface BaseFormData {
         mtech: Array<Record<string, unknown>>;
     };
 }
+export function calculateStep2ShowMarks(formData: any): number {
+    let marks = 0;
+
+    const courses = formData?.teachingEngagement?.courses || formData?.courses || [];
+    courses.forEach((course: any) => {
+        marks += (course.totalTheoryHours * 1) + (course.totalLabHours * 0.5);
+    });
+    marks = Math.min(marks, 14);
+    const innovations = formData?.step2?.innovations || formData?.innovations || [];
+    marks += Math.min(innovations.length, 2);
+    const newLabs = formData?.step2?.newLabs || formData?.newLabs || [];
+    marks += newLabs.length * 2;
+    const otherTasks = formData?.step2?.otherTasks || formData?.otherTasks || [];
+    marks += Math.min(otherTasks.length, 2);
+    const btechProjects = formData?.step2?.projectSupervision?.btech || formData?.projectSupervision?.btech || [];
+    const mtechProjects = formData?.step2?.projectSupervision?.mtech || formData?.projectSupervision?.mtech ||  formData?.projectSupervision?.mca ||  formData?.projectSupervision?.mba|| [];
+    
+    marks += btechProjects.length * 2;
+    marks += mtechProjects.length * 3;
+
+    marks = Math.min(marks, 25);
+    return marks;
+}
 
 export function calculateStep2Marks(formData: any): number {
     let marks = 0;
     
     // Check for nested structure and handle courses
-    const courses = formData?.step2?.courses || formData?.courses || [];
+    const courses = formData?.step2?.teachingEngagement?.courses || formData?.courses || [];
     courses.forEach((course: any) => {
         marks += (course.totalTheoryHours * 1) + (course.totalLabHours * 0.5);
     });
@@ -159,51 +182,64 @@ export const calculateStep5Marks = (formData: any) => {
 export const calculateStep6Marks = (formData: any) => {
     let marks = 0;
 
+    // const getNumberOfSemesters = (duration: string) => {
+    //     const [startDate, endDate] = duration.split(" - ");
+    //     const start = new Date(startDate);
+    //     const currentYear = new Date().getFullYear();
+        
+    //     // if (start.getFullYear() < currentYear) {
+    //     //     start.setFullYear(currentYear, 0, 1);
+    //     // }
+
+    //     const end = endDate === 'Continue' ? new Date() : new Date(endDate);
+
+    //     let semesters = 0;
+
+    //     const isValidSemester = (start: Date, end: Date) => {
+    //         const monthsDifference = (end.getFullYear() - start.getFullYear()) * 12 + end.getMonth() - start.getMonth();
+    //         return monthsDifference >= 4;
+    //     };
+
+    //     const baseEndDate = new Date(currentYear, 5, 30);
+
+    //     if (start.getFullYear() === end.getFullYear()) {
+    //         if (start <= baseEndDate && end >= baseEndDate) {
+    //             if (isValidSemester(start, baseEndDate) && isValidSemester(baseEndDate, end)) {
+    //                 semesters = 2;
+    //             } else if (isValidSemester(start, baseEndDate)) {
+    //                 semesters = 1;
+    //             } else if (isValidSemester(baseEndDate, end)) {
+    //                 semesters = 1;
+    //             }
+    //         } else {
+    //             if (isValidSemester(start, end)) {
+    //                 semesters = 1;
+    //             }
+    //         }
+    //     } else {
+    //         const firstSemesterEnd = new Date(currentYear, 5, 30);
+    //         if (isValidSemester(start, firstSemesterEnd)) {
+    //             semesters++;
+    //         }
+
+    //         const secondSemesterStart = new Date(currentYear, 6, 1);
+    //         if (isValidSemester(secondSemesterStart, end)) {
+    //             semesters++;
+    //         }
+    //     }
+    //     // return Math.min(semesters, 2);
+    //     return (semesters);
+    // };
+
     const getNumberOfSemesters = (duration: string) => {
         const [startDate, endDate] = duration.split(" - ");
         const start = new Date(startDate);
-        const currentYear = new Date().getFullYear();
-        
-        if (start.getFullYear() < currentYear) {
-            start.setFullYear(currentYear, 0, 1);
-        }
-
         const end = endDate === 'Continue' ? new Date() : new Date(endDate);
-
+    
         let semesters = 0;
+        const monthDifference = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
 
-        const isValidSemester = (start: Date, end: Date) => {
-            const monthsDifference = (end.getFullYear() - start.getFullYear()) * 12 + end.getMonth() - start.getMonth();
-            return monthsDifference >= 4;
-        };
-
-        const baseEndDate = new Date(currentYear, 5, 30);
-
-        if (start.getFullYear() === end.getFullYear()) {
-            if (start <= baseEndDate && end >= baseEndDate) {
-                if (isValidSemester(start, baseEndDate) && isValidSemester(baseEndDate, end)) {
-                    semesters = 2;
-                } else if (isValidSemester(start, baseEndDate)) {
-                    semesters = 1;
-                } else if (isValidSemester(baseEndDate, end)) {
-                    semesters = 1;
-                }
-            } else {
-                if (isValidSemester(start, end)) {
-                    semesters = 1;
-                }
-            }
-        } else {
-            const firstSemesterEnd = new Date(currentYear, 5, 30);
-            if (isValidSemester(start, firstSemesterEnd)) {
-                semesters++;
-            }
-
-            const secondSemesterStart = new Date(currentYear, 6, 1);
-            if (isValidSemester(secondSemesterStart, end)) {
-                semesters++;
-            }
-        }
+        semesters = Math.floor(monthDifference / 6);
         return Math.min(semesters, 2);
     };
 

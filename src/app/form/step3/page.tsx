@@ -528,14 +528,14 @@ export default function Step3Page() {
                     
                     {formData.phdSupervision.map((student, index) => (
                         <div key={index} className="border p-4 rounded mb-4 relative">
-                            <button
+                            {/* <button
                                 type="button"
                                 onClick={() => handleRemovePhDStudent(index)}
                                 className="absolute top-2 right-2 text-red-500 hover:text-red-700 text-xl font-bold"
                                 title="Delete record"
                             >
                                 ×
-                            </button>
+                            </button> */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block mb-2">Student Name & Roll No.</label>
@@ -718,13 +718,13 @@ export default function Step3Page() {
                     </p>
                     {formData.journalPapers.map((paper, index) => (
                         <div key={index} className="border p-4 rounded mb-4 relative">
-                            <button
+                            {/* <button
                                 type="button"
                                 onClick={() => handleRemoveJournalPaper(index)}
                                 className="absolute top-2 right-2 text-red-500 hover:text-red-700"
                             >
                                 ×
-                            </button>
+                            </button> */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block mb-2">Authors</label>
@@ -895,13 +895,13 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                     <h2 className="text-xl font-semibold mb-4">Conference Papers</h2>
                     {formData.conferencePapers.map((paper, index) => (
                         <div key={index} className="border p-4 rounded mb-4 relative">
-                            <button
+                            {/* <button
                                 type="button"
                                 onClick={() => handleRemoveConferencePaper(index)}
                                 className="absolute top-2 right-2 text-red-500 hover:text-red-700"
                             >
                                 ×
-                            </button>
+                            </button> */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block mb-2">Authors</label>
@@ -1068,13 +1068,13 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                     <h3 className="text-lg font-medium mb-3">Textbooks</h3>
                     {formData.books.textbooks.map((book, index) => (
                         <div key={index} className="border p-4 rounded mb-4 relative">
-                            <button
+                            {/* <button
                                 type="button"
                                 onClick={() => handleRemoveTextbook(index)}
                                 className="absolute top-2 right-2 text-red-500 hover:text-red-700"
                             >
                                 ×
-                            </button>
+                            </button> */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block mb-2">Title</label>
@@ -1190,13 +1190,13 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                     <h3 className="text-lg font-medium mb-3 mt-6">Edited Books</h3>
                     {formData.books.editedBooks.map((book, index) => (
                         <div key={index} className="border p-4 rounded mb-4 relative">
-                            <button
+                            {/* <button
                                 type="button"
                                 onClick={() => handleRemoveEditedBook(index)}
                                 className="absolute top-2 right-2 text-red-500 hover:text-red-700"
                             >
                                 ×
-                            </button>
+                            </button> */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block mb-2">Title</label>
@@ -1314,13 +1314,13 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                     <h3 className="text-lg font-medium mb-3 mt-6">Book Chapters</h3>
                     {formData.books.chapters.map((chapter, index) => (
                         <div key={index} className="border p-4 rounded mb-4 relative">
-                            <button
+                            {/* <button
                                 type="button"
                                 onClick={() => handleRemoveBookChapter(index)}
                                 className="absolute top-2 right-2 text-red-500 hover:text-red-700"
                             >
                                 ×
-                            </button>
+                            </button> */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block mb-2">Authors</label>

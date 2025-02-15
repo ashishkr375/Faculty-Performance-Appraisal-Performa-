@@ -7,7 +7,7 @@ import type { TeachingCourse } from '@/types/form';
 import Loading from '@/app/loading';
 import { fetchFacultyData } from '@/lib/fetchFacultyData';
 import { calculateStep2Marks } from '@/utils/calculateMarks';
-
+import { calculateStep2ShowMarks } from '@/utils/calculateMarks';
 const COURSE_LEVELS = ['UG', 'PG', 'PhD','Undergraduate','Postgraduate'] as const;
 const SEMESTERS = ['Spring', 'Summer', 'Autumn',"Fall","1","2","3","4","5","6","7","8","9","10"] as const;
 
@@ -126,7 +126,7 @@ export default function Step2Page() {
     }, []);
 
 useEffect(()=>{
-setmarks(calculateStep2Marks(formData))
+setmarks(calculateStep2ShowMarks(formData))
 },[formData])
 
     useEffect(() => {
@@ -186,15 +186,16 @@ setmarks(calculateStep2Marks(formData))
 // console.log(facultyData?.project_supervision)
 if (facultyData?.project_supervision) {
     facultyData.project_supervision.forEach((project) => {
-        const startDate = project.start_date ? new Date(project.start_date) : null;
-        const endDate = project.end_date && project.end_date !== 'continue' 
-                        ? new Date(project.end_date) 
-                        : (project.end_date === 'continue' ? new Date() : null);
+        const startYear = project.start_date
+            ? new Date(project.start_date).getFullYear()
+            : appraisalYear;
 
-        const startYear = startDate ? startDate.getFullYear() : appraisalYear;
-        const endYear = endDate ? endDate.getFullYear() : (project.end_date === 'continue' ? new Date().getFullYear() : appraisalYear);
+        const endYear =
+            project.end_date && project.end_date.toLowerCase() !== 'continue'
+                ? new Date(project.end_date).getFullYear()
+                : new Date().getFullYear();
 
-        if (endYear >= appraisalYear && startYear <= appraisalYear) {
+        if (!isNaN(startYear) && !isNaN(endYear) && endYear >= appraisalYear && startYear <= appraisalYear) {
             const projectData = {
                 title: project.project_title,
                 students: project.student_details,
@@ -202,20 +203,11 @@ if (facultyData?.project_supervision) {
                 externalSupervisors: project.external_supervisors,
             };
 
-            if (project.category === 'Undergraduate' || project.category === 'UG' || project.category ==='BTech') {
+            if (["Undergraduate", "UG", "BTech"].includes(project.category)) {
                 projectSupervision.btech.push(projectData);
-            } else{
+            } else {
                 projectSupervision.mtech.push(projectData);
             }
-            // else if (project.category === 'Postgraduate' || project.category === 'PG' || project.category ==='MTech') {
-            //     projectSupervision.mtech.push(projectData);
-            // } else if (project.category === 'MCA') {
-            //     projectSupervision.mtech.push(projectData);
-            // } else if (project.category === 'MBA') {
-            //     projectSupervision.mtech.push(projectData);
-            // }else if (project.category === 'MSC') {
-            //     projectSupervision.mtech.push(projectData);
-            // }
         }
     });
 }
@@ -282,15 +274,16 @@ if (facultyData?.project_supervision) {
                     const projectSupervision = { btech: [], mtech: [],mca:[],mba:[] };
                     if (facultyData?.project_supervision) {
                         facultyData.project_supervision.forEach((project) => {
-                            // const yearsOffered = project.years_offered? project.years_offered.split('-'):['2024','2025']; //checking edge cases for filter part 
-                            // const startYear = parseInt(yearsOffered[0]);
-                            // const endYear = parseInt(yearsOffered[1]);
-                            const startYear=project.start_date != null ? new Date(parseInt((project.start_date))).getFullYear() : appraisalYear;
-                            const endYear = project.end_date !== null && project.end_date !== 'continue' 
-                                ? new Date(parseInt(project.end_date)).getFullYear() 
-                                : (project.end_date === 'continue' ? new Date().getFullYear() : appraisalYear);
-                                
-                            if (endYear >= appraisalYear && startYear <= appraisalYear)  {
+                            const startYear = project.start_date
+                                ? new Date(project.start_date).getFullYear()
+                                : appraisalYear;
+                    
+                            const endYear =
+                                project.end_date && project.end_date.toLowerCase() !== 'continue'
+                                    ? new Date(project.end_date).getFullYear()
+                                    : new Date().getFullYear();
+                    
+                            if (!isNaN(startYear) && !isNaN(endYear) && endYear >= appraisalYear && startYear <= appraisalYear) {
                                 const projectData = {
                                     title: project.project_title,
                                     students: project.student_details,
@@ -298,23 +291,15 @@ if (facultyData?.project_supervision) {
                                     externalSupervisors: project.external_supervisors,
                                 };
                     
-                                if (project.category === 'Undergraduate' || project.category === 'UG' || project.category ==='BTech') {
+                                if (["Undergraduate", "UG", "BTech"].includes(project.category)) {
                                     projectSupervision.btech.push(projectData);
-                                }else{
+                                } else {
                                     projectSupervision.mtech.push(projectData);
                                 }
-                                //  else if (project.category === 'Postgraduate' || project.category === 'PG' || project.category ==='MTech') {
-                                //     projectSupervision.mtech.push(projectData);
-                                // } else if (project.category === 'MCA') {
-                                //     projectSupervision.mtech.push(projectData);
-                                // } else if (project.category === 'MBA') {
-                                //     projectSupervision.mtech.push(projectData);
-                                // }else if (project.category === 'MSC') {
-                                //     projectSupervision.mtech.push(projectData);
-                                // }
                             }
                         });
                     }
+                    
 
                     let workshopsConferences = [];
                     if (facultyData?.workshops_conferences) {
