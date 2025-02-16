@@ -309,7 +309,7 @@ export default function Preview({ formData }: PreviewProps) {
     const organizationMarks = calculateMarks.organizationParticipation(formData.step5);
     // const organizationMarks = (formData.step5.calculatedMarks);
     // const managementMarks = (formData.step6.calculatedMarks);
-    const managementMarks = calculateMarks.managementDevelopment(formData.step6);
+    const managementMarks = calculateMarks.managementDevelopment(formData.step6,new Date(formData.step1.appraisalPeriodStart).getFullYear());
     const totalMarks = instructionalMarks + researchMarks + sponsoredRDMarks + 
                       organizationMarks + managementMarks;
 
@@ -1177,7 +1177,7 @@ export default function Preview({ formData }: PreviewProps) {
                                 <tr>
                                     <th className="border p-2">Role/Activity</th>
                                     <th className="border p-2">Duration</th>
-                                    <th className="border p-2">Marks</th>
+                                    <th className="border p-2">Marks/sem</th>
                                 </tr>
                             </thead>
                             <tbody>
