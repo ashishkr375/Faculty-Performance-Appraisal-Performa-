@@ -38,6 +38,7 @@ const Step6Page = () => {
         departmentLevelActivities: [],
         calculatedMarks: 0
     });
+    const [appraisalYear,setappraisalYear]=useState(2024)
     const [loading, setLoading] = useState(true);
     const formatDate = (date: string | Date) => {
         const d = new Date(date);
@@ -62,7 +63,7 @@ const Step6Page = () => {
                 } else {
                     const { stepData: existingData, appraisalPeriod } = await response.json();
                     const appraisalYear = new Date(appraisalPeriod).getFullYear();
-    
+                    setappraisalYear(appraisalYear);
                     const facultyData = await fetchFacultyData(session?.user?.email || '');
                     if (facultyData) {
                         let instituteMarks = 0;
@@ -173,12 +174,12 @@ const Step6Page = () => {
     }, [status, router, session?.user?.email]);
 
     useEffect(()=>{
-        setmarks(calculateStep6Marks(formData))
+        setmarks(calculateStep6Marks(formData,appraisalYear))
     },[formData])
 
     useEffect(() => {
         // Calculate marks whenever form data changes
-        const marks = calculateStep6Marks(formData);
+        const marks = calculateStep6Marks(formData,appraisalYear);
         if (marks !== formData.calculatedMarks) {
             setFormData(prev => ({ ...prev, calculatedMarks: marks }));
         }

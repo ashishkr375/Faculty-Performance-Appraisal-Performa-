@@ -246,7 +246,7 @@ export const calculateStep5Marks = (formData: any) => {
     return Math.min(marks, 6);
 };
 
-export const calculateStep6Marks = (formData: any) => {
+export const calculateStep6Marks = (formData: any,appraisalYear:number) => {
     let marks = 0;
 
     // const getNumberOfSemesters = (duration: string) => {
@@ -301,10 +301,11 @@ export const calculateStep6Marks = (formData: any) => {
     const getNumberOfSemesters = (duration: string) => {
         const [startDate, endDate] = duration.split(" - ");
         const start = new Date(startDate);
+        const startingAppraisalYear=new Date(Math.max(start,new Date(appraisalYear,0,1)));
         const end = endDate === 'Continue' ? new Date() : new Date(endDate);
     
         let semesters = 0;
-        const monthDifference = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
+        const monthDifference = (end.getFullYear() - startingAppraisalYear.getFullYear()) * 12 + (end.getMonth() - startingAppraisalYear.getMonth());
 
         semesters = Math.floor(monthDifference / 6);
         return Math.min(semesters, 2);
@@ -324,7 +325,7 @@ export const calculateStep6Marks = (formData: any) => {
         }
     });
 
-    return Math.min(marks, 15); 
+    return marks>0.5 ? Math.min(marks+0.5, 15):0; 
 };
 
 
