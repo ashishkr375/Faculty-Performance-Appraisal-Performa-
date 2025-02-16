@@ -2,7 +2,7 @@ import { Header } from './Header';
 import { PersonalInfo } from './PersonalInfo';
 import { calculateMarks } from '@/utils/calculateMarks';
 import { useRouter } from 'next/navigation';
-
+import { calculateStep2ShowMarks } from '@/utils/calculateMarks';
 interface PreviewProps {
     formData: {
         step1: {
@@ -301,13 +301,13 @@ export default function Preview({ formData }: PreviewProps) {
     };
 
     // Calculate all marks
-    const instructionalMarks = calculateMarks.instructionalElement(formData);
+    const instructionalMarks = calculateStep2ShowMarks(formData.step2);
     // const researchMarks = calculateMarks.researchPublications(formData.step3);
     const researchMarks = (formData.step3.calculatedMarks);
-    // const sponsoredRDMarks = calculateMarks.sponsoredRD(formData.step4);
-    const sponsoredRDMarks = (formData.step4.calculatedMarks);
-    // const organizationMarks = calculateMarks.organizationParticipation(formData.step5);
-    const organizationMarks = (formData.step5.calculatedMarks);
+    const sponsoredRDMarks = calculateMarks.sponsoredRD(formData.step4);
+    // const sponsoredRDMarks = (formData.step4.calculatedMarks);
+    const organizationMarks = calculateMarks.organizationParticipation(formData.step5);
+    // const organizationMarks = (formData.step5.calculatedMarks);
     // const managementMarks = (formData.step6.calculatedMarks);
     const managementMarks = calculateMarks.managementDevelopment(formData.step6);
     const totalMarks = instructionalMarks + researchMarks + sponsoredRDMarks + 

@@ -398,6 +398,7 @@ if (facultyData?.project_supervision) {
                 body: JSON.stringify({
                     step: 2,
                     data: formData,
+                    step2Marks:marks,
                 }),
             });
 

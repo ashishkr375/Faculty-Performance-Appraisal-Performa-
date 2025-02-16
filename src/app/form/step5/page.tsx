@@ -49,6 +49,7 @@ const SECTION_DESCRIPTIONS = {
 const Step5Page = () => {
     const { data: session, status } = useSession();
     const router = useRouter();
+    const [marks,setmarks]=useState(0);
     const [formData, setFormData] = useState<OrganizationParticipation>({
         events: [],
         lectures: [],
@@ -170,12 +171,13 @@ const Step5Page = () => {
 
     useEffect(() => {
         // Calculate marks whenever form data changes
-        const marks = calculateStep5Marks(formData);
-        if (marks !== formData.calculatedMarks) {
-            setFormData(prev => ({ ...prev, calculatedMarks: marks }));
-        }
-    }, [formData.events, formData.lectures, formData.onlineCourses, 
-        formData.visits, formData.outreachActivities]);
+        const calculated_marks = calculateStep5Marks(formData);
+        // if (marks !== formData.calculatedMarks) {
+        //     setFormData(prev => ({ ...prev, calculatedMarks: marks }));
+        // }
+        formData.calculatedMarks=marks;
+        setmarks(calculateStep5Marks(formData));
+    }, [formData]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -208,7 +210,8 @@ const Step5Page = () => {
             <h1 className="text-2xl font-bold mb-6">Organization & Participation</h1>
             <div className="mb-4 text-right">
                 <span className="font-semibold">Total Marks: </span>
-                <span className="text-blue-600">{formData.calculatedMarks}</span>
+                {/* <span className="text-blue-600">{formData.calculatedMarks?formData.calculatedMarks :0}</span> */}
+                <span className="text-blue-600">{marks}</span>
                 <span className="text-gray-600">/6</span>
             </div>
             <form onSubmit={handleSubmit} className="space-y-8">

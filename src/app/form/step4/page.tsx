@@ -60,6 +60,7 @@ const SECTION_DESCRIPTIONS = {
 const Step4Page = () => {
     const { data: session, status } = useSession();
     const router = useRouter();
+    const [marks,setmarks]=useState(0);
     const [formData, setFormData] = useState<SponsoredRD>({
         sponsoredProjects: [],
         consultancyProjects: [],
@@ -150,9 +151,9 @@ const Step4Page = () => {
                     }).filter(project => project !== null) || [];
     
                     const ipr = facultyData?.ipr?.map(iprItem => {
-                        const projectYear = new Date(iprItem.registration_date).getFullYear();
+                        const projectYear = new Date(iprItem.publication_date).getFullYear();
                         const startYear=projectYear;
-                        const endYear=new Date(iprItem.publication_date).getFullYear();
+                        const endYear=new Date(iprItem.grant_date).getFullYear();
                         if (!(endYear >= appraisalYear && startYear <= appraisalYear)) return null;
     
                         let marks = 0;
@@ -167,8 +168,8 @@ const Step4Page = () => {
                         return marks > 0 ? {
                             title: iprItem.title,
                             registrationDate: iprItem.registration_date.split("T")[0] || '',
-                            publicationDate: iprItem.publication_date.split('T')[0] || '',
-                            grantDate: iprItem.grant_date.split("T")[0] || '',
+                            publicationDate: iprItem?.publication_date?.split('T')[0] || '',
+                            grantDate: iprItem?.grant_date?.split("T")[0] || '',
                             grantNumber: iprItem.grant_no || iprItem.patent_number,
                             applicant: iprItem.applicant_name || '',
                             inventors: iprItem.inventors || '',
@@ -224,8 +225,8 @@ const Step4Page = () => {
                             qualification: internship.qualification || '',
                             affiliation: internship.affiliation || '',
                             projectTitle: internship.project_title || '',
-                            startDate: internship.start_date.split("T")[0],
-                            endDate:internship.end_date? internship.end_date.split("T")[0]:null,
+                            startDate:new Date(internship.start_date),
+                            endDate:internship.end_date? new Date(internship.end_date):null,
                             isExternal: internship.student_type === 'External',
                             marks,
                         } : null;
@@ -270,11 +271,12 @@ const Step4Page = () => {
     useEffect(() => {
         // Calculate marks whenever form data changes
         const marks = calculateStep4Marks(formData);
-        if (marks !== formData.calculatedMarks) {
-            setFormData(prev => ({ ...prev, calculatedMarks: marks }));
-        }
-    }, [formData.sponsoredProjects, formData.consultancyProjects, formData.ipr, 
-        formData.startups, formData.internships, formData.industryLabs]);
+        // if (marks !== formData.calculatedMarks) {
+        //     setFormData(prev => ({ ...prev, calculatedMarks: marks }));
+        // }
+
+        setmarks(calculateStep4Marks(formData))
+    }, [formData]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -307,7 +309,8 @@ const Step4Page = () => {
             <h1 className="text-2xl font-bold mb-6">Sponsored R&D, Consultancy & Extension Elements</h1>
             <div className="mb-4 text-right">
                 <span className="font-semibold">Total Marks: </span>
-                <span className="text-blue-600">{formData.calculatedMarks}</span>
+                {/* <span className="text-blue-600">{formData.calculatedMarks}</span> */}
+                <span className="text-blue-600">{marks}</span>
                 <span className="text-gray-600">/14</span>
             </div>
             <form onSubmit={handleSubmit} className="space-y-8">

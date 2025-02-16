@@ -109,7 +109,7 @@ export const Internships = ({ formData, setFormData }: Props) => {
                         <div>
                             <label className="block mb-2">{DESCRIPTION.fields.startDate}</label>
                             <input
-                                type="date"
+                                type="text"
                                 value={internship.startDate}
                                 onChange={(e) => {
                                     const updated = [...formData.internships];
@@ -124,7 +124,7 @@ export const Internships = ({ formData, setFormData }: Props) => {
                         <div>
                             <label className="block mb-2">{DESCRIPTION.fields.endDate}</label>
                             <input
-                                type="date"
+                                type="text"
                                 value={internship.endDate}
                                 onChange={(e) => {
                                     const updated = [...formData.internships];
