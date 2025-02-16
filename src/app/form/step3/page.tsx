@@ -150,7 +150,8 @@ export default function Step3Page() {
                         const registrationYear = candidate.registration_year;
                         const currentYear = new Date().getFullYear();
                         const yearsInPhD = currentYear - registrationYear;
-    
+                        const completion_year=candidate.completion_year?new Date(candidate.completion_year).getFullYear() :new Date().getFullYear()
+                        // if (registrationYear <= appraisalYear && appraisalYear<=completion_year)return
                         if (candidate.current_status != "Awarded") {
                             if (yearsInPhD <= 3) marks += 2;
                             else if (yearsInPhD <= 5) marks += 1; 
@@ -169,12 +170,14 @@ export default function Step3Page() {
                             researchArea: candidate.research_area,
                             otherSupervisors: candidate.other_supervisors,
                             marks,
-                            statusDate: candidate.completion_year
+                            statusDate: candidate.completion_year,
+                            completion_year:candidate.completion_year?new Date(candidate.completion_year).getFullYear():new Date().getFullYear()
                         } : null;
-                    }).filter(candidate => candidate !== null && candidate.registrationYear <=appraisalYear) || [];
+                    // }).filter(candidate => candidate !== null && candidate.registrationYear <=appraisalYear) || [];
+                    }).filter(candidate => candidate !== null && candidate.registrationYear <=appraisalYear && appraisalYear<=candidate.completion_year) || [];
     
                     phdSupervisionMarks = Math.min(phdSupervisionMarks, 10);
-    
+                    
                     const journalPapers = facultyData?.journal_papers?.map(paper => {
                         let marks = 0;
                         const publicationYear = new Date(paper.publication_date).getFullYear();
@@ -185,7 +188,7 @@ export default function Step3Page() {
                                 case 'Q2': marks = 3; break;
                                 case 'Q3': marks = 2; break;
                                 case 'Q4': marks = 1; break;
-                                default: marks = 0; break;
+                                default: marks = 1; break;
                             }
                             const isScopusIndexed = paper.journal_name && paper.journal_name.toLowerCase().includes('scopus');
                             if (isScopusIndexed && marks === 0) {
@@ -193,9 +196,9 @@ export default function Step3Page() {
                             }
     
                             const authorCount = paper.authors.split(',').length;
-                            if (authorCount > 1) {
-                                marks = Math.floor(marks / authorCount);
-                            }
+                            // if (authorCount > 1) {
+                            //     marks = Math.floor(marks / authorCount);
+                            // }
     
                             return marks > 0 ? {
                                 authors: paper.authors,
@@ -215,8 +218,9 @@ export default function Step3Page() {
                     }).filter(paper => paper !== null) || [];
     
                     const totalJournalMarks = journalPapers.reduce((total, paper) => total + (paper?.marks || 0), 0);
-                    const cappedJournalMarks = Math.min(totalJournalMarks, 10);
-    
+                    const cappedJournalMarks = totalJournalMarks;
+                    // const cappedJournalMarks = Math.min(totalJournalMarks, 10);
+
                     let conferencePapersMarks = 0;
                     const conferencePapers = facultyData?.conference_papers?.map(paper => {
                         // const conferenceYear = new Date(paper.conference_year).getFullYear();
@@ -224,7 +228,7 @@ export default function Step3Page() {
                         // conferenceYear >= appraisalYear
                         if (conferenceYear == appraisalYear) {
                             let marks = 0;
-                            if (paper.indexing === 'SCOPUS' || paper.indexing === 'Web of Science') {
+                            if (paper.indexing) {
                                 marks = 0.5;
                             } else {
                                 marks = 0.25;
@@ -1002,6 +1006,7 @@ https://www.webofscience.com/wos/author/search by typing your name (authors deta
                                         disabled={true}
                                         className="w-full p-2 border rounded bg-gray-300"
                                     >
+                                        <option value="">-</option>
                                         <option value="SCOPUS">SCOPUS</option>
                                         <option value="Web of Science">Web of Science</option>
                                         <option value="Non-indexed">Non-indexed</option>

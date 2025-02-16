@@ -31,9 +31,10 @@ export function calculateStep2ShowMarks(formData: any): number {
     marks += Math.min(otherTasks.length, 2);
     const btechProjects = formData?.step2?.projectSupervision?.btech || formData?.projectSupervision?.btech || [];
     const mtechProjects = formData?.step2?.projectSupervision?.mtech || formData?.projectSupervision?.mtech ||  formData?.projectSupervision?.mca ||  formData?.projectSupervision?.mba|| [];
-    
-    marks += btechProjects.length * 2;
-    marks += mtechProjects.length * 3;
+    let temp_marks=btechProjects.length *2;
+    temp_marks+=mtechProjects.length*3;
+    temp_marks=Math.min(temp_marks,10);
+    marks+=temp_marks;
 
     marks = Math.min(marks, 25);
     return marks;
@@ -73,6 +74,8 @@ export function calculateStep2Marks(formData: any): number {
 
     // Cap total marks at maximum allowed (if needed)
     // marks = Math.min(marks, MAX_MARKS); // Uncomment and set MAX_MARKS if needed
+
+    
 
     return marks;
 }
@@ -122,50 +125,109 @@ export const calculateStep3Marks = (formData: any) => {
 export const calculateStep4Marks = (formData: any) => {
     let marks = 0;
 
-    // Sponsored Projects
     formData.sponsoredProjects.forEach((project: any) => {
+        let projectMarks = 1;
         const amount = project.financialOutlay;
-        if (amount >= 1000000) { // ≥ 10 lacs
-            marks += 5;
-        } else if (amount >= 500000) { // 5-10 lacs
-            marks += 4;
-        } else { // ≤ 5 lacs
-            marks += 3;
+
+        if (amount >= 1000000) {
+            projectMarks = 5;
+        } else if (amount >= 500000) {
+            projectMarks = 4;
+        } else if (amount >= 50000) {
+            projectMarks = 3;
         }
+
+        marks += projectMarks;
     });
 
-    // Consultancy Projects (max 8 marks)
+    let temp_marks = 0;
+    formData.industryLabs.forEach((lab: any) => {
+        temp_marks += 1;
+    });
+    marks += Math.min(temp_marks, 5);
+
+    let internshipMarks = 0;
+    formData.internships.forEach((internship: any) => {
+        internshipMarks = Math.min(internshipMarks + (internship.isExternal ? 2 : 1), 4);
+    });
+    marks += internshipMarks;
+
+    let startupMarks = 0;
+    formData.startups.forEach((startup: any) => {
+        let startupBaseMarks = 2;
+        const amount = startup.financialOutlay;
+
+        if (amount >= 1000000) {
+            startupBaseMarks += 6;
+        } else if (amount >= 500000) {
+            startupBaseMarks += 5;
+        } else if (amount >= 100000) {
+            startupBaseMarks += 4;
+        } else if (amount >= 50000) {
+            startupBaseMarks += 3;
+        }
+
+        startupMarks += startupBaseMarks;
+    });
+    marks += Math.min(startupMarks, 6);
+
+    formData.ipr.forEach((item: any) => {
+        let iprMarks = 1;
+        if (item.type === 'Patent') {
+            iprMarks += item.grantDate ? 3 : 2;
+        } else if (item.type === 'Technology Transfer') {
+            iprMarks = 4;
+        } else if (item.grantDate) {
+            iprMarks += 1;
+        }
+        marks += iprMarks;
+    });
+
     let consultancyMarks = 0;
     formData.consultancyProjects.forEach((project: any) => {
         const amount = project.financialOutlay;
-        consultancyMarks += Math.floor(amount / 50000);
+        let consultancyProjectMarks = 1;
+
+        if (amount >= 50000) {
+            consultancyProjectMarks = Math.floor(amount / 50000);
+        }
+
+        consultancyMarks += consultancyProjectMarks;
     });
     marks += Math.min(consultancyMarks, 8);
-
-    // IPR
-    formData.ipr.forEach((item: any) => {
-        if (item.type === 'Patent') {
-            if (item.grantDate) marks += 3;
-            if (item.publicationDate) marks += 2;
-        } else if (item.grantDate) {
-            marks += 1;
-        }
-    });
 
     return Math.min(marks, 14);
 };
 
+
+
 export const calculateStep5Marks = (formData: any) => {
     let marks = 0;
-
+    let temp_marks=0
     // Events
     formData.events.forEach((event: any) => {
-        if (event.type === 'International') {
-            marks += 3;
-        } else {
-            marks += 1;
+        const startDate = new Date(event.startDate);
+        const endDate = new Date(event.endDate);
+        const durationInMs = endDate.getTime() - startDate.getTime();
+        const durationInDays = durationInMs / (1000 * 3600 * 24);
+        if (event.type && (event.type.toLowerCase() === 'national' || event.type.toLowerCase() === 'international')) {
+            temp_marks += 3;
+            return;
+        } 
+        if (durationInDays === 5) {
+            if (event.role && (event.role.toLowerCase() === 'coordinator' || event.role.toLowerCase() === 'convener')) {
+                temp_marks += 2;
+            }
+        } else if (durationInDays === 7) {
+            temp_marks += 1;
+        } else if (durationInDays === 14) {
+            temp_marks += 2;
+        }else{
+            temp_marks+=1;
         }
     });
+    
+    marks+=Math.min(temp_marks,3)
 
     // Lectures (max 1 mark)
     marks += Math.min(formData.lectures.length * 0.5, 1);
