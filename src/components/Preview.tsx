@@ -1200,7 +1200,7 @@ export default function Preview({ formData }: PreviewProps) {
                                 <tr>
                                     <th className="border p-2">Activity</th>
                                     <th className="border p-2">Duration</th>
-                                    <th className="border p-2">Marks</th>
+                                    <th className="border p-2">Marks/Sem</th>
                                 </tr>
                             </thead>
                             <tbody>
