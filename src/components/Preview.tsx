@@ -529,7 +529,7 @@ export default function Preview({ formData }: PreviewProps) {
                         <h3 className="font-semibold mb-2">Details of new experiment developed:</h3>
                         <p className="text-xs mb-2">[02 marks per new laboratory developed/01 mark per new experiment]</p>
                         <ul className="list-disc pl-5">
-                            {formData.step2.ExperimentLabs.map((lab, index) => (
+                            {formData.step2.ExperimentLabs?.map((lab, index) => (
                                 <li key={index} className="mb-1">{lab}</li>
                             ))}
                         </ul>
