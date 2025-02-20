@@ -93,7 +93,7 @@ const Step4Page = () => {
     
                 const facultyData = await fetchFacultyData(session?.user?.email || '');
                 if (facultyData) {
-                    const sponsoredProjects = facultyData?.sponsored_projects?.map(project => {
+                    let sponsoredProjects = facultyData?.sponsored_projects?.map(project => {
                         const endYear =project.end_date? new Date(project.end_date).getFullYear():new Date().getFullYear();
                         const startYear=new Date(project.start_date).getFullYear();
                         // const endYear=new Date(project.end_date).getFullYear();
@@ -124,6 +124,28 @@ const Step4Page = () => {
                             marks,
                         } : null;
                     }).filter(project => project !== null) || [];
+
+                    const existingSponsoredProjects = existingData?.sponsoredProjects
+                        ?.filter(project => project.status === "Submitted")
+                        ?.map(project => {
+                            let marks = 0;
+                            const financialOutlay = parseInt(project.financial_outlay) || 0;
+
+                            if (financialOutlay <= 500000) {
+                                marks += 3;
+                            } else if (financialOutlay <= 1000000) {
+                                marks += 4;
+                            } else {
+                                marks += 5;
+                            }
+
+                            return {
+                                ...project,
+                                marks,
+                            };
+                        }) || [];
+
+                    sponsoredProjects = [...sponsoredProjects, ...existingSponsoredProjects];
     
                     const consultancyProjects = facultyData?.consultancy_projects?.map(project => {
                         const projectYear = new Date(project.start_date).getFullYear();
