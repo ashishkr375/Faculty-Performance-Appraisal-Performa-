@@ -133,7 +133,7 @@ export interface SponsoredRD {
         endDate: string;
         investigators: string;
         piInstitute: string;
-        status: 'Started' | 'Completed' | 'In Progress';
+        status: 'Started' | 'Completed' | 'In Progress'|"Submitted";
         fundReceived: number;
     }[];
     consultancyProjects: {

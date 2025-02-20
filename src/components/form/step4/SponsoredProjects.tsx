@@ -30,7 +30,7 @@ export const SponsoredProjects = ({ formData, setFormData }: Props) => {
                 endDate: '',
                 investigators: '',
                 piInstitute: '',
-                status: 'Started',
+                status: 'Submitted',
                 fundReceived: 0
             }]
         });
@@ -51,8 +51,8 @@ export const SponsoredProjects = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...project, title: e.target.value };
                                     setFormData({ ...formData, sponsoredProjects: updated });
                                 }}
-                                className="w-full p-2 border rounded bg-gray-200"
-                                disabled={true}
+                                className="w-full p-2 border rounded"
+                                disabled={project.status !== 'Submitted'}
                                 required
                             />
                         </div>
@@ -66,8 +66,8 @@ export const SponsoredProjects = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...project, fundingAgency: e.target.value };
                                     setFormData({ ...formData, sponsoredProjects: updated });
                                 }}
-                                className="w-full p-2 border rounded bg-gray-200"
-                                disabled={true}
+                                className="w-full p-2 border rounded"
+                                disabled={project.status !== 'Submitted'}
                                 required
                             />
                         </div>
@@ -81,41 +81,60 @@ export const SponsoredProjects = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...project, financialOutlay: parseInt(e.target.value) };
                                     setFormData({ ...formData, sponsoredProjects: updated });
                                 }}
-                                className="w-full p-2 border rounded bg-gray-200"
-                                disabled={true}
+                                className="w-full p-2 border rounded"
+                                disabled={project.status !== 'Submitted'}
                                 required
                             />
                         </div>
                         <div>
-                            <label className="block mb-2">Start Date</label>
+                            <label className="block mb-2">Funds Received by NIT Patna (₹)</label>
                             <input
-                                type="date"
-                                value={project.startDate}
+                                type="number"
+                                value={project.fundReceived}
                                 onChange={(e) => {
                                     const updated = [...formData.sponsoredProjects];
-                                    updated[index] = { ...project, startDate: e.target.value };
+                                    updated[index] = { ...project, fundReceived: Math.max(0, parseInt(e.target.value)) };
                                     setFormData({ ...formData, sponsoredProjects: updated });
                                 }}
-                                className="w-full p-2 border rounded bg-gray-200"
-                                disabled={true}
+                                className="w-full p-2 border rounded"
+                                disabled={project.status !== 'Submitted'}
                                 required
                             />
                         </div>
-                        <div>
-                            <label className="block mb-2">End Date</label>
-                            <input
-                                type="date"
-                                value={project.endDate}
-                                onChange={(e) => {
-                                    const updated = [...formData.sponsoredProjects];
-                                    updated[index] = { ...project, endDate: e.target.value };
-                                    setFormData({ ...formData, sponsoredProjects: updated });
-                                }}
-                                className="w-full p-2 border rounded bg-gray-200"
-                                required
-                                disabled={true}
-                            />
-                        </div>
+                        {project.status !== 'Submitted' && (
+                            <>
+                                <div>
+                                    <label className="block mb-2">Start Date</label>
+                                    <input
+                                        type="date"
+                                        value={project.startDate}
+                                        onChange={(e) => {
+                                            const updated = [...formData.sponsoredProjects];
+                                            updated[index] = { ...project, startDate: e.target.value };
+                                            setFormData({ ...formData, sponsoredProjects: updated });
+                                        }}
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        disabled={true}
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block mb-2">End Date</label>
+                                    <input
+                                        type="date"
+                                        value={project.endDate}
+                                        onChange={(e) => {
+                                            const updated = [...formData.sponsoredProjects];
+                                            updated[index] = { ...project, endDate: e.target.value };
+                                            setFormData({ ...formData, sponsoredProjects: updated });
+                                        }}
+                                        className="w-full p-2 border rounded bg-gray-200"
+                                        required
+                                        disabled={true}
+                                    />
+                                </div>
+                            </>
+                        )}
                         <div>
                             <label className="block mb-2">Name of P.I and other Investigators</label>
                             <input
@@ -126,8 +145,8 @@ export const SponsoredProjects = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...project, investigators: e.target.value };
                                     setFormData({ ...formData, sponsoredProjects: updated });
                                 }}
-                                className="w-full p-2 border rounded bg-gray-200"
-                                disabled={true}
+                                className="w-full p-2 border rounded"
+                                disabled={project.status !== 'Submitted'}
                                 required
                             />
                         </div>
@@ -141,8 +160,8 @@ export const SponsoredProjects = ({ formData, setFormData }: Props) => {
                                     updated[index] = { ...project, piInstitute: e.target.value };
                                     setFormData({ ...formData, sponsoredProjects: updated });
                                 }}
-                                className="w-full p-2 border rounded bg-gray-200"
-                                disabled={true}
+                                className="w-full p-2 border rounded"
+                                disabled={project.status !== 'Submitted'}
                                 required
                             />
                         </div>
@@ -152,34 +171,20 @@ export const SponsoredProjects = ({ formData, setFormData }: Props) => {
                                 value={project.status}
                                 onChange={(e) => {
                                     const updated = [...formData.sponsoredProjects];
-                                    updated[index] = { ...project, status: e.target.value as 'Started' | 'Completed' | 'In Progress' };
+                                    updated[index] = { ...project, status: e.target.value as 'Submitted' | 'Started' | 'Completed' | 'In Progress' };
                                     setFormData({ ...formData, sponsoredProjects: updated });
                                 }}
-                                className="w-full p-2 border rounded bg-gray-200"
+                                className="w-full p-2 border rounded"
                                 required
                                 disabled={true}
                             >
+                                <option value="Submitted">Submitted</option>
                                 <option value="Started">Started</option>
                                 <option value="In Progress">In Progress</option>
                                 <option value="Completed">Completed</option>
                                 <option value="Ongoing">Ongoing</option>
                                 <option value="Terminated">Terminated</option>
                             </select>
-                        </div>
-                        <div>
-                            <label className="block mb-2">Funds Received by NIT Patna (₹)</label>
-                            <input
-                                type="number"
-                                value={project.fundReceived}
-                                onChange={(e) => {
-                                    const updated = [...formData.sponsoredProjects];
-                                    updated[index] = { ...project, fundReceived: parseInt(e.target.value) };
-                                    setFormData({ ...formData, sponsoredProjects: updated });
-                                }}
-                                className="w-full p-2 border rounded bg-gray-200"
-                                disabled={true}
-                                required
-                            />
                         </div>
                     </div>
                     {/* <button
@@ -194,13 +199,13 @@ export const SponsoredProjects = ({ formData, setFormData }: Props) => {
                     </button> */}
                 </div>
             ))}
-            {/* <button
+            <button
                 type="button"
                 onClick={handleAddProject}
                 className="w-full p-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-600"
             >
                 + Add Sponsored Project
-            </button> */}
+            </button>
         </section>
     );
-}; 
+};
