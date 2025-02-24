@@ -54,26 +54,25 @@ export default function Step1Page() {
                     console.log('Using existing form data:', existingData);
                     setFormData(prevData => ({
                         ...prevData,
-                        ...existingData,
+                        jointFaculty: existingData.jointFaculty || '',
+                        jointFacultyDepartment: existingData.jointFacultyDepartment || '',
                         appraisalPeriodStart: existingData.appraisalPeriodStart || '',
                         // appraisalPeriodEnd: existingData.appraisalPeriodEnd || ''
                     }));
-                } else {
-                    console.log('No existing data, fetching from faculty API');
-                    const facultyData = await fetchFacultyData(session?.user?.email || '');
-                    
-                    if (facultyData && facultyData.profile) {
-                        setFormData(prevData => ({
-                            ...prevData,
-                            name: facultyData.profile.name,
-                            department: facultyData.profile.department,
-                            designation: facultyData.profile.designation,
-                            jointFaculty: '',
-                            jointFacultyDepartment: '',
-                            appraisalPeriodStart: '',
-                            // appraisalPeriodEnd: ''
-                        }));
-                    }
+                }
+                const facultyData = await fetchFacultyData(session?.user?.email || '');
+
+                if (facultyData && facultyData.profile) {
+                    setFormData(prevData => ({
+                        ...prevData,
+                        name: facultyData.profile.name,
+                        department: facultyData.profile.department,
+                        designation: facultyData.profile.designation,
+                        jointFaculty: existingData?.jointFaculty || '',
+                        jointFacultyDepartment: existingData?.jointFacultyDepartment || '',
+                        appraisalPeriodStart: existingData?.appraisalPeriodStart || '',
+                        // appraisalPeriodEnd: existingData?.appraisalPeriodEnd || ''
+                    }));
                 }
             } catch (error) {
                 console.error('Error in initializeData:', error);
