@@ -128,8 +128,10 @@ export const calculateStep4Marks = (formData: any) => {
     formData.sponsoredProjects.forEach((project: any) => {
         let projectMarks = 1;
         const amount = project.financialOutlay;
-
-        if (amount >= 1000000) {
+        if(project.status==="Submitted"){
+            projectMarks=1;
+        }
+        else if (amount >= 1000000) {
             projectMarks = 5;
         } else if (amount >= 500000) {
             projectMarks = 4;
@@ -177,7 +179,7 @@ export const calculateStep4Marks = (formData: any) => {
             iprMarks += item.grantDate ? 3 : 2;
         } else if (item.type === 'Technology Transfer') {
             iprMarks = 4;
-        } else if (item.grantDate) {
+        } else if (item.grantDate) {//published  --mpsir patent
             iprMarks += 1;
         }
         marks += iprMarks;
