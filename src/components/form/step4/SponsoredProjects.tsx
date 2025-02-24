@@ -36,10 +36,15 @@ export const SponsoredProjects = ({ formData, setFormData }: Props) => {
         });
     };
 
+    const handleRemoveProject = (index: number) => {
+        const updatedProjects = formData.sponsoredProjects.filter((_, i) => i !== index);
+        setFormData({ ...formData, sponsoredProjects: updatedProjects });
+    };
+
     return (
         <section>
             {formData.sponsoredProjects.map((project, index) => (
-                <div key={index} className="border p-4 rounded mb-4">
+                <div key={index} className="border p-4 rounded mb-4 relative">
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="block mb-2">Project Title</label>
@@ -187,16 +192,15 @@ export const SponsoredProjects = ({ formData, setFormData }: Props) => {
                             </select>
                         </div>
                     </div>
-                    {/* <button
-                        type="button"
-                        onClick={() => {
-                            const updated = formData.sponsoredProjects.filter((_, i) => i !== index);
-                            setFormData({ ...formData, sponsoredProjects: updated });
-                        }}
-                        className="mt-2 text-red-500 text-sm"
-                    >
-                        Remove Project
-                    </button> */}
+                    {project.status === 'Submitted' && (
+                        <button
+                            type="button"
+                            onClick={() => handleRemoveProject(index)}
+                            className="absolute top-2 right-2 text-red-500"
+                        >
+                            Remove
+                        </button>
+                    )}
                 </div>
             ))}
             <button
