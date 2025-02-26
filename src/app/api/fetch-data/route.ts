@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
         }
 
         // Fetch faculty data from NITP API
-        const response = await fetch(`https://adminportal-updated-new.vercel.app/api/faculty?type=${encodeURIComponent(email)}`);
+        const response = await fetch(`https://admin.nitp.ac.in/api/faculty?type=${encodeURIComponent(email)}`);
         
         if (!response.ok) {
             return NextResponse.json({ 
