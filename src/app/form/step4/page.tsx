@@ -173,10 +173,10 @@ const Step4Page = () => {
                     }).filter(project => project !== null) || [];
     
                     const ipr = facultyData?.ipr?.map(iprItem => {
-                        const projectYear = new Date(iprItem.publication_date).getFullYear();
+                        const projectYear = iprItem.publication_date ? new Date(iprItem.publication_date).getFullYear() : null;
                         const startYear=projectYear;
-                        const endYear=new Date(iprItem.grant_date).getFullYear();
-                        if (!(endYear >= appraisalYear && startYear <= appraisalYear)) return null;
+                        const endYear=iprItem.grant_date ?new Date(iprItem.grant_date)?.getFullYear():new Date().getFullYear();
+                        if (startYear === null ||!(endYear >= appraisalYear && startYear <= appraisalYear)) return null;
     
                         let marks = 0;
                         if (iprItem.type === 'Patent') {
