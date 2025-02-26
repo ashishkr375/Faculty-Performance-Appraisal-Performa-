@@ -327,7 +327,7 @@ export const calculateStep6Marks = (formData: any,appraisalYear:number) => {
         }
     });
 
-    return marks>0.5 ? Math.min(marks+0.5, 15):0; 
+    return  Math.min(marks, 15); 
 };
 
 
