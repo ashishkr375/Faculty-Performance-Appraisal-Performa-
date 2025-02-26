@@ -189,7 +189,7 @@ const Step4Page = () => {
                         }
                         return marks > 0 ? {
                             title: iprItem.title,
-                            registrationDate: iprItem.registration_date.split("T")[0] || '',
+                            registrationDate: iprItem.registration_date?.split("T")[0] || '',
                             publicationDate: iprItem?.publication_date?.split('T')[0] || '',
                             grantDate: iprItem?.grant_date?.split("T")[0] || '',
                             grantNumber: iprItem.grant_no || iprItem.patent_number,
