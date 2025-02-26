@@ -180,7 +180,7 @@ export default function Step3Page() {
                     
                     const journalPapers = facultyData?.journal_papers?.map(paper => {
                         let marks = 0;
-                        const publicationYear = new Date(paper.publication_date).getFullYear();
+                        const publicationYear =parseInt(paper.publication_year) || new Date(paper.publication_date).getFullYear() ;
                         // endYear >= appraisalYear && startYear <= appraisalYear
                         if (publicationYear == appraisalYear) { //publicationYear>=appraisalYear
                             switch (paper.journal_quartile) {
@@ -208,7 +208,7 @@ export default function Step3Page() {
                                 year: paper.publication_year,
                                 pages: paper.pages,
                                 quartile: paper.journal_quartile,
-                                publicationDate: paper.publication_date.split("T")[0],
+                                publicationDate: paper?.publication_date?.split("T")[0],
                                 studentInvolved: paper.student_involved ? 'Yes' : 'No',
                                 doi: paper.doi_url,
                                 marks,
@@ -671,6 +671,8 @@ export default function Step3Page() {
                                         disabled={true}                                        
                                     >
                                         <option value="">Select Status</option>
+                                    <option value="Admission">Admission</option>
+                                    <option value="Registered">Registered</option>
                                         <option value="Comprehension">Comprehensive done</option>
                                         <option value="Presubmission ">Pre-submission done</option>
                                         <option value="Thesis_Submitted">Thesis submitted</option>
