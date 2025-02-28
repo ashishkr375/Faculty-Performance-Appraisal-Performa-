@@ -16,7 +16,7 @@ export async function GET() {
         const { db } = await connectToDatabase();
         const formData = await db.collection('forms').findOne(
             { userId: session.user.email },
-            { projection: { completedSteps: 1, lastUpdated: 1 } }
+            { projection: { completedSteps: 1, lastUpdated: 1,finalSubmit:1 } }
         );
 
         if (!formData) {
