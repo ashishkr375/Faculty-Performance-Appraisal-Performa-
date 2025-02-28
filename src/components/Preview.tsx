@@ -552,7 +552,7 @@ export default function Preview({ formData }: PreviewProps) {
                         
                         {/* B.Tech Projects */}
                         <div className="mb-4">
-                            <h4 className="text-xs mb-2">B.Tech Projects (@ 02 per project/group)</h4>
+                            <h4 className="text-xs mb-2">B.Tech/B.Arch Projects (@ 02 per project/group)</h4>
                             <table className="w-full border-collapse text-xs">
                                 <thead>
                                     <tr>
@@ -577,7 +577,7 @@ export default function Preview({ formData }: PreviewProps) {
 
                         {/* M.Tech Projects */}
                         <div className="mb-4">
-                            <h4 className="font-medium mb-2">M.Tech/MSc/MCA/MBA Projects (@ 03 per project/group)</h4>
+                            <h4 className="font-medium mb-2">M.Tech/MSc/MCA/MBA/Int.Msc/MURP Projects (@ 03 per project/group)</h4>
                             <table className="w-full border-collapse text-xs">
                                 <thead>
                                     <tr>
