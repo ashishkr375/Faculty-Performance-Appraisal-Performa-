@@ -1221,7 +1221,9 @@ export default function Preview({ formData }: PreviewProps) {
                 {/* Self Appraisal Section */}
                 <div className="mb-8">
                     <h2 className="text-base font-bold mb-4">VI. SELF APPRAISAL</h2>
-                    <p className="text-xs mb-4">(Comments on work including circumstances for not being able to undertake activities in some elements) [Max. 500 words]</p>
+                    {/* <p className="text-xs mb-4">(Comments on work including circumstances for not being able to undertake activities in some elements) [Max. 500 words]</p>
+                     */}
+                     <h3 className="font-semibold mb-2">Significant Achievements During the Assessment Period</h3>
                     <div className="border p-4 rounded whitespace-pre-wrap text-xs">
                         {formData.step7.achievements}
                     </div>
@@ -1230,22 +1232,22 @@ export default function Preview({ formData }: PreviewProps) {
                 {/* Future Work Section */}
                 <div className="mb-8">
                     <h2 className="text-base font-bold mb-4">VII. COMMENTS/ SUGGESTIONS FOR FUTURE WORK</h2>
-                    <p className="text-xs mb-4">(Including difficulties faced and suggestions for improvement) [Max. 500 words]</p>
+                    {/* <p className="text-xs mb-4">(Including difficulties faced and suggestions for improvement) [Max. 500 words]</p> */}
                     <div className="space-y-4">
                         <div>
-                            <h3 className="font-semibold mb-2">Areas of Improvement:</h3>
+                            <h3 className="font-semibold mb-2">Areas Where You Need to Improve</h3>
                             <div className="border p-4 rounded whitespace-pre-wrap text-xs">
                                 {formData.step7.areasOfImprovement}
                             </div>
                         </div>
                         <div>
-                            <h3 className="font-semibold mb-2">Future Plans:</h3>
+                            <h3 className="font-semibold mb-2">Future Plans for Professional Development</h3>
                             <div className="border p-4 rounded whitespace-pre-wrap text-xs">
                                 {formData.step7.futurePlans}
                             </div>
                         </div>
                         <div>
-                            <h3 className="font-semibold mb-2">Support Required:</h3>
+                            <h3 className="font-semibold mb-2">Support Required from the Institute:</h3>
                             <div className="border p-4 rounded whitespace-pre-wrap text-xs">
                                 {formData.step7.supportRequired}
                             </div>

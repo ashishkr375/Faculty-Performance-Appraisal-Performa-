@@ -302,16 +302,30 @@ export const calculateStep6Marks = (formData: any,appraisalYear:number) => {
 
     const getNumberOfSemesters = (duration: string) => {
         const [startDate, endDate] = duration.split(" - ");
-        const start = new Date(startDate);
-        const startingAppraisalYear=new Date(Math.max(start,new Date(appraisalYear,0,1)));
-        const end = endDate === 'Continue' ? new Date(appraisalYear,12,1) : new Date(endDate);
+        let start = new Date(startDate);
+        let end = endDate === "Continue" ? new Date(appraisalYear, 11, 31) : new Date(endDate);
+        start = new Date(Math.max(start.getTime(), new Date(appraisalYear, 0, 1).getTime()));
+        const benchmark = new Date(appraisalYear, 5, 30);
         let semesters = 0;
-        const monthDifference = (end.getFullYear() - startingAppraisalYear.getFullYear()) * 12 + (end.getMonth() - startingAppraisalYear.getMonth()+1);
-
-        semesters = Math.floor(monthDifference / 6);     
+        //(Jan - June)
+        if (start <= benchmark) {
+            const firstHalfEnd = end <= benchmark ? end : benchmark;
+            const monthDifference = (firstHalfEnd.getFullYear() - start.getFullYear()) * 12 + (firstHalfEnd.getMonth() - start.getMonth()) + 1;
+            if (monthDifference >= 4) {
+                semesters++;
+            }
+        }
+        //(July - Dec)
+        if (end > benchmark) {
+            const secondHalfStart = start > benchmark ? start : new Date(appraisalYear, 6, 1);
+            const monthDifference = (end.getFullYear() - secondHalfStart.getFullYear()) * 12 + (end.getMonth() - secondHalfStart.getMonth()) + 1;
+            if (monthDifference >= 4) {
+                semesters++;
+            }
+        }
         return Math.min(semesters, 2);
     };
-
+    
     formData.instituteLevelActivities.forEach((activity: any) => {
         const semesters = getNumberOfSemesters(activity.duration);
         // console.log(`Activity ${semesters} ${activity.duration}`);
