@@ -36,7 +36,7 @@ const SECTION_DESCRIPTIONS = {
     },
     outreach: {
         title: "Outreach Activities",
-        description: "Maximum 07 marks @ 01 mark per activity\n" +
+        description: "Maximum 06 marks @ 01 mark per activity\n" +
             "Such as involvement with outside institutes - Network/Joint Projects, International & National Academics, " +
             "Professional Societies, Industry/Govt./Public/Community Service, Editorial & Renewing work, " +
             "Editing of proceedings, Development of national code of standards, members of advisory committee/BOS/Senate/BOG/" +
