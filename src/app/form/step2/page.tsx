@@ -42,7 +42,7 @@ const SECTION_DESCRIPTIONS = {
         title: "Project and Thesis Supervision",
         description: "Maximum marks: 10",
         btech: {
-            title: "B.Tech Projects",
+            title: "B.Tech/B.Arch Projects",
             description: "02 marks per project/group",
             fields: {
                 title: "Complete title of the Project/Thesis/Dissertation",
@@ -52,7 +52,7 @@ const SECTION_DESCRIPTIONS = {
             }
         },
         mtech: {
-            title: "M.Tech/MSc/MCA/MBA Projects",
+            title: "M.Tech/MSc/MCA/MBA/Int.Msc/MURP Projects",
             description: "03 marks per project/group",
             fields: {
                 title: "Complete title of the Project/Thesis/Dissertation",
@@ -205,7 +205,7 @@ if (facultyData?.project_supervision) {
                 externalSupervisors: project.external_supervisors,
             };
 
-            if (["Undergraduate", "UG", "BTech"].includes(project.category)) {
+            if (["Undergraduate", "UG", "BTech","B.Arch"].includes(project.category)) {
                 projectSupervision.btech.push(projectData);
             } else {
                 projectSupervision.mtech.push(projectData);
@@ -293,7 +293,7 @@ if (facultyData?.project_supervision) {
                                     externalSupervisors: project.external_supervisors,
                                 };
                     
-                                if (["Undergraduate", "UG", "BTech"].includes(project.category)) {
+                                if (["Undergraduate", "UG", "BTech","B.Arch"].includes(project.category)) {
                                     projectSupervision.btech.push(projectData);
                                 } else {
                                     projectSupervision.mtech.push(projectData);
@@ -398,7 +398,6 @@ if (facultyData?.project_supervision) {
                 body: JSON.stringify({
                     step: 2,
                     data: formData,
-                    step2Marks:marks,
                 }),
             });
 
