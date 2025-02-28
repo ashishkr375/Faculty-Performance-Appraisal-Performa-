@@ -9,6 +9,7 @@ import Loading from '../loading';
 interface FormProgress {
     completedSteps: number[];
     lastUpdated?: Date;
+    finalSubmit?: boolean;
 }
 
 export default function Dashboard() {
@@ -16,6 +17,7 @@ export default function Dashboard() {
     const router = useRouter();
     const [formProgress, setFormProgress] = useState<FormProgress>({ completedSteps: [] });
     const [loading, setLoading] = useState(true);
+    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         if (status === 'unauthenticated') {
@@ -51,6 +53,27 @@ export default function Dashboard() {
         { number: 7, title: 'Self Appraisal', path: '/form/step7' },
     ];
 
+    const handleFinalSubmit = async () => {
+        try {
+            const response = await fetch('/api/final-submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email: session?.user?.email }),
+            });
+
+            if (response.ok) {
+                setFormProgress(prev => ({ ...prev, finalSubmit: true }));
+                setShowModal(false);
+            } else {
+                console.error('Failed to submit final form');
+            }
+        } catch (error) {
+            console.error('Error submitting final form:', error);
+        }
+    };
+
     if (loading) {
         return <Loading />;
     }
@@ -78,7 +101,10 @@ export default function Dashboard() {
                                     </p>
                                 </div>
                                 <div>
-                                    {isCompleted ? (
+                                    {/* {formProgress.finalSubmit && !isStepOne ? ( */}
+                                    {formProgress.finalSubmit? (
+                                        <span className="text-gray-400">Locked</span>
+                                    ) : isCompleted ? (
                                         <Link
                                             href={step.path}
                                             className="text-blue-500 hover:text-blue-700"
@@ -117,8 +143,47 @@ export default function Dashboard() {
                     >
                         View Complete Filled Form
                     </Link>
+
+                    {!formProgress.finalSubmit && (
+                        <button
+                            onClick={() => setShowModal(true)}
+                            className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 ml-4"
+                        >
+                            Final Submit
+                        </button>
+                    )}
+                </div>
+            )}
+
+
+            {showModal && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg">
+                        <h2 className="text-xl font-semibold mb-4">Confirm Final Submission</h2>
+                        <p className="mb-4">Are you sure you want to submit the form? You will not be able to make any changes after this.</p>
+                        <div className="flex justify-end space-x-4">
+                            <button
+                                onClick={() => setShowModal(false)}
+                                className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleFinalSubmit}
+                                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                            >
+                                Confirm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {formProgress.finalSubmit && (
+                <div className="text-center mt-8">
+                    <p className="text-green-600 font-semibold">Your form has been successfully submitted.</p>
                 </div>
             )}
         </div>
     );
-} 
+}
