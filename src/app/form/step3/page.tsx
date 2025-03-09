@@ -174,7 +174,7 @@ export default function Step3Page() {
                             completion_year:candidate.completion_year?new Date(candidate.completion_year).getFullYear():new Date().getFullYear()
                         } : null;
                     // }).filter(candidate => candidate !== null && candidate.registrationYear <=appraisalYear) || [];
-                    }).filter(candidate => candidate !== null && candidate.registrationYear <=appraisalYear && appraisalYear<=candidate.completion_year) || [];
+                    }).filter(candidate => candidate !== null && candidate.registrationYear <=appraisalYear) || [];
     
                     phdSupervisionMarks = Math.min(phdSupervisionMarks, 10);
                     
@@ -682,7 +682,8 @@ export default function Step3Page() {
                                 </div>
                                 <div>
                                     {/* <label className="block mb-2">Status Date </label> */}
-                                    <label className="block mb-2">Completion Year </label>
+                                    {/* <label className="block mb-2">{student.status === "Awarded"?"Completion Year":`${student.status} Completed Year`}</label> */}
+                                    <label className="block mb-2">Status Date</label>
                                     <input
                                         type="text"
                                         value={student.statusDate}
