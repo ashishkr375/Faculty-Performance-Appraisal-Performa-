@@ -1,36 +1,32 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NITP Faculty Appraisal Form
 
-## Getting Started
+## Introduction
+This is the official NITP Faculty Appraisal Form, which enables faculty members to generate their final appraisal report dynamically. The marks assignment is based on various factors and marking schemes, and the scores are normalized to 100 before final assignment. This system plays a crucial role in faculty promotions at NIT Patna.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Dynamic Marks Assignment**- Automatically assigns scores based on faculty achievements and performance
+- **100-Point Normalization**- Ensures fair and consistent evaluation across different criteria
+- **Automated Report Generation**- Faculty members can generate, view, and download their final appraisal reports
+- **Role-Based Access**- Secure login for faculty members with restricted access
+- **Promotion-Oriented Assessment**- Helps in determining faculty promotions and career advancements
+- **Real-Time Processing**- Instant calculations and normalization of scores without delays
+- **User-Friendly Interface**- Simplified and intuitive form submission process
+- **Secure Data Storage**- Ensures confidentiality and integrity of faculty records
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Technologies Used
+- **Frontend**- Next.js, Tailwind CSS
+- **Backend**- Next.js api router
+- **Database**- MongoDB
+- **API Integration**- RESTful APIs
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Usage
+- **Faculty Login**- Faculty members log in using their NITP credentials
+- **Form Submission**- Faculty fill in their academic, research, and administrative achievements
+- **Marks Assignment**- The system assigns marks dynamically based on predefined factors
+- **Normalization Process**- All scores are adjusted to a 100-point scale for uniformity
+- **Report Generation**- Faculty members can download or print their final appraisal report
+- **Review & Approval**- The report can be reviewed by the administration for promotion considerations
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Thank You
+We appreciate your interest in the NITP Faculty Appraisal Form. Stay tuned for updates!
