@@ -249,7 +249,7 @@ export async function fetchFacultyData(email: string): Promise<FacultyProfile | 
     try {
         console.log('Fetching data for email:', email);
         
-        const response = await fetch(`https://adminportal-updated-new.vercel.app/api/faculty?type=${encodeURIComponent(email)}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_Backend_URL}/api/faculty?type=${encodeURIComponent(email)}`, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
